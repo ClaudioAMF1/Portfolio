@@ -1,5 +1,5 @@
 /* ============================================
-   CLAUDIO MEIRELES - PORTFOLIO
+   CLAUDIO MEIRELES - PORTFOLIO v2
    JavaScript - Animations & Interactivity
    ============================================ */
 
@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
     animateFollower();
 
     // Hover effect on interactive elements
-    const interactiveElements = document.querySelectorAll('a, button, .project-card, .contact-card, .skill-category, .detail-item, .cert-item');
-    interactiveElements.forEach(el => {
+    const hoverSelectors = 'a, button, .project-card, .contact-card, .skill-category, .detail-item, .cert-item, .skill-tag, .quick-item';
+    document.querySelectorAll(hoverSelectors).forEach(el => {
         el.addEventListener('mouseenter', () => {
             cursor.classList.add('hover');
             cursorFollower.classList.add('hover');
@@ -70,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
         update() {
             this.x += this.speedX;
             this.y += this.speedY;
-
             if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
             if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
         }
@@ -124,15 +123,17 @@ document.addEventListener('DOMContentLoaded', () => {
     initParticles();
     animateParticles();
 
-    // Pause particles when not in viewport
+    // Pause particles when hero is not visible
     const heroSection = document.getElementById('hero');
     const heroObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 if (!animationId) animateParticles();
             } else {
-                cancelAnimationFrame(animationId);
-                animationId = null;
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                    animationId = null;
+                }
             }
         });
     }, { threshold: 0.1 });
@@ -186,18 +187,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileLinks = document.querySelectorAll('.mobile-link');
     const sections = document.querySelectorAll('section[id]');
 
-    // Scroll handling
-    let lastScroll = 0;
     window.addEventListener('scroll', () => {
         const currentScroll = window.scrollY;
 
+        // Navbar background
         if (currentScroll > 50) {
             navbar.classList.add('scrolled');
         } else {
             navbar.classList.remove('scrolled');
         }
-
-        lastScroll = currentScroll;
 
         // Active nav link
         let current = '';
@@ -214,6 +212,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 link.classList.add('active');
             }
         });
+
+        // Hero parallax
+        const heroContent = document.querySelector('.hero-content');
+        if (heroContent && currentScroll < window.innerHeight) {
+            heroContent.style.transform = `translateY(${currentScroll * 0.15}px)`;
+            heroContent.style.opacity = 1 - (currentScroll / (window.innerHeight * 0.8));
+        }
     });
 
     // Mobile menu toggle
@@ -223,7 +228,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
     });
 
-    // Close mobile menu on link click
     mobileLinks.forEach(link => {
         link.addEventListener('click', () => {
             menuToggle.classList.remove('active');
@@ -232,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Smooth scroll for all anchor links
+    // Smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
@@ -240,10 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (target) {
                 const offset = 80;
                 const targetPosition = target.getBoundingClientRect().top + window.scrollY - offset;
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
+                window.scrollTo({ top: targetPosition, behavior: 'smooth' });
             }
         });
     });
@@ -255,26 +256,11 @@ document.addEventListener('DOMContentLoaded', () => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
-
-                // Animate skill bars
-                if (entry.target.closest('.skills-grid')) {
-                    const progressBars = entry.target.querySelectorAll('.skill-progress');
-                    progressBars.forEach((bar, index) => {
-                        setTimeout(() => {
-                            bar.classList.add('animate');
-                        }, index * 100);
-                    });
-                }
-
-                // Animate stat numbers
-                if (entry.target.closest('.hero-stats')) {
-                    animateStatNumbers();
-                }
             }
         });
     }, {
-        threshold: 0.15,
-        rootMargin: '0px 0px -50px 0px'
+        threshold: 0.12,
+        rootMargin: '0px 0px -40px 0px'
     });
 
     animateElements.forEach(el => scrollObserver.observe(el));
@@ -286,8 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (statsAnimated) return;
         statsAnimated = true;
 
-        const statNumbers = document.querySelectorAll('.stat-number');
-        statNumbers.forEach(stat => {
+        document.querySelectorAll('.stat-number').forEach(stat => {
             const target = parseInt(stat.getAttribute('data-target'));
             const duration = 2000;
             const startTime = performance.now();
@@ -295,8 +280,6 @@ document.addEventListener('DOMContentLoaded', () => {
             function updateCounter(currentTime) {
                 const elapsed = currentTime - startTime;
                 const progress = Math.min(elapsed / duration, 1);
-
-                // Ease out cubic
                 const eased = 1 - Math.pow(1 - progress, 3);
                 const current = Math.floor(eased * target);
 
@@ -308,25 +291,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     stat.textContent = target.toLocaleString('pt-BR');
                 }
             }
-
             requestAnimationFrame(updateCounter);
         });
     }
 
-    // Check if stats are already visible on load
     const statsSection = document.querySelector('.hero-stats');
     if (statsSection) {
         const statsObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    animateStatNumbers();
-                }
+                if (entry.isIntersecting) animateStatNumbers();
             });
         }, { threshold: 0.5 });
         statsObserver.observe(statsSection);
     }
 
-    // ─── Skill bars animation on scroll ───
+    // ─── Skill bars animation ───
     const skillsGrid = document.querySelector('.skills-grid');
     if (skillsGrid) {
         const skillsObserver = new IntersectionObserver((entries) => {
@@ -334,9 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (entry.isIntersecting) {
                     const progressBars = entry.target.querySelectorAll('.skill-progress');
                     progressBars.forEach((bar, index) => {
-                        setTimeout(() => {
-                            bar.classList.add('animate');
-                        }, index * 80);
+                        setTimeout(() => bar.classList.add('animate'), index * 80);
                     });
                 }
             });
@@ -344,16 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
         skillsObserver.observe(skillsGrid);
     }
 
-    // ─── Letter hover animation ───
-    document.querySelectorAll('.name-letter').forEach(letter => {
-        letter.addEventListener('mouseenter', function() {
-            this.style.animation = 'none';
-            this.offsetHeight; // trigger reflow
-            this.style.animation = 'letterBounce 0.4s ease';
-        });
-    });
-
-    // ─── Tilt effect on project cards ───
+    // ─── 3D Tilt on project visual cards ───
     const tiltCards = document.querySelectorAll('.project-visual-card');
     tiltCards.forEach(card => {
         card.addEventListener('mousemove', (e) => {
@@ -362,36 +330,44 @@ document.addEventListener('DOMContentLoaded', () => {
             const y = e.clientY - rect.top;
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
-            const rotateX = (y - centerY) / 20;
-            const rotateY = (centerX - x) / 20;
+            const rotateX = (y - centerY) / 25;
+            const rotateY = (centerX - x) / 25;
 
             card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            card.style.transition = 'none';
         });
 
         card.addEventListener('mouseleave', () => {
             card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
-            card.style.transition = 'transform 0.5s ease';
-        });
-
-        card.addEventListener('mouseenter', () => {
-            card.style.transition = 'none';
+            card.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
         });
     });
 
-    // ─── Parallax on scroll ───
-    window.addEventListener('scroll', () => {
-        const scrollY = window.scrollY;
-        const heroContent = document.querySelector('.hero-content');
-        if (heroContent && scrollY < window.innerHeight) {
-            heroContent.style.transform = `translateY(${scrollY * 0.15}px)`;
-            heroContent.style.opacity = 1 - (scrollY / (window.innerHeight * 0.8));
-        }
-    });
+    // ─── Photo frame tilt ───
+    const photoFrame = document.querySelector('.photo-frame');
+    if (photoFrame) {
+        photoFrame.addEventListener('mousemove', (e) => {
+            const rect = photoFrame.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateX = (y - centerY) / 30;
+            const rotateY = (centerX - x) / 30;
 
-    // ─── Preloader ───
+            photoFrame.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            photoFrame.style.transition = 'none';
+        });
+
+        photoFrame.addEventListener('mouseleave', () => {
+            photoFrame.style.transform = 'perspective(800px) rotateX(0) rotateY(0)';
+            photoFrame.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+        });
+    }
+
+    // ─── Preloader / initial reveal ───
     window.addEventListener('load', () => {
         document.body.style.opacity = '1';
-        // Trigger initial animations
         setTimeout(() => {
             document.querySelectorAll('.hero .animate-on-scroll').forEach((el, i) => {
                 setTimeout(() => el.classList.add('visible'), i * 150);
