@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Claudio Meireles | Software Developer</title>
     <meta name="description" content="Portfolio de Claudio Meireles - Desenvolvedor de Software especializado em Backend, Engenharia de Dados e Arquiteturas Escaláveis.">
+
+    <!-- Open Graph / SEO -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Claudio Meireles | Software Developer">
+    <meta property="og:description" content="Desenvolvedor de Software especializado em Backend, Engenharia de Dados e Arquiteturas Escaláveis. Experiência com APIs REST, sistemas distribuídos e processamento de dados em tempo real.">
+    <meta property="og:locale" content="pt_BR">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Claudio Meireles | Software Developer">
+    <meta name="twitter:description" content="Desenvolvedor de Software especializado em Backend, Engenharia de Dados e Arquiteturas Escaláveis.">
+    <meta name="author" content="Claudio Meireles">
+    <meta name="keywords" content="Claudio Meireles, Software Developer, Backend, Engenharia de Dados, Python, Flask, FastAPI, AWS, Portfolio">
+    <meta name="theme-color" content="#06060b">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -12,6 +25,9 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scroll-progress"></div>
+
     <!-- Custom Cursor -->
     <div class="cursor" id="cursor"></div>
     <div class="cursor-follower" id="cursor-follower"></div>
@@ -128,7 +144,7 @@
                     <div class="photo-frame">
                         <div class="photo-glow"></div>
                         <div class="photo-border">
-                            <img src="assets/profile.jpg" alt="Claudio Meireles" class="profile-photo"
+                            <img src="assets/profile.jpg" alt="Claudio Meireles" class="profile-photo" loading="lazy"
                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <div class="photo-fallback" style="display:none;">
                                 <span>CM</span>
@@ -793,42 +809,82 @@
                     Não hesite em entrar em contato!
                 </p>
             </div>
-            <div class="contact-grid animate-on-scroll">
-                <a href="mailto:cmeireles756@gmail.com" class="contact-card">
-                    <div class="contact-icon email">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-                    <h3>Email</h3>
-                    <p>cmeireles756@gmail.com</p>
-                    <span class="contact-action">Enviar email <i class="fas fa-arrow-right"></i></span>
-                </a>
-                <a href="https://www.linkedin.com/in/cgfm1" target="_blank" rel="noopener" class="contact-card">
-                    <div class="contact-icon linkedin">
-                        <i class="fab fa-linkedin-in"></i>
-                    </div>
-                    <h3>LinkedIn</h3>
-                    <p>linkedin.com/in/cgfm1</p>
-                    <span class="contact-action">Conectar <i class="fas fa-arrow-right"></i></span>
-                </a>
-                <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener" class="contact-card">
-                    <div class="contact-icon github">
-                        <i class="fab fa-github"></i>
-                    </div>
-                    <h3>GitHub</h3>
-                    <p>github.com/ClaudioAMF1</p>
-                    <span class="contact-action">Ver perfil <i class="fas fa-arrow-right"></i></span>
-                </a>
-                <a href="tel:+5561982105723" class="contact-card">
-                    <div class="contact-icon phone">
-                        <i class="fas fa-phone"></i>
-                    </div>
-                    <h3>Telefone</h3>
-                    <p>(61) 98210-5723</p>
-                    <span class="contact-action">Ligar <i class="fas fa-arrow-right"></i></span>
-                </a>
+            <div class="contact-layout animate-on-scroll">
+                <!-- Contact Form -->
+                <div class="contact-form-wrapper">
+                    <h3>Envie uma mensagem</h3>
+                    <p>Preencha o formulário e entrarei em contato o mais breve possível.</p>
+                    <form class="contact-form" id="contact-form">
+                        <div class="form-group">
+                            <label for="name">Nome</label>
+                            <input type="text" id="name" name="name" placeholder="Seu nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Assunto</label>
+                            <input type="text" id="subject" name="subject" placeholder="Sobre o que deseja falar?">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Mensagem</label>
+                            <textarea id="message" name="message" placeholder="Sua mensagem..." required></textarea>
+                        </div>
+                        <button type="submit" class="form-submit">
+                            <span>Enviar Mensagem</span>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                        <div class="form-status" id="form-status"></div>
+                    </form>
+                </div>
+                <!-- Contact Info -->
+                <div class="contact-info-side">
+                    <a href="mailto:cmeireles756@gmail.com" class="contact-card">
+                        <div class="contact-icon email">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-info-card-text">
+                            <h3>Email</h3>
+                            <p>cmeireles756@gmail.com</p>
+                        </div>
+                    </a>
+                    <a href="https://www.linkedin.com/in/cgfm1" target="_blank" rel="noopener" class="contact-card">
+                        <div class="contact-icon linkedin">
+                            <i class="fab fa-linkedin-in"></i>
+                        </div>
+                        <div class="contact-info-card-text">
+                            <h3>LinkedIn</h3>
+                            <p>linkedin.com/in/cgfm1</p>
+                        </div>
+                    </a>
+                    <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener" class="contact-card">
+                        <div class="contact-icon github">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <div class="contact-info-card-text">
+                            <h3>GitHub</h3>
+                            <p>github.com/ClaudioAMF1</p>
+                        </div>
+                    </a>
+                    <a href="tel:+5561982105723" class="contact-card">
+                        <div class="contact-icon phone">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-info-card-text">
+                            <h3>Telefone</h3>
+                            <p>(61) 98210-5723</p>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
     </section>
+
+    <!-- Back to Top -->
+    <button class="back-to-top" id="back-to-top" aria-label="Voltar ao topo">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
     <!-- Footer -->
     <footer class="footer">

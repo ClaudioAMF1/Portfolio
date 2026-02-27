@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     animateFollower();
 
     // Hover effect on interactive elements
-    const hoverSelectors = 'a, button, .project-card, .contact-card, .skill-category, .detail-item, .cert-item, .skill-tag, .quick-item';
+    const hoverSelectors = 'a, button, .project-card, .contact-card, .skill-category, .detail-item, .cert-item, .skill-tag, .quick-item, .back-to-top, .form-submit, input, textarea';
     document.querySelectorAll(hoverSelectors).forEach(el => {
         el.addEventListener('mouseenter', () => {
             cursor.classList.add('hover');
@@ -187,8 +187,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileLinks = document.querySelectorAll('.mobile-link');
     const sections = document.querySelectorAll('section[id]');
 
+    // ─── Scroll Progress Bar ───
+    const scrollProgress = document.getElementById('scroll-progress');
+
+    // ─── Back to Top Button ───
+    const backToTop = document.getElementById('back-to-top');
+
     window.addEventListener('scroll', () => {
         const currentScroll = window.scrollY;
+        const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+
+        // Scroll progress bar
+        if (scrollProgress && documentHeight > 0) {
+            const scrollPercent = (currentScroll / documentHeight) * 100;
+            scrollProgress.style.width = scrollPercent + '%';
+        }
+
+        // Back to top button visibility
+        if (backToTop) {
+            if (currentScroll > 400) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        }
 
         // Navbar background
         if (currentScroll > 50) {
@@ -220,6 +242,13 @@ document.addEventListener('DOMContentLoaded', () => {
             heroContent.style.opacity = 1 - (currentScroll / (window.innerHeight * 0.8));
         }
     });
+
+    // Back to top click
+    if (backToTop) {
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
 
     // Mobile menu toggle
     menuToggle.addEventListener('click', () => {
@@ -362,6 +391,40 @@ document.addEventListener('DOMContentLoaded', () => {
         photoFrame.addEventListener('mouseleave', () => {
             photoFrame.style.transform = 'perspective(800px) rotateX(0) rotateY(0)';
             photoFrame.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+        });
+    }
+
+    // ─── Contact Form ───
+    const contactForm = document.getElementById('contact-form');
+    const formStatus = document.getElementById('form-status');
+
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const subject = document.getElementById('subject').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            if (!name || !email || !message) {
+                formStatus.textContent = 'Por favor, preencha todos os campos obrigatórios.';
+                formStatus.className = 'form-status error';
+                return;
+            }
+
+            const mailtoSubject = encodeURIComponent(subject || 'Contato via Portfolio');
+            const mailtoBody = encodeURIComponent(`Nome: ${name}\nEmail: ${email}\n\n${message}`);
+            const mailtoLink = `mailto:cmeireles756@gmail.com?subject=${mailtoSubject}&body=${mailtoBody}`;
+
+            window.location.href = mailtoLink;
+
+            formStatus.textContent = 'Redirecionando para seu cliente de email...';
+            formStatus.className = 'form-status success';
+
+            setTimeout(() => {
+                formStatus.className = 'form-status';
+            }, 5000);
         });
     }
 
