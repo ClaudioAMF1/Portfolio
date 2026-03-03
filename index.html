@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Claudio Meireles | Software Developer</title>
     <meta name="description" content="Portfolio de Claudio Meireles - Desenvolvedor de Software especializado em Backend, Engenharia de Dados e Arquiteturas Escaláveis.">
 
@@ -25,17 +25,40 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-inner">
+            <div class="preloader-logo">
+                <span class="logo-bracket">&lt;</span>
+                <span class="logo-text">CM</span>
+                <span class="logo-bracket">/&gt;</span>
+            </div>
+            <div class="preloader-bar">
+                <div class="preloader-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scroll Progress Bar -->
     <div class="scroll-progress" id="scroll-progress"></div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast" role="alert" aria-live="polite">
+        <div class="toast-icon"><i class="fas fa-check-circle"></i></div>
+        <span class="toast-message"></span>
+    </div>
 
     <!-- Custom Cursor -->
     <div class="cursor" id="cursor"></div>
     <div class="cursor-follower" id="cursor-follower"></div>
 
+    <!-- Skip to content (Accessibility) -->
+    <a href="#hero" class="skip-link">Pular para o conteúdo</a>
+
     <!-- Floating Navigation -->
-    <nav class="navbar" id="navbar">
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Navegação principal">
         <div class="nav-container">
-            <a href="#hero" class="nav-logo">
+            <a href="#hero" class="nav-logo" aria-label="Início">
                 <span class="logo-bracket">&lt;</span>
                 <span class="logo-text">CM</span>
                 <span class="logo-bracket">/&gt;</span>
@@ -54,7 +77,7 @@
                 <a href="https://www.linkedin.com/in/cgfm1" target="_blank" rel="noopener" class="nav-social" aria-label="LinkedIn">
                     <i class="fab fa-linkedin-in"></i>
                 </a>
-                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+                <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobile-menu">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -64,7 +87,7 @@
     </nav>
 
     <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu de navegação">
         <div class="mobile-menu-content">
             <a href="#about" class="mobile-link">Sobre</a>
             <a href="#projects" class="mobile-link">Projetos</a>
@@ -76,7 +99,7 @@
 
     <!-- Hero Section -->
     <section class="hero" id="hero">
-        <canvas id="particles-canvas"></canvas>
+        <canvas id="particles-canvas" aria-hidden="true"></canvas>
         <div class="hero-content">
             <div class="hero-badge animate-on-scroll">
                 <span class="badge-dot"></span>
@@ -89,8 +112,8 @@
             <div class="hero-roles animate-on-scroll">
                 <span class="role-prefix">&gt;&gt;&gt;</span>
                 <div class="role-typewriter">
-                    <span id="typewriter"></span>
-                    <span class="typewriter-cursor">|</span>
+                    <span id="typewriter" aria-label="Software Developer"></span>
+                    <span class="typewriter-cursor" aria-hidden="true">|</span>
                 </div>
             </div>
             <p class="hero-description animate-on-scroll">
@@ -105,6 +128,10 @@
                 </a>
                 <a href="#contact" class="btn btn-outline">
                     <span>Entre em Contato</span>
+                </a>
+                <a href="assets/Claudio_Meireles_CV.pdf" download class="btn btn-ghost">
+                    <i class="fas fa-download"></i>
+                    <span>Download CV</span>
                 </a>
             </div>
             <div class="hero-stats animate-on-scroll">
@@ -124,11 +151,20 @@
                 </div>
             </div>
         </div>
-        <div class="hero-scroll-indicator">
+        <div class="hero-scroll-indicator" aria-hidden="true">
             <div class="scroll-line"></div>
             <span>Scroll</span>
         </div>
     </section>
+
+    <!-- Section Divider -->
+    <div class="section-divider" aria-hidden="true">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25"></path>
+            <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5"></path>
+            <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z"></path>
+        </svg>
+    </div>
 
     <!-- About Section -->
     <section class="section about" id="about">
@@ -250,7 +286,7 @@
             </div>
 
             <!-- Featured Project 1 -->
-            <div class="project-featured animate-on-scroll">
+            <div class="project-featured animate-on-scroll" data-reveal="left">
                 <div class="project-featured-content">
                     <span class="project-overline">Projeto Destaque</span>
                     <h3 class="project-title">Pipeline Big Data - Análise de Criptomoedas</h3>
@@ -338,7 +374,7 @@
             </div>
 
             <!-- Featured Project 2 -->
-            <div class="project-featured reverse animate-on-scroll">
+            <div class="project-featured reverse animate-on-scroll" data-reveal="right">
                 <div class="project-featured-content">
                     <span class="project-overline">Visão Computacional</span>
                     <h3 class="project-title">Análise Tática de Futebol com CV</h3>
@@ -404,7 +440,7 @@
             </div>
 
             <!-- Featured Project 3 -->
-            <div class="project-featured animate-on-scroll">
+            <div class="project-featured animate-on-scroll" data-reveal="left">
                 <div class="project-featured-content">
                     <span class="project-overline">Big Data &amp; IoT</span>
                     <h3 class="project-title">Pipeline de Qualidade do Ar em Tempo Real</h3>
@@ -483,11 +519,11 @@
             <div class="projects-grid animate-on-scroll">
                 <h3 class="grid-title">Outros Projetos</h3>
                 <div class="project-cards">
-                    <div class="project-card">
+                    <div class="project-card stagger-item">
                         <div class="card-header">
                             <i class="fas fa-folder-open"></i>
                             <div class="card-links">
-                                <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener"><i class="fab fa-github"></i></a>
+                                <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener" aria-label="Ver no GitHub"><i class="fab fa-github"></i></a>
                             </div>
                         </div>
                         <h4>Carreta Digital - RBCIP</h4>
@@ -499,11 +535,11 @@
                             <span>REST APIs</span>
                         </div>
                     </div>
-                    <div class="project-card">
+                    <div class="project-card stagger-item">
                         <div class="card-header">
                             <i class="fas fa-folder-open"></i>
                             <div class="card-links">
-                                <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener"><i class="fab fa-github"></i></a>
+                                <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener" aria-label="Ver no GitHub"><i class="fab fa-github"></i></a>
                             </div>
                         </div>
                         <h4>Portfólio Pessoal</h4>
@@ -530,7 +566,7 @@
             </div>
             <div class="skills-grid animate-on-scroll">
                 <!-- Languages -->
-                <div class="skill-category">
+                <div class="skill-category stagger-item">
                     <div class="category-header">
                         <div class="category-icon">
                             <i class="fas fa-code"></i>
@@ -582,7 +618,7 @@
                 </div>
 
                 <!-- Backend & Frameworks -->
-                <div class="skill-category">
+                <div class="skill-category stagger-item">
                     <div class="category-header">
                         <div class="category-icon">
                             <i class="fas fa-server"></i>
@@ -600,7 +636,7 @@
                 </div>
 
                 <!-- Data & Big Data -->
-                <div class="skill-category">
+                <div class="skill-category stagger-item">
                     <div class="category-header">
                         <div class="category-icon">
                             <i class="fas fa-database"></i>
@@ -620,7 +656,7 @@
                 </div>
 
                 <!-- DevOps & Cloud -->
-                <div class="skill-category">
+                <div class="skill-category stagger-item">
                     <div class="category-header">
                         <div class="category-icon">
                             <i class="fas fa-cloud"></i>
@@ -638,7 +674,7 @@
                 </div>
 
                 <!-- ML & AI -->
-                <div class="skill-category">
+                <div class="skill-category stagger-item">
                     <div class="category-header">
                         <div class="category-icon">
                             <i class="fas fa-brain"></i>
@@ -656,7 +692,7 @@
                 </div>
 
                 <!-- Tools -->
-                <div class="skill-category">
+                <div class="skill-category stagger-item">
                     <div class="category-header">
                         <div class="category-icon">
                             <i class="fas fa-tools"></i>
@@ -814,28 +850,31 @@
                 <div class="contact-form-wrapper">
                     <h3>Envie uma mensagem</h3>
                     <p>Preencha o formulário e entrarei em contato o mais breve possível.</p>
-                    <form class="contact-form" id="contact-form">
+                    <form class="contact-form" id="contact-form" novalidate>
                         <div class="form-group">
-                            <label for="name">Nome</label>
-                            <input type="text" id="name" name="name" placeholder="Seu nome" required>
+                            <label for="name">Nome <span class="required">*</span></label>
+                            <input type="text" id="name" name="name" placeholder="Seu nome completo" required autocomplete="name">
+                            <span class="form-error" id="name-error"></span>
                         </div>
                         <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" placeholder="seu@email.com" required autocomplete="email">
+                            <span class="form-error" id="email-error"></span>
                         </div>
                         <div class="form-group">
                             <label for="subject">Assunto</label>
                             <input type="text" id="subject" name="subject" placeholder="Sobre o que deseja falar?">
                         </div>
                         <div class="form-group">
-                            <label for="message">Mensagem</label>
+                            <label for="message">Mensagem <span class="required">*</span></label>
                             <textarea id="message" name="message" placeholder="Sua mensagem..." required></textarea>
+                            <span class="form-error" id="message-error"></span>
+                            <span class="char-count"><span id="char-count">0</span>/500</span>
                         </div>
-                        <button type="submit" class="form-submit">
+                        <button type="submit" class="form-submit" id="form-submit-btn">
                             <span>Enviar Mensagem</span>
                             <i class="fas fa-paper-plane"></i>
                         </button>
-                        <div class="form-status" id="form-status"></div>
                     </form>
                 </div>
                 <!-- Contact Info -->
@@ -887,7 +926,7 @@
     </button>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" role="contentinfo">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-logo">
