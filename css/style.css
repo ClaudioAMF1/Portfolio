@@ -2379,6 +2379,53 @@ textarea:focus-visible {
     flex-direction: column;
 }
 
+/* Contact layout mobile override (must come after base definition) */
+@media (max-width: 1024px) {
+    .contact-layout {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .contact-layout {
+        grid-template-columns: 1fr !important;
+        gap: 24px;
+    }
+
+    .contact-info-side {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .contact-info-side .contact-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 16px 12px;
+        gap: 10px;
+    }
+
+    .contact-info-side .contact-icon {
+        margin-bottom: 0;
+    }
+
+    .contact-info-side .contact-card p {
+        word-break: break-all;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-info-side {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-info-side .contact-card {
+        flex-direction: row;
+        text-align: left;
+        padding: 14px 16px;
+    }
+}
+
 /* ─── Subtle Effects ─── */
 body::before {
     content: '';
