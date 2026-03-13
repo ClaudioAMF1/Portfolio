@@ -1,4 +1,39 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    // ─── Scroll-driven reveals ───
+    const revealElements = document.querySelectorAll(
+        '.section-heading, .section-header-row, .about-left, .about-right, ' +
+        '.project-item, .skills-layout, .exp-item, .contact-intro, .contact-grid'
+    );
+    revealElements.forEach(el => el.classList.add('reveal'));
+
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // ─── Skill bars animation ───
+    const skillBars = document.querySelectorAll('.skill-fill');
+    const skillObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const fills = entry.target.querySelectorAll('.skill-fill');
+                fills.forEach((fill, i) => {
+                    setTimeout(() => fill.classList.add('animate'), i * 100);
+                });
+                skillObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+
+    const skillSection = document.querySelector('.skill-list');
+    if (skillSection) skillObserver.observe(skillSection.parentElement);
+
     // ─── Navigation ───
     const navbar = document.getElementById('navbar');
     const menuToggle = document.getElementById('menu-toggle');
@@ -21,32 +56,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function handleScroll() {
-        const currentScroll = window.scrollY;
+        const y = window.scrollY;
 
-        // Back to top
-        if (backToTop) {
-            backToTop.classList.toggle('visible', currentScroll > 400);
-        }
+        if (backToTop) backToTop.classList.toggle('visible', y > 500);
+        if (navbar) navbar.classList.toggle('scrolled', y > 60);
 
-        // Navbar bg
-        if (navbar) {
-            navbar.classList.toggle('scrolled', currentScroll > 50);
-        }
-
-        // Active nav link
+        // Active section
         let current = '';
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop - 200;
-            if (currentScroll >= sectionTop) {
-                current = section.getAttribute('id');
-            }
+        sections.forEach(s => {
+            if (y >= s.offsetTop - 200) current = s.id;
         });
-        navLinks.forEach(link => {
-            link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+        navLinks.forEach(l => {
+            l.classList.toggle('active', l.getAttribute('href') === '#' + current);
         });
     }
 
-    // Back to top click
+    // Back to top
     if (backToTop) {
         backToTop.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -56,67 +81,60 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mobile menu
     if (menuToggle && mobileMenu) {
         menuToggle.addEventListener('click', () => {
-            const isActive = mobileMenu.classList.toggle('active');
+            const active = mobileMenu.classList.toggle('active');
             menuToggle.classList.toggle('active');
-            menuToggle.setAttribute('aria-expanded', isActive);
-            document.body.style.overflow = isActive ? 'hidden' : '';
+            menuToggle.setAttribute('aria-expanded', active);
+            document.body.style.overflow = active ? 'hidden' : '';
         });
 
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                menuToggle.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                menuToggle.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
-            });
-        });
+        const closeMenu = () => {
+            menuToggle.classList.remove('active');
+            mobileMenu.classList.remove('active');
+            menuToggle.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        };
+
+        mobileLinks.forEach(l => l.addEventListener('click', closeMenu));
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
-                menuToggle.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                menuToggle.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
+                closeMenu();
                 menuToggle.focus();
             }
         });
     }
 
-    // Smooth scroll
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', function(e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
-                const offset = 80;
-                const targetPosition = target.getBoundingClientRect().top + window.scrollY - offset;
-                window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+                window.scrollTo({
+                    top: target.getBoundingClientRect().top + window.scrollY - 80,
+                    behavior: 'smooth'
+                });
             }
         });
     });
 
-    // ─── Scroll Animations ───
-    const animateElements = document.querySelectorAll('.animate-on-scroll');
-    const scrollObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, {
-        threshold: 0.08,
-        rootMargin: '0px 0px -20px 0px'
+    // ─── Hero entrance ───
+    const heroElements = document.querySelectorAll('.hero-top, .hero-name-line, .hero-bottom, .hero-scroll');
+    heroElements.forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            el.style.transition = `opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)`;
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, 100 + i * 120);
     });
-    animateElements.forEach(el => scrollObserver.observe(el));
 
     // ─── Toast ───
     const toast = document.getElementById('toast');
-    function showToast(message, icon = 'fa-check-circle', duration = 3000) {
+    function showToast(msg, duration = 3000) {
         if (!toast) return;
-        const toastIcon = toast.querySelector('.toast-icon i');
-        const toastMsg = toast.querySelector('.toast-message');
-        if (toastIcon) toastIcon.className = `fas ${icon}`;
-        if (toastMsg) toastMsg.textContent = message;
+        toast.querySelector('.toast-message').textContent = msg;
         toast.classList.add('visible');
         setTimeout(() => toast.classList.remove('visible'), duration);
     }
@@ -129,92 +147,71 @@ document.addEventListener('DOMContentLoaded', () => {
     if (messageEl && charCountEl) {
         messageEl.addEventListener('input', () => {
             const len = messageEl.value.length;
-            charCountEl.textContent = len;
-            if (len > 500) {
-                messageEl.value = messageEl.value.substring(0, 500);
-                charCountEl.textContent = 500;
-            }
+            charCountEl.textContent = Math.min(len, 500);
+            if (len > 500) messageEl.value = messageEl.value.substring(0, 500);
         });
     }
 
     function validateField(field, errorId) {
         const errorEl = document.getElementById(errorId);
-        let isValid = true;
-        let errorMsg = '';
+        let valid = true, msg = '';
 
         if (field.required && !field.value.trim()) {
-            isValid = false;
-            errorMsg = 'Este campo é obrigatório';
+            valid = false;
+            msg = 'Campo obrigatório';
         } else if (field.type === 'email' && field.value.trim()) {
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(field.value.trim())) {
-                isValid = false;
-                errorMsg = 'Por favor, insira um email válido';
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value.trim())) {
+                valid = false;
+                msg = 'Email inválido';
             }
         }
 
-        field.classList.toggle('invalid', !isValid);
-        field.classList.toggle('valid', isValid && field.value.trim());
-
+        field.classList.toggle('invalid', !valid);
+        field.classList.toggle('valid', valid && field.value.trim());
         if (errorEl) {
-            errorEl.textContent = errorMsg;
-            errorEl.classList.toggle('visible', !isValid);
+            errorEl.textContent = msg;
+            errorEl.classList.toggle('visible', !valid);
         }
-        return isValid;
+        return valid;
     }
 
     if (contactForm) {
-        const requiredFields = contactForm.querySelectorAll('[required]');
-        requiredFields.forEach(field => {
-            field.addEventListener('blur', () => {
-                if (field.value.trim()) {
-                    validateField(field, field.id + '-error');
-                }
+        contactForm.querySelectorAll('[required]').forEach(f => {
+            f.addEventListener('blur', () => {
+                if (f.value.trim()) validateField(f, f.id + '-error');
             });
-            field.addEventListener('input', () => {
-                if (field.classList.contains('invalid')) {
-                    validateField(field, field.id + '-error');
-                }
+            f.addEventListener('input', () => {
+                if (f.classList.contains('invalid')) validateField(f, f.id + '-error');
             });
         });
 
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const nameField = document.getElementById('name');
-            const emailField = document.getElementById('email');
-            const subjectField = document.getElementById('subject');
-            const messageField = document.getElementById('message');
+            const n = document.getElementById('name');
+            const em = document.getElementById('email');
+            const sub = document.getElementById('subject');
+            const msg = document.getElementById('message');
 
-            const isNameValid = validateField(nameField, 'name-error');
-            const isEmailValid = validateField(emailField, 'email-error');
-            const isMessageValid = validateField(messageField, 'message-error');
+            const v1 = validateField(n, 'name-error');
+            const v2 = validateField(em, 'email-error');
+            const v3 = validateField(msg, 'message-error');
 
-            if (!isNameValid || !isEmailValid || !isMessageValid) {
-                showToast('Corrija os campos destacados', 'fa-exclamation-circle', 3000);
+            if (!v1 || !v2 || !v3) {
+                showToast('Corrija os campos destacados');
                 return;
             }
 
-            const name = nameField.value.trim();
-            const email = emailField.value.trim();
-            const subject = subjectField.value.trim();
-            const message = messageField.value.trim();
-
-            const mailtoSubject = encodeURIComponent(subject || 'Contato via Portfolio');
-            const mailtoBody = encodeURIComponent(`Nome: ${name}\nEmail: ${email}\n\n${message}`);
-            window.location.href = `mailto:cmeireles756@gmail.com?subject=${mailtoSubject}&body=${mailtoBody}`;
-
-            showToast('Redirecionando para seu cliente de email...', 'fa-paper-plane', 4000);
+            const s = encodeURIComponent(sub.value.trim() || 'Contato via Portfolio');
+            const b = encodeURIComponent(`Nome: ${n.value.trim()}\nEmail: ${em.value.trim()}\n\n${msg.value.trim()}`);
+            window.location.href = `mailto:cmeireles756@gmail.com?subject=${s}&body=${b}`;
+            showToast('Redirecionando para seu email...', 4000);
 
             setTimeout(() => {
                 contactForm.reset();
                 if (charCountEl) charCountEl.textContent = '0';
-                contactForm.querySelectorAll('.valid, .invalid').forEach(f => {
-                    f.classList.remove('valid', 'invalid');
-                });
-                contactForm.querySelectorAll('.form-error').forEach(e => {
-                    e.classList.remove('visible');
-                });
+                contactForm.querySelectorAll('.valid, .invalid').forEach(f => f.classList.remove('valid', 'invalid'));
+                contactForm.querySelectorAll('.form-error').forEach(e => e.classList.remove('visible'));
             }, 1000);
         });
     }
