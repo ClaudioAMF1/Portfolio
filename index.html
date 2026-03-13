@@ -6,7 +6,6 @@
     <title>Claudio Meireles | Software Developer</title>
     <meta name="description" content="Portfolio de Claudio Meireles - Desenvolvedor de Software especializado em Backend, Engenharia de Dados e Arquiteturas Escaláveis.">
 
-    <!-- Open Graph / SEO -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Claudio Meireles | Software Developer">
     <meta property="og:description" content="Desenvolvedor de Software especializado em Backend, Engenharia de Dados e Arquiteturas Escaláveis. Experiência com APIs REST, sistemas distribuídos e processamento de dados em tempo real.">
@@ -16,53 +15,28 @@
     <meta name="twitter:description" content="Desenvolvedor de Software especializado em Backend, Engenharia de Dados e Arquiteturas Escaláveis.">
     <meta name="author" content="Claudio Meireles">
     <meta name="keywords" content="Claudio Meireles, Software Developer, Backend, Engenharia de Dados, Python, Flask, FastAPI, AWS, Portfolio">
-    <meta name="theme-color" content="#06060b">
+    <meta name="theme-color" content="#0a0a0b">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Preloader -->
-    <div class="preloader" id="preloader">
-        <div class="preloader-inner">
-            <div class="preloader-logo">
-                <span class="logo-bracket">&lt;</span>
-                <span class="logo-text">CM</span>
-                <span class="logo-bracket">/&gt;</span>
-            </div>
-            <div class="preloader-bar">
-                <div class="preloader-bar-fill"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scroll Progress Bar -->
-    <div class="scroll-progress" id="scroll-progress"></div>
-
     <!-- Toast Notification -->
     <div class="toast" id="toast" role="alert" aria-live="polite">
         <div class="toast-icon"><i class="fas fa-check-circle"></i></div>
         <span class="toast-message"></span>
     </div>
 
-    <!-- Custom Cursor -->
-    <div class="cursor" id="cursor"></div>
-    <div class="cursor-follower" id="cursor-follower"></div>
-
-    <!-- Skip to content (Accessibility) -->
+    <!-- Skip to content -->
     <a href="#hero" class="skip-link">Pular para o conteúdo</a>
 
-    <!-- Floating Navigation -->
+    <!-- Navigation -->
     <nav class="navbar" id="navbar" role="navigation" aria-label="Navegação principal">
         <div class="nav-container">
-            <a href="#hero" class="nav-logo" aria-label="Início">
-                <span class="logo-bracket">&lt;</span>
-                <span class="logo-text">CM</span>
-                <span class="logo-bracket">/&gt;</span>
-            </a>
+            <a href="#hero" class="nav-logo" aria-label="Início">CM</a>
             <div class="nav-links" id="nav-links">
                 <a href="#about" class="nav-link">Sobre</a>
                 <a href="#projects" class="nav-link">Projetos</a>
@@ -99,95 +73,38 @@
 
     <!-- Hero Section -->
     <section class="hero" id="hero">
-        <canvas id="particles-canvas" aria-hidden="true"></canvas>
         <div class="hero-content">
-            <div class="hero-badge animate-on-scroll">
-                <span class="badge-dot"></span>
-                <span>Disponível para oportunidades</span>
-            </div>
-            <h1 class="hero-title animate-on-scroll">
-                <span class="hero-greeting">Olá, eu sou</span>
-                <span class="hero-name">Claudio Meireles</span>
-            </h1>
-            <div class="hero-roles animate-on-scroll">
-                <span class="role-prefix">&gt;&gt;&gt;</span>
-                <div class="role-typewriter">
-                    <span id="typewriter" aria-label="Software Developer"></span>
-                    <span class="typewriter-cursor" aria-hidden="true">|</span>
-                </div>
-            </div>
-            <p class="hero-description animate-on-scroll">
-                Desenvolvedor de Software focado em <strong>Backend</strong>, <strong>Engenharia de Dados</strong>
-                e <strong>Arquiteturas Escaláveis</strong>. Experiência com APIs REST, sistemas distribuídos
+            <p class="hero-greeting">Olá, eu sou</p>
+            <h1 class="hero-name">Claudio Meireles</h1>
+            <p class="hero-role">Software Developer</p>
+            <p class="hero-description">
+                Desenvolvedor de Software focado em Backend, Engenharia de Dados
+                e Arquiteturas Escaláveis. Experiência com APIs REST, sistemas distribuídos
                 e processamento de dados em tempo real.
             </p>
-            <div class="hero-cta animate-on-scroll">
-                <a href="#projects" class="btn btn-primary">
-                    <span>Ver Projetos</span>
-                    <i class="fas fa-arrow-right"></i>
-                </a>
-                <a href="#contact" class="btn btn-outline">
-                    <span>Entre em Contato</span>
-                </a>
-                <a href="assets/Claudio_Meireles_CV.pdf" download class="btn btn-ghost btn-cv-download">
+            <div class="hero-cta">
+                <a href="#projects" class="btn btn-primary">Ver Projetos</a>
+                <a href="#contact" class="btn btn-outline">Entre em Contato</a>
+                <a href="assets/Claudio_Meireles_CV.pdf" download class="btn btn-ghost">
                     <i class="fas fa-download"></i>
-                    <span>Download CV</span>
+                    Download CV
                 </a>
             </div>
-            <div class="hero-stats animate-on-scroll">
-                <div class="stat">
-                    <span class="stat-number" data-target="5">0</span><span class="stat-plus">+</span>
-                    <span class="stat-label">Projetos</span>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat">
-                    <span class="stat-number" data-target="8000">0</span><span class="stat-plus">+</span>
-                    <span class="stat-label">Usuários Impactados</span>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat">
-                    <span class="stat-number" data-target="10">0</span><span class="stat-plus">+</span>
-                    <span class="stat-label">Tecnologias</span>
-                </div>
-            </div>
-        </div>
-        <div class="hero-scroll-indicator" aria-hidden="true">
-            <div class="scroll-line"></div>
-            <span>Scroll</span>
         </div>
     </section>
-
-    <!-- Section Divider -->
-    <div class="section-divider" aria-hidden="true">
-        <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25"></path>
-            <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5"></path>
-            <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z"></path>
-        </svg>
-    </div>
 
     <!-- About Section -->
     <section class="section about" id="about">
         <div class="container">
-            <div class="section-header animate-on-scroll">
-                <span class="section-tag">&lt;sobre&gt;</span>
-                <h2 class="section-title">Quem sou eu</h2>
-                <div class="section-line"></div>
-            </div>
+            <h2 class="section-title animate-on-scroll">Sobre mim</h2>
             <div class="about-grid">
-                <!-- Photo Side -->
                 <div class="about-photo-wrapper animate-on-scroll">
                     <div class="photo-frame">
-                        <div class="photo-glow"></div>
-                        <div class="photo-border">
-                            <img src="assets/profile.jpg" alt="Claudio Meireles" class="profile-photo" loading="lazy"
-                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <div class="photo-fallback" style="display:none;">
-                                <span>CM</span>
-                            </div>
+                        <img src="assets/profile.jpg" alt="Claudio Meireles" class="profile-photo" loading="lazy"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="photo-fallback" style="display:none;">
+                            <span>CM</span>
                         </div>
-                        <div class="photo-decoration top-left"></div>
-                        <div class="photo-decoration bottom-right"></div>
                     </div>
                     <div class="about-quick-info">
                         <div class="quick-item">
@@ -204,7 +121,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Content Side -->
                 <div class="about-content animate-on-scroll">
                     <div class="about-text">
                         <p>
@@ -213,9 +129,8 @@
                             engenharia de dados e arquiteturas escaláveis.
                         </p>
                         <p>
-                            Tenho experiência prática em projetos que impactaram <strong>milhares de usuários</strong>,
+                            Tenho experiência prática em projetos que impactaram milhares de usuários,
                             trabalhando com microsserviços, mensageria e computação em nuvem (AWS).
-                            Meu perfil é analítico, orientado à eficiência e inovação.
                         </p>
                         <p>
                             Busco constantemente aprender novas tecnologias e aplicá-las em soluções
@@ -225,50 +140,35 @@
                     </div>
                     <div class="about-details">
                         <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-briefcase"></i>
-                            </div>
+                            <i class="fas fa-briefcase"></i>
                             <div>
                                 <strong>Estagiário de TI</strong>
                                 <span>RBCIP - ~8.000 alunos impactados</span>
                             </div>
                         </div>
                         <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fab fa-aws"></i>
-                            </div>
+                            <i class="fab fa-aws"></i>
                             <div>
                                 <strong>AWS Certified</strong>
                                 <span>Cloud Security Foundations</span>
                             </div>
                         </div>
                         <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-tasks"></i>
-                            </div>
+                            <i class="fas fa-tasks"></i>
                             <div>
                                 <strong>Scrum Master</strong>
                                 <span>Metodologias Ágeis</span>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-code"></i>
-                            </div>
-                            <div>
-                                <strong>Full Stack</strong>
-                                <span>Backend &amp; Data Engineering</span>
                             </div>
                         </div>
                     </div>
                     <div class="about-cta">
                         <a href="https://www.linkedin.com/in/cgfm1" target="_blank" rel="noopener" class="btn btn-primary btn-sm">
                             <i class="fab fa-linkedin-in"></i>
-                            <span>LinkedIn</span>
+                            LinkedIn
                         </a>
                         <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
                             <i class="fab fa-github"></i>
-                            <span>GitHub</span>
+                            GitHub
                         </a>
                     </div>
                 </div>
@@ -279,39 +179,19 @@
     <!-- Projects Section -->
     <section class="section projects" id="projects">
         <div class="container">
-            <div class="section-header animate-on-scroll">
-                <span class="section-tag">&lt;projetos&gt;</span>
-                <h2 class="section-title">Projetos em Destaque</h2>
-                <div class="section-line"></div>
-            </div>
+            <h2 class="section-title animate-on-scroll">Projetos</h2>
 
             <!-- Featured Project 1 -->
-            <div class="project-featured animate-on-scroll" data-reveal="left">
+            <article class="project-featured animate-on-scroll">
                 <div class="project-featured-content">
-                    <span class="project-overline">Projeto Destaque</span>
+                    <span class="project-overline">Big Data</span>
                     <h3 class="project-title">Pipeline Big Data - Análise de Criptomoedas</h3>
-                    <div class="project-description-card">
-                        <p>
-                            Arquitetura de microsserviços com Docker para coleta, processamento e análise
-                            de dados de criptomoedas em tempo real. Pipeline completo com Apache Kafka
-                            processando ~500 msg/s, armazenamento em MongoDB, cache Redis e
-                            orquestração via Apache Airflow. Dashboard interativo com Streamlit + Plotly.
-                        </p>
-                    </div>
-                    <div class="project-metrics">
-                        <div class="metric">
-                            <span class="metric-value">~500</span>
-                            <span class="metric-label">msg/s Kafka</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">&lt;100ms</span>
-                            <span class="metric-label">Latência</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">99.9%</span>
-                            <span class="metric-label">Uptime</span>
-                        </div>
-                    </div>
+                    <p class="project-description">
+                        Arquitetura de microsserviços com Docker para coleta, processamento e análise
+                        de dados de criptomoedas em tempo real. Pipeline completo com Apache Kafka
+                        processando ~500 msg/s, armazenamento em MongoDB, cache Redis e
+                        orquestração via Apache Airflow. Dashboard interativo com Streamlit + Plotly.
+                    </p>
                     <div class="project-tech">
                         <span>Docker</span>
                         <span>Apache Kafka</span>
@@ -319,87 +199,24 @@
                         <span>Redis</span>
                         <span>Airflow</span>
                         <span>Streamlit</span>
-                        <span>Plotly</span>
                     </div>
-                    <div class="project-links">
-                        <a href="https://github.com/ClaudioAMF1/crypto-analytics-pipeline" target="_blank" rel="noopener" class="project-link">
-                            <i class="fab fa-github"></i>
-                            <span>Ver Código</span>
-                        </a>
-                    </div>
+                    <a href="https://github.com/ClaudioAMF1/crypto-analytics-pipeline" target="_blank" rel="noopener" class="project-link">
+                        <i class="fab fa-github"></i> Ver Código
+                    </a>
                 </div>
-                <div class="project-featured-visual">
-                    <div class="project-visual-card">
-                        <div class="pipeline-demo">
-                            <div class="pipeline-row">
-                                <div class="pipeline-node">
-                                    <div class="node-icon"><i class="fas fa-coins"></i></div>
-                                    <span>Coleta</span>
-                                </div>
-                                <div class="pipeline-connector"><div class="connector-dot"></div></div>
-                                <div class="pipeline-node">
-                                    <div class="node-icon kafka"><i class="fas fa-stream"></i></div>
-                                    <span>Kafka</span>
-                                </div>
-                                <div class="pipeline-connector"><div class="connector-dot"></div></div>
-                                <div class="pipeline-node">
-                                    <div class="node-icon mongo"><i class="fas fa-database"></i></div>
-                                    <span>MongoDB</span>
-                                </div>
-                            </div>
-                            <div class="pipeline-vertical-connector"></div>
-                            <div class="pipeline-row">
-                                <div class="pipeline-node">
-                                    <div class="node-icon dashboard"><i class="fas fa-chart-line"></i></div>
-                                    <span>Dashboard</span>
-                                </div>
-                                <div class="pipeline-connector reverse"><div class="connector-dot"></div></div>
-                                <div class="pipeline-node">
-                                    <div class="node-icon airflow"><i class="fas fa-cogs"></i></div>
-                                    <span>Airflow</span>
-                                </div>
-                                <div class="pipeline-connector reverse"><div class="connector-dot"></div></div>
-                                <div class="pipeline-node">
-                                    <div class="node-icon redis"><i class="fas fa-bolt"></i></div>
-                                    <span>Redis</span>
-                                </div>
-                            </div>
-                            <div class="pipeline-status">
-                                <span class="status-live"><i class="fas fa-circle"></i> Live</span>
-                                <span class="status-msgs">~500 msg/s</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </article>
 
             <!-- Featured Project 2 -->
-            <div class="project-featured reverse animate-on-scroll" data-reveal="right">
+            <article class="project-featured animate-on-scroll">
                 <div class="project-featured-content">
                     <span class="project-overline">Visão Computacional</span>
                     <h3 class="project-title">Análise Tática de Futebol com CV</h3>
-                    <div class="project-description-card">
-                        <p>
-                            Sistema de visão computacional para análise tática de partidas de futebol em
-                            tempo real a 30 FPS. Detecção e rastreamento de jogadores usando YOLOv8 com
-                            tracking via Norfair. Geração automática de mapas de calor, análise de
-                            formações táticas e métricas de desempenho.
-                        </p>
-                    </div>
-                    <div class="project-metrics">
-                        <div class="metric">
-                            <span class="metric-value">30 FPS</span>
-                            <span class="metric-label">Real-time</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">YOLOv8</span>
-                            <span class="metric-label">Detecção</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">Norfair</span>
-                            <span class="metric-label">Tracking</span>
-                        </div>
-                    </div>
+                    <p class="project-description">
+                        Sistema de visão computacional para análise tática de partidas de futebol em
+                        tempo real a 30 FPS. Detecção e rastreamento de jogadores usando YOLOv8 com
+                        tracking via Norfair. Geração automática de mapas de calor, análise de
+                        formações táticas e métricas de desempenho.
+                    </p>
                     <div class="project-tech">
                         <span>Python</span>
                         <span>YOLOv8</span>
@@ -408,64 +225,23 @@
                         <span>SciPy</span>
                         <span>Norfair</span>
                     </div>
-                    <div class="project-links">
-                        <a href="https://github.com/ClaudioAMF1/soccer-video-analytics" target="_blank" rel="noopener" class="project-link">
-                            <i class="fab fa-github"></i>
-                            <span>Ver Código</span>
-                        </a>
-                    </div>
+                    <a href="https://github.com/ClaudioAMF1/soccer-video-analytics" target="_blank" rel="noopener" class="project-link">
+                        <i class="fab fa-github"></i> Ver Código
+                    </a>
                 </div>
-                <div class="project-featured-visual">
-                    <div class="project-visual-card cv-card">
-                        <div class="cv-demo">
-                            <div class="cv-field">
-                                <div class="cv-player" style="--x: 20%; --y: 30%;"></div>
-                                <div class="cv-player" style="--x: 40%; --y: 55%;"></div>
-                                <div class="cv-player" style="--x: 60%; --y: 25%;"></div>
-                                <div class="cv-player" style="--x: 75%; --y: 65%;"></div>
-                                <div class="cv-player team-b" style="--x: 30%; --y: 70%;"></div>
-                                <div class="cv-player team-b" style="--x: 55%; --y: 42%;"></div>
-                                <div class="cv-player team-b" style="--x: 80%; --y: 35%;"></div>
-                                <div class="cv-ball" style="--x: 50%; --y: 50%;"></div>
-                                <div class="cv-tracking-box"></div>
-                                <div class="cv-heatmap"></div>
-                            </div>
-                            <div class="cv-overlay">
-                                <span class="cv-fps"><i class="fas fa-circle"></i> 30 FPS</span>
-                                <span class="cv-detection">YOLOv8 Active</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </article>
 
             <!-- Featured Project 3 -->
-            <div class="project-featured animate-on-scroll" data-reveal="left">
+            <article class="project-featured animate-on-scroll">
                 <div class="project-featured-content">
-                    <span class="project-overline">Big Data &amp; IoT</span>
+                    <span class="project-overline">IoT &amp; Big Data</span>
                     <h3 class="project-title">Pipeline de Qualidade do Ar em Tempo Real</h3>
-                    <div class="project-description-card">
-                        <p>
-                            Pipeline de Big Data para análise de qualidade do ar em tempo real.
-                            Processamento de 6.500+ registros com alertas automáticos via RabbitMQ,
-                            processamento assíncrono com Celery + Redis. Sistema detectou 156+
-                            eventos críticos de poluição, contribuindo para monitoramento ambiental.
-                        </p>
-                    </div>
-                    <div class="project-metrics">
-                        <div class="metric">
-                            <span class="metric-value">6.500+</span>
-                            <span class="metric-label">Registros</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">156+</span>
-                            <span class="metric-label">Alertas</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">Real-time</span>
-                            <span class="metric-label">Processing</span>
-                        </div>
-                    </div>
+                    <p class="project-description">
+                        Pipeline de Big Data para análise de qualidade do ar em tempo real.
+                        Processamento de 6.500+ registros com alertas automáticos via RabbitMQ,
+                        processamento assíncrono com Celery + Redis. Sistema detectou 156+
+                        eventos críticos de poluição, contribuindo para monitoramento ambiental.
+                    </p>
                     <div class="project-tech">
                         <span>Kafka</span>
                         <span>Flask</span>
@@ -474,238 +250,121 @@
                         <span>Celery</span>
                         <span>MinIO</span>
                         <span>Airflow</span>
-                        <span>Streamlit</span>
                     </div>
-                    <div class="project-links">
-                        <a href="https://github.com/ClaudioAMF1/air-quality-pipeline" target="_blank" rel="noopener" class="project-link">
-                            <i class="fab fa-github"></i>
-                            <span>Ver Código</span>
-                        </a>
-                    </div>
+                    <a href="https://github.com/ClaudioAMF1/air-quality-pipeline" target="_blank" rel="noopener" class="project-link">
+                        <i class="fab fa-github"></i> Ver Código
+                    </a>
                 </div>
-                <div class="project-featured-visual">
-                    <div class="project-visual-card air-card">
-                        <div class="air-demo">
-                            <div class="air-gauge">
-                                <svg viewBox="0 0 120 120" class="gauge-svg">
-                                    <circle cx="60" cy="60" r="50" class="gauge-bg"/>
-                                    <circle cx="60" cy="60" r="50" class="gauge-fill"/>
-                                </svg>
-                                <div class="gauge-value">
-                                    <span class="gauge-number">AQI</span>
-                                    <span class="gauge-label">Monitorando</span>
-                                </div>
-                            </div>
-                            <div class="air-alerts">
-                                <div class="alert-item critical">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    <span>156+ alertas detectados</span>
-                                </div>
-                                <div class="alert-item processing">
-                                    <i class="fas fa-sync-alt fa-spin"></i>
-                                    <span>Processamento em tempo real</span>
-                                </div>
-                                <div class="alert-item data">
-                                    <i class="fas fa-database"></i>
-                                    <span>6.500+ registros analisados</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </article>
 
-            <!-- Other Projects Grid -->
-            <div class="projects-grid animate-on-scroll">
-                <h3 class="grid-title">Outros Projetos</h3>
-                <div class="project-cards">
-                    <div class="project-card stagger-item">
-                        <div class="card-header">
-                            <i class="fas fa-folder-open"></i>
-                            <div class="card-links">
-                                <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener" aria-label="Ver no GitHub"><i class="fab fa-github"></i></a>
-                            </div>
-                        </div>
-                        <h4>Carreta Digital - RBCIP</h4>
-                        <p>Interface web completa para acesso e download de certificados, com banco PostgreSQL e APIs RESTful. Impactou ~8.000 alunos.</p>
-                        <div class="card-tech">
-                            <span>PostgreSQL</span>
-                            <span>Python</span>
-                            <span>Flask</span>
-                            <span>REST APIs</span>
-                        </div>
-                    </div>
-                    <div class="project-card stagger-item">
-                        <div class="card-header">
-                            <i class="fas fa-folder-open"></i>
-                            <div class="card-links">
-                                <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener" aria-label="Ver no GitHub"><i class="fab fa-github"></i></a>
-                            </div>
-                        </div>
-                        <h4>Portfólio Pessoal</h4>
-                        <p>Este portfólio profissional, construído com design premium, animações fluidas, partículas interativas e UI/UX de alto nível.</p>
-                        <div class="card-tech">
-                            <span>HTML5</span>
-                            <span>CSS3</span>
-                            <span>JavaScript</span>
-                            <span>UI/UX</span>
-                        </div>
-                    </div>
+            <!-- Other Project -->
+            <article class="project-card animate-on-scroll">
+                <div class="card-header">
+                    <i class="fas fa-folder-open"></i>
+                    <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener" aria-label="Ver no GitHub"><i class="fab fa-github"></i></a>
                 </div>
-            </div>
+                <h4>Carreta Digital - RBCIP</h4>
+                <p>Interface web completa para acesso e download de certificados, com banco PostgreSQL e APIs RESTful. Impactou ~8.000 alunos.</p>
+                <div class="card-tech">
+                    <span>PostgreSQL</span>
+                    <span>Python</span>
+                    <span>Flask</span>
+                    <span>REST APIs</span>
+                </div>
+            </article>
         </div>
     </section>
 
     <!-- Skills Section -->
     <section class="section skills" id="skills">
         <div class="container">
-            <div class="section-header animate-on-scroll">
-                <span class="section-tag">&lt;skills&gt;</span>
-                <h2 class="section-title">Tecnologias & Habilidades</h2>
-                <div class="section-line"></div>
-            </div>
+            <h2 class="section-title animate-on-scroll">Skills</h2>
             <div class="skills-grid animate-on-scroll">
-                <!-- Languages -->
-                <div class="skill-category stagger-item">
-                    <div class="category-header">
-                        <div class="category-icon">
-                            <i class="fas fa-code"></i>
-                        </div>
-                        <h3>Linguagens</h3>
-                    </div>
+                <div class="skill-category">
+                    <h3>Linguagens</h3>
                     <div class="skill-items">
                         <div class="skill-item">
-                            <div class="skill-info">
-                                <i class="fab fa-python"></i>
-                                <span>Python</span>
-                                <span class="skill-level">Avançado</span>
-                            </div>
-                            <div class="skill-bar"><div class="skill-progress" style="--width: 95%"></div></div>
+                            <span>Python</span>
+                            <span class="skill-level">Avançado</span>
                         </div>
                         <div class="skill-item">
-                            <div class="skill-info">
-                                <i class="fab fa-js-square"></i>
-                                <span>JavaScript / TypeScript</span>
-                                <span class="skill-level">Intermediário</span>
-                            </div>
-                            <div class="skill-bar"><div class="skill-progress" style="--width: 75%"></div></div>
+                            <span>JavaScript / TypeScript</span>
+                            <span class="skill-level">Intermediário</span>
                         </div>
                         <div class="skill-item">
-                            <div class="skill-info">
-                                <i class="fab fa-java"></i>
-                                <span>Java</span>
-                                <span class="skill-level">Intermediário</span>
-                            </div>
-                            <div class="skill-bar"><div class="skill-progress" style="--width: 70%"></div></div>
+                            <span>Java</span>
+                            <span class="skill-level">Intermediário</span>
                         </div>
                         <div class="skill-item">
-                            <div class="skill-info">
-                                <i class="fas fa-microchip"></i>
-                                <span>C / C++</span>
-                                <span class="skill-level">Intermediário</span>
-                            </div>
-                            <div class="skill-bar"><div class="skill-progress" style="--width: 65%"></div></div>
+                            <span>C / C++</span>
+                            <span class="skill-level">Intermediário</span>
                         </div>
                         <div class="skill-item">
-                            <div class="skill-info">
-                                <i class="fab fa-swift"></i>
-                                <span>Swift</span>
-                                <span class="skill-level">Básico</span>
-                            </div>
-                            <div class="skill-bar"><div class="skill-progress" style="--width: 50%"></div></div>
+                            <span>Swift</span>
+                            <span class="skill-level">Básico</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Backend & Frameworks -->
-                <div class="skill-category stagger-item">
-                    <div class="category-header">
-                        <div class="category-icon">
-                            <i class="fas fa-server"></i>
-                        </div>
-                        <h3>Backend & Frameworks</h3>
-                    </div>
-                    <div class="skill-items skill-tags">
-                        <div class="skill-tag"><i class="fas fa-flask-vial"></i><span>Flask</span></div>
-                        <div class="skill-tag"><i class="fas fa-bolt"></i><span>FastAPI</span></div>
-                        <div class="skill-tag"><i class="fab fa-react"></i><span>React</span></div>
-                        <div class="skill-tag"><i class="fab fa-node-js"></i><span>Node.js</span></div>
-                        <div class="skill-tag"><i class="fas fa-plug"></i><span>Express</span></div>
-                        <div class="skill-tag"><i class="fas fa-chart-bar"></i><span>Streamlit</span></div>
+                <div class="skill-category">
+                    <h3>Backend &amp; Frameworks</h3>
+                    <div class="skill-tags">
+                        <span>Flask</span>
+                        <span>FastAPI</span>
+                        <span>React</span>
+                        <span>Node.js</span>
+                        <span>Express</span>
+                        <span>Streamlit</span>
                     </div>
                 </div>
 
-                <!-- Data & Big Data -->
-                <div class="skill-category stagger-item">
-                    <div class="category-header">
-                        <div class="category-icon">
-                            <i class="fas fa-database"></i>
-                        </div>
-                        <h3>Data & Big Data</h3>
-                    </div>
-                    <div class="skill-items skill-tags">
-                        <div class="skill-tag"><i class="fas fa-stream"></i><span>Apache Kafka</span></div>
-                        <div class="skill-tag"><i class="fas fa-leaf"></i><span>MongoDB</span></div>
-                        <div class="skill-tag"><i class="fas fa-bolt"></i><span>Redis</span></div>
-                        <div class="skill-tag"><i class="fas fa-wind"></i><span>Apache Airflow</span></div>
-                        <div class="skill-tag"><i class="fas fa-database"></i><span>PostgreSQL</span></div>
-                        <div class="skill-tag"><i class="fas fa-archive"></i><span>MinIO</span></div>
-                        <div class="skill-tag"><i class="fas fa-envelope"></i><span>RabbitMQ</span></div>
-                        <div class="skill-tag"><i class="fas fa-table"></i><span>CassandraDB</span></div>
+                <div class="skill-category">
+                    <h3>Data &amp; Big Data</h3>
+                    <div class="skill-tags">
+                        <span>Apache Kafka</span>
+                        <span>MongoDB</span>
+                        <span>Redis</span>
+                        <span>Apache Airflow</span>
+                        <span>PostgreSQL</span>
+                        <span>MinIO</span>
+                        <span>RabbitMQ</span>
+                        <span>CassandraDB</span>
                     </div>
                 </div>
 
-                <!-- DevOps & Cloud -->
-                <div class="skill-category stagger-item">
-                    <div class="category-header">
-                        <div class="category-icon">
-                            <i class="fas fa-cloud"></i>
-                        </div>
-                        <h3>DevOps & Cloud</h3>
-                    </div>
-                    <div class="skill-items skill-tags">
-                        <div class="skill-tag"><i class="fab fa-docker"></i><span>Docker</span></div>
-                        <div class="skill-tag"><i class="fab fa-aws"></i><span>AWS</span></div>
-                        <div class="skill-tag"><i class="fab fa-git-alt"></i><span>Git / GitHub</span></div>
-                        <div class="skill-tag"><i class="fas fa-infinity"></i><span>CI/CD</span></div>
-                        <div class="skill-tag"><i class="fas fa-dharmachakra"></i><span>Kubernetes</span></div>
-                        <div class="skill-tag"><i class="fas fa-cubes"></i><span>Microsserviços</span></div>
+                <div class="skill-category">
+                    <h3>DevOps &amp; Cloud</h3>
+                    <div class="skill-tags">
+                        <span>Docker</span>
+                        <span>AWS</span>
+                        <span>Git / GitHub</span>
+                        <span>CI/CD</span>
+                        <span>Kubernetes</span>
+                        <span>Microsserviços</span>
                     </div>
                 </div>
 
-                <!-- ML & AI -->
-                <div class="skill-category stagger-item">
-                    <div class="category-header">
-                        <div class="category-icon">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <h3>ML & Inteligência Artificial</h3>
-                    </div>
-                    <div class="skill-items skill-tags">
-                        <div class="skill-tag"><i class="fas fa-eye"></i><span>Computer Vision</span></div>
-                        <div class="skill-tag"><i class="fas fa-crosshairs"></i><span>YOLOv8</span></div>
-                        <div class="skill-tag"><i class="fas fa-camera"></i><span>OpenCV</span></div>
-                        <div class="skill-tag"><i class="fas fa-project-diagram"></i><span>Scikit-learn</span></div>
-                        <div class="skill-tag"><i class="fas fa-fire"></i><span>TensorFlow</span></div>
-                        <div class="skill-tag"><i class="fas fa-brain"></i><span>PyTorch</span></div>
+                <div class="skill-category">
+                    <h3>ML &amp; IA</h3>
+                    <div class="skill-tags">
+                        <span>Computer Vision</span>
+                        <span>YOLOv8</span>
+                        <span>OpenCV</span>
+                        <span>Scikit-learn</span>
+                        <span>TensorFlow</span>
+                        <span>PyTorch</span>
                     </div>
                 </div>
 
-                <!-- Tools -->
-                <div class="skill-category stagger-item">
-                    <div class="category-header">
-                        <div class="category-icon">
-                            <i class="fas fa-tools"></i>
-                        </div>
-                        <h3>Bibliotecas & Tools</h3>
-                    </div>
-                    <div class="skill-items skill-tags">
-                        <div class="skill-tag"><i class="fas fa-chart-area"></i><span>Plotly</span></div>
-                        <div class="skill-tag"><i class="fas fa-table"></i><span>Pandas</span></div>
-                        <div class="skill-tag"><i class="fas fa-calculator"></i><span>NumPy</span></div>
-                        <div class="skill-tag"><i class="fas fa-wave-square"></i><span>SciPy</span></div>
-                        <div class="skill-tag"><i class="fas fa-route"></i><span>Norfair</span></div>
-                        <div class="skill-tag"><i class="fas fa-tasks"></i><span>Celery</span></div>
+                <div class="skill-category">
+                    <h3>Bibliotecas &amp; Tools</h3>
+                    <div class="skill-tags">
+                        <span>Plotly</span>
+                        <span>Pandas</span>
+                        <span>NumPy</span>
+                        <span>SciPy</span>
+                        <span>Norfair</span>
+                        <span>Celery</span>
                     </div>
                 </div>
             </div>
@@ -715,16 +374,10 @@
     <!-- Experience Section -->
     <section class="section experience" id="experience">
         <div class="container">
-            <div class="section-header animate-on-scroll">
-                <span class="section-tag">&lt;experiência&gt;</span>
-                <h2 class="section-title">Experiência & Formação</h2>
-                <div class="section-line"></div>
-            </div>
+            <h2 class="section-title animate-on-scroll">Experiência &amp; Formação</h2>
             <div class="timeline animate-on-scroll">
                 <div class="timeline-item">
-                    <div class="timeline-marker">
-                        <i class="fas fa-briefcase"></i>
-                    </div>
+                    <div class="timeline-marker"></div>
                     <div class="timeline-content">
                         <div class="timeline-header">
                             <span class="timeline-badge work">Experiência</span>
@@ -749,9 +402,7 @@
                 </div>
 
                 <div class="timeline-item">
-                    <div class="timeline-marker">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                    </div>
+                    <div class="timeline-marker"></div>
                     <div class="timeline-content">
                         <div class="timeline-header">
                             <span class="timeline-badge work">Experiência</span>
@@ -767,9 +418,7 @@
                 </div>
 
                 <div class="timeline-item">
-                    <div class="timeline-marker education">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
+                    <div class="timeline-marker education"></div>
                     <div class="timeline-content">
                         <div class="timeline-header">
                             <span class="timeline-badge education">Formação</span>
@@ -785,48 +434,22 @@
                 </div>
 
                 <div class="timeline-item">
-                    <div class="timeline-marker cert">
-                        <i class="fas fa-award"></i>
-                    </div>
+                    <div class="timeline-marker cert"></div>
                     <div class="timeline-content">
                         <div class="timeline-header">
                             <span class="timeline-badge cert">Certificações</span>
                         </div>
-                        <h3>Certificações & Cursos</h3>
-                        <div class="certs-grid">
-                            <div class="cert-item">
-                                <i class="fab fa-aws"></i>
-                                <span>AWS Cloud Security Foundations</span>
-                            </div>
-                            <div class="cert-item">
-                                <i class="fas fa-tasks"></i>
-                                <span>Scrum Master - IDP</span>
-                            </div>
-                            <div class="cert-item">
-                                <i class="fab fa-js"></i>
-                                <span>JavaScript & TypeScript</span>
-                            </div>
-                            <div class="cert-item">
-                                <i class="fab fa-python"></i>
-                                <span>Python Avançado</span>
-                            </div>
-                            <div class="cert-item">
-                                <i class="fab fa-apple"></i>
-                                <span>iOS & Swift Development</span>
-                            </div>
-                            <div class="cert-item">
-                                <i class="fas fa-brain"></i>
-                                <span>Machine Learning Fundamentals</span>
-                            </div>
-                            <div class="cert-item">
-                                <i class="fas fa-database"></i>
-                                <span>Big Data & NoSQL</span>
-                            </div>
-                            <div class="cert-item">
-                                <i class="fas fa-laptop-code"></i>
-                                <span>C, C#, C++, Java, Python</span>
-                            </div>
-                        </div>
+                        <h3>Certificações &amp; Cursos</h3>
+                        <ul class="certs-list">
+                            <li>AWS Cloud Security Foundations</li>
+                            <li>Scrum Master - IDP</li>
+                            <li>JavaScript &amp; TypeScript</li>
+                            <li>Python Avançado</li>
+                            <li>iOS &amp; Swift Development</li>
+                            <li>Machine Learning Fundamentals</li>
+                            <li>Big Data &amp; NoSQL</li>
+                            <li>C, C#, C++, Java, Python</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -836,40 +459,12 @@
     <!-- Contact Section -->
     <section class="section contact" id="contact">
         <div class="container">
-            <div class="section-header animate-on-scroll">
-                <span class="section-tag">&lt;contato&gt;</span>
-                <h2 class="section-title">Vamos Trabalhar Juntos?</h2>
-                <div class="section-line"></div>
-            </div>
-
-            <!-- CTA Banner -->
-            <div class="contact-cta-banner animate-on-scroll">
-                <div class="cta-banner-content">
-                    <div class="cta-banner-icon">
-                        <i class="fas fa-rocket"></i>
-                    </div>
-                    <div class="cta-banner-text">
-                        <h3>Tem um projeto em mente?</h3>
-                        <p>Estou disponível para novos desafios em <strong>Backend</strong>, <strong>Engenharia de Dados</strong> e <strong>Arquiteturas Escaláveis</strong>. Vamos transformar sua ideia em realidade.</p>
-                    </div>
-                </div>
-                <div class="cta-banner-actions">
-                    <a href="mailto:cmeireles756@gmail.com" class="btn btn-primary btn-sm">
-                        <i class="fas fa-envelope"></i>
-                        <span>Enviar Email</span>
-                    </a>
-                    <a href="https://www.linkedin.com/in/cgfm1" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
-                        <i class="fab fa-linkedin-in"></i>
-                        <span>LinkedIn</span>
-                    </a>
-                </div>
-            </div>
+            <h2 class="section-title animate-on-scroll">Contato</h2>
 
             <div class="contact-layout animate-on-scroll">
-                <!-- Contact Form -->
                 <div class="contact-form-wrapper">
                     <h3>Envie uma mensagem</h3>
-                    <p>Preencha o formulário abaixo e responderei o mais breve possível.</p>
+                    <p>Preencha o formulário e responderei o mais breve possível.</p>
                     <form class="contact-form" id="contact-form" novalidate>
                         <div class="form-group">
                             <label for="name">Nome <span class="required">*</span></label>
@@ -892,45 +487,35 @@
                             <span class="char-count"><span id="char-count">0</span>/500</span>
                         </div>
                         <button type="submit" class="form-submit" id="form-submit-btn">
-                            <span>Enviar Mensagem</span>
-                            <i class="fas fa-paper-plane"></i>
+                            Enviar Mensagem
                         </button>
                     </form>
                 </div>
-                <!-- Contact Info -->
                 <div class="contact-info-side">
                     <a href="mailto:cmeireles756@gmail.com" class="contact-card">
-                        <div class="contact-icon email">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-                        <div class="contact-info-card-text">
+                        <i class="fas fa-envelope"></i>
+                        <div>
                             <h3>Email</h3>
                             <p>cmeireles756@gmail.com</p>
                         </div>
                     </a>
                     <a href="https://www.linkedin.com/in/cgfm1" target="_blank" rel="noopener" class="contact-card">
-                        <div class="contact-icon linkedin">
-                            <i class="fab fa-linkedin-in"></i>
-                        </div>
-                        <div class="contact-info-card-text">
+                        <i class="fab fa-linkedin-in"></i>
+                        <div>
                             <h3>LinkedIn</h3>
                             <p>linkedin.com/in/cgfm1</p>
                         </div>
                     </a>
                     <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener" class="contact-card">
-                        <div class="contact-icon github">
-                            <i class="fab fa-github"></i>
-                        </div>
-                        <div class="contact-info-card-text">
+                        <i class="fab fa-github"></i>
+                        <div>
                             <h3>GitHub</h3>
                             <p>github.com/ClaudioAMF1</p>
                         </div>
                     </a>
                     <a href="tel:+5561982105723" class="contact-card">
-                        <div class="contact-icon phone">
-                            <i class="fas fa-phone"></i>
-                        </div>
-                        <div class="contact-info-card-text">
+                        <i class="fas fa-phone"></i>
+                        <div>
                             <h3>Telefone</h3>
                             <p>(61) 98210-5723</p>
                         </div>
@@ -949,12 +534,8 @@
     <footer class="footer" role="contentinfo">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-logo">
-                    <span class="logo-bracket">&lt;</span>
-                    <span class="logo-text">CM</span>
-                    <span class="logo-bracket">/&gt;</span>
-                </div>
-                <p class="footer-text">Projetado & Desenvolvido por Claudio Meireles</p>
+                <span class="footer-logo">CM</span>
+                <p class="footer-text">Claudio Meireles</p>
                 <div class="footer-socials">
                     <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
                     <a href="https://www.linkedin.com/in/cgfm1" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
