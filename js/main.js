@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
     // ─── Skill bars animation ───
-    const skillBars = document.querySelectorAll('.skill-fill');
     const skillObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -71,10 +70,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const scrollBehavior = () => prefersReducedMotion.matches ? 'auto' : 'smooth';
+
     // Back to top
     if (backToTop) {
         backToTop.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: scrollBehavior() });
         });
     }
 
@@ -112,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (target) {
                 window.scrollTo({
                     top: target.getBoundingClientRect().top + window.scrollY - 80,
-                    behavior: 'smooth'
+                    behavior: scrollBehavior()
                 });
             }
         });
