@@ -259,7 +259,7 @@
       panel.querySelector("h2").textContent;
     if (options.focus || focusWasHidden)
       scroller.focus({ preventScroll: true });
-    if (mobile.matches && options.scroll !== false)
+    if (!mobile.matches || options.scroll !== false)
       window.scrollTo({ top: 0, behavior: "instant" });
   }
 
@@ -316,6 +316,21 @@
       if (anchor.classList.contains("enter-link")) enterPortfolio(id);
       else showPanel(id, { focus: !anchor.classList.contains("wheel-item") });
     }
+  });
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (inWorkspace && !mobile.matches && window.scrollY) window.scrollTo(0, 0);
+    },
+    { passive: true },
+  );
+  // Opening a #section link should show the panel, not jump to the anchor.
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  window.addEventListener("load", () => {
+    // The browser jumps to the #fragment after load; undo it once.
+    setTimeout(() => {
+      if (inWorkspace) window.scrollTo(0, 0);
+    }, 60);
   });
   window.addEventListener("popstate", route);
   window.addEventListener("hashchange", route);

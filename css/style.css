@@ -2453,3 +2453,68 @@ body:not(.enhanced) .film-frame .shot {
 .wheel-item.is-active .wheel-preview img {
   filter: none;
 }
+
+/* ---------- fit the viewport: no page scroll on desktop ---------- */
+@media (min-width: 651px) {
+  .landing {
+    min-height: 340px;
+  }
+  .enhanced .workspace {
+    grid-template-rows: minmax(260px, min(640px, calc(100svh - 356px))) auto auto;
+  }
+}
+@media (min-width: 651px) and (max-height: 820px) {
+  .is-workspace .site-header {
+    height: 46px;
+  }
+  .enhanced .workspace {
+    margin-top: 4px;
+    grid-template-rows: minmax(230px, calc(100svh - 268px)) auto auto;
+  }
+  .status-bar {
+    margin-top: 6px;
+    padding-top: 6px;
+  }
+  .desk {
+    margin-top: 6px;
+    width: 330px;
+  }
+  .desk .key-row {
+    gap: 3px;
+    padding: 0;
+  }
+  .desk .key-row span {
+    min-width: 14px;
+    line-height: 14px;
+    font-size: 9px;
+  }
+  .desk .key-row span:first-child {
+    min-width: 22px;
+  }
+  .desk .key-row.space-row span {
+    min-width: 90px;
+    line-height: 10px;
+    font-size: 7px;
+  }
+  .desk .keyboard-traces {
+    height: 34px;
+  }
+  .ambient-note {
+    display: none;
+  }
+}
+@media (min-width: 651px) and (max-height: 600px) {
+  .ambient-facts,
+  .ambient-bottom,
+  .desk {
+    display: none;
+  }
+  .enhanced .workspace {
+    grid-template-rows: minmax(230px, calc(100svh - 128px)) auto;
+  }
+}
+@media (min-width: 651px) {
+  html:has(body.enhanced.is-workspace) {
+    overflow: hidden;
+  }
+}
