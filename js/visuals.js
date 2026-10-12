@@ -7,7 +7,7 @@
     return value - Math.floor(value);
   };
 
-  function create({ palette, motion }) {
+  function create({ palette, motion, focus = () => null }) {
     function surface(id) {
       const canvas = document.getElementById(id);
       let context = null;
@@ -26,12 +26,21 @@
       cursor: surface("cursor-canvas"),
       entry: surface("entry-canvas"),
     };
-    const eye = { x: 0, y: 0, blink: 0 };
+    const eye = { x: 0, y: 0, blink: 0, px: 0, py: 0, open: 1, state: "" };
     const pointer = {
       x: innerWidth * 0.58,
       y: innerHeight * 0.48,
       seen: false,
+      at: -1e9,
+      dx: 0,
+      dy: 0,
     };
+    // Where the eye is looking, in screen coordinates.
+    const sight = { x: innerWidth * 0.5, y: innerHeight * 0.4, ready: false };
+    const mouse = { x: 0, y: 0, ox: 0, oy: 0, ready: false };
+    let eyeText = "claudio meireles backend data ai ";
+    let focusKey = null;
+    let lastKeyLabel = "None";
     const hands = Array.from({ length: 2 }, () => ({
       x: 0,
       y: 0,
@@ -136,7 +145,10 @@
           ? [1, 0]
           : fingerKeys.find(([, , keys]) => keys.includes(mapped));
       if (!assignment) return;
+      if (assignment[0] === 1 && mouseActive()) return;
       reachKey(assignment[0], assignment[1], position);
+      focusKey = { node: position.node, until: performance.now() + 700 };
+      lastKeyLabel = mapped;
       if (
         shiftedKeys[value] ||
         (value.length === 1 && value !== value.toLowerCase())
@@ -146,10 +158,20 @@
         if (shift) reachKey(other, 4, shift);
       }
     }
+    function mouseActive() {
+      return workspaceMode && performance.now() - pointer.at < 1400;
+    }
     function trackPointer(event) {
+      if (pointer.seen) {
+        pointer.dx = event.clientX - pointer.x;
+        pointer.dy = event.clientY - pointer.y;
+        mouse.ox = clamp(mouse.ox + pointer.dx * 0.05, -16, 16);
+        mouse.oy = clamp(mouse.oy + pointer.dy * 0.05, -10, 10);
+      }
       pointer.x = event.clientX;
       pointer.y = event.clientY;
       pointer.seen = true;
+      pointer.at = performance.now();
       if (motion()) {
         const last = trail.at(-1);
         if (!last || Math.hypot(last.x - pointer.x, last.y - pointer.y) > 7) {
@@ -164,113 +186,209 @@
       }
     }
 
+    function setEyeText(text) {
+      const clean = String(text || "").replace(/\s+/g, " ").trim();
+      eyeText = (clean || "claudio meireles") + "  ";
+    }
+
+    function eyeGeometry(layer) {
+      const { width: W, height: H } = layer;
+      const cx = W * 0.42;
+      const cy = H * 0.6;
+      const rx = W * 0.4;
+      const ry = H * 0.33;
+      return { cx, cy, rx, ry, iris: ry * 0.66 };
+    }
+
+    // Decide what the eye looks at: the visitor's mouse while it moves,
+    // otherwise whatever the page is "doing" (caret, pressed key, card).
+    function updateSight(dt) {
+      const now = performance.now();
+      let target = null;
+      let state = "focused";
+      if (pointer.seen && now - pointer.at < 2200) {
+        target = { x: pointer.x, y: pointer.y };
+        state = "tracking";
+      } else if (focusKey && now < focusKey.until && focusKey.node) {
+        const r = focusKey.node.getBoundingClientRect();
+        if (r.width) target = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      }
+      if (!target) target = focus();
+      if (!target) {
+        target = {
+          x: innerWidth * (0.45 + Math.sin(clock * 0.0004) * 0.2),
+          y: innerHeight * (0.45 + Math.cos(clock * 0.0003) * 0.15),
+        };
+        state = "idle";
+      }
+      const gain = motion() && sight.ready ? 1 - Math.exp(-dt * 9) : 1;
+      sight.x += (target.x - sight.x) * gain;
+      sight.y += (target.y - sight.y) * gain;
+      sight.ready = true;
+      return state;
+    }
+
     function drawEye(time, dt, forceOpen = false) {
       const layer = surfaces.eye;
       if (!layer.context || !layer.width) return;
       const { context: ctx, width, height } = layer;
       const colors = palette();
-      const cx = width / 2;
-      const cy = height * 0.47;
-      const rx = width * 0.46;
-      const ry = height * 0.36;
-      const targetX = pointer.seen
-        ? clamp(
-            (pointer.x - layer.left - cx) / Math.max(220, innerWidth * 0.42),
-            -0.9,
-            0.9,
-          )
-        : -0.27 + Math.sin(time * 0.0004) * 0.16;
-      const targetY = pointer.seen
-        ? clamp(
-            (pointer.y - layer.top - cy) / Math.max(180, innerHeight * 0.42),
-            -0.7,
-            0.7,
-          )
-        : 0.05 + Math.cos(time * 0.0003) * 0.1;
-      const smoothing = motion() ? 1 - Math.exp(-dt * 12) : 1;
-      eye.x += (targetX - eye.x) * smoothing;
-      eye.y += (targetY - eye.y) * smoothing;
+      const { cx, cy, rx, ry, iris } = eyeGeometry(layer);
+      let state = updateSight(dt);
+      const gx = clamp((sight.x - layer.left - cx) / Math.max(240, innerWidth * 0.36), -1, 1);
+      const gy = clamp((sight.y - layer.top - cy) / Math.max(200, innerHeight * 0.4), -1, 1);
+      const smoothing = motion() ? 1 - Math.exp(-dt * 14) : 1;
+      eye.x += (gx - eye.x) * smoothing;
+      eye.y += (gy - eye.y) * smoothing;
       const cycle = (time + 1000) % 6400;
       eye.blink =
         !forceOpen && motion() && cycle > 6110
           ? Math.sin(((cycle - 6110) / 290) * Math.PI) ** 2
           : 0;
-      const open = Math.max(0.025, 1 - eye.blink);
-      const pupilX = eye.x * rx * 0.32;
-      const pupilY = eye.y * ry * 0.33;
-      const iris = Math.min(width * 0.12, height * 0.19);
-      const cellX = width > 110 ? 3.7 : 3;
-      const cellY = width > 110 ? 5.7 : 4;
-      const glyphs = "claudio.data_backend/{}[]:;<>01";
-      ctx.clearRect(0, 0, width, height);
-      ctx.font = `${width > 110 ? 5.5 : 4}px monospace`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
+      if (eye.blink > 0.4) state = "blink";
+      if (!motion()) state = "still";
+      const open = Math.max(0.03, 1 - eye.blink);
+      eye.open = open;
+      const px = cx + eye.x * rx * 0.5;
+      const py = cy + eye.y * ry * 0.42;
+      eye.px = px;
+      eye.py = py;
+      const box = iris * 0.42;
+
+      const fs = clamp(width / 44, 4.4, 7);
+      const cellX = fs * 0.62;
+      const cellY = fs * 1.2;
+      const cols = Math.ceil((rx * 2) / cellX) + 1;
+      const length = eyeText.length;
+      const drift = motion() ? Math.floor(time / 170) : 0;
+      const faint = [];
+      const bright = [];
+      const bold = [];
       for (let row = 0, y = -ry; y <= ry; row++, y += cellY) {
         for (let column = 0, x = -rx; x <= rx; column++, x += cellX) {
           const lid =
-            ry *
-            Math.pow(Math.max(0, 1 - Math.abs(x / rx) ** 1.8), 0.63) *
-            open;
+            ry * Math.pow(Math.max(0, 1 - Math.abs(x / rx) ** 2), 0.62) * open;
           if (Math.abs(y) > lid) continue;
-          const distance = Math.hypot(
-            x - pupilX,
-            (y - pupilY) / Math.max(0.22, open),
-          );
-          if (distance < iris * 0.52) continue;
-          const edge = Math.abs(distance - iris);
-          const outline = edge < cellX * 0.7;
-          const light = Math.max(0, 1 - Math.hypot(x / rx, y / ry));
-          ctx.globalAlpha = outline
-            ? 0.88
-            : distance < iris * 1.4
-              ? 0.34
-              : 0.08 + light * 0.12;
-          ctx.fillStyle = outline ? colors.text : colors.muted;
-          const offset = Math.floor(time / 240) + row * 7 + column * 3;
-          ctx.fillText(
-            glyphs[((offset % glyphs.length) + glyphs.length) % glyphs.length],
-            cx + x,
-            cy + y,
-          );
+          const ch = eyeText[(row * cols + column + drift) % length];
+          if (ch === " ") continue;
+          const sx = cx + x;
+          const sy = cy + y;
+          const dx = sx - px;
+          const dy = (sy - py) / Math.max(0.2, open);
+          if (Math.abs(dx) < box && Math.abs(dy) < box) {
+            bold.push(ch, sx, sy, 0.95);
+            continue;
+          }
+          const distance = Math.hypot(dx, dy);
+          if (distance < iris) {
+            const ring = distance > iris * 0.78;
+            (ring ? bold : bright).push(
+              ch,
+              sx,
+              sy,
+              ring ? 0.95 : 0.62 + (1 - distance / iris) * 0.3,
+            );
+          } else {
+            const edge = Math.abs(y) / Math.max(1, lid);
+            faint.push(
+              ch,
+              sx,
+              sy,
+              Math.max(0.16, 0.56 - (distance / rx) * 0.3 - edge * 0.16),
+            );
+          }
         }
       }
-      ctx.globalAlpha = 0.65;
+      ctx.clearRect(0, 0, width, height);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      const paint = (list, font, color) => {
+        ctx.font = font;
+        ctx.fillStyle = color;
+        for (let i = 0; i < list.length; i += 4) {
+          ctx.globalAlpha = list[i + 3];
+          ctx.fillText(list[i], list[i + 1], list[i + 2]);
+        }
+      };
+      paint(faint, `${fs}px monospace`, colors.muted);
+      paint(bright, `${fs}px monospace`, colors.text);
+      paint(bold, `bold ${fs}px monospace`, colors.text);
+
       ctx.strokeStyle = colors.text;
-      ctx.lineWidth = 0.6;
-      if (open > 0.2) {
-        ctx.beginPath();
-        ctx.ellipse(
-          cx + pupilX,
-          cy + pupilY,
-          iris * 0.55,
-          iris * 0.55 * open,
-          0,
-          0,
-          Math.PI * 2,
+      ctx.lineWidth = 0.8;
+      if (open > 0.25) {
+        ctx.globalAlpha = 0.9;
+        ctx.strokeRect(px - box, py - box * open, box * 2, box * 2 * open);
+        ctx.globalAlpha = 0.55;
+        const inner = box * 0.38;
+        ctx.strokeRect(
+          px - inner + eye.x * box * 0.35,
+          py - inner * open + eye.y * box * 0.35,
+          inner * 2,
+          inner * 2 * open,
         );
-        ctx.stroke();
-      } else {
-        ctx.beginPath();
-        ctx.moveTo(cx - rx * 0.8, cy);
-        ctx.lineTo(cx + rx * 0.8, cy);
-        ctx.stroke();
       }
+
+      // Telemetry label, tied to the eye by a leader line.
+      const labelSize = clamp(width / 36, 5, 8);
+      ctx.font = `${labelSize}px monospace`;
+      const labelWidth = ctx.measureText("['pupil:u'] 0.0000000").width;
+      const lx = Math.min(width * 0.66, width - labelWidth - 2);
+      const ly = labelSize * 1.2;
+      const distance = Math.hypot(sight.x - layer.left - px, sight.y - layer.top - py);
+      const lines = [
+        `['pupil:u'] ${((eye.x + 1) / 2).toFixed(7)}`,
+        ((eye.y + 1) / 2).toFixed(7),
+        (distance / Math.hypot(innerWidth, innerHeight)).toFixed(10),
+        lastKeyLabel,
+      ];
+      ctx.globalAlpha = 0.55;
+      ctx.lineWidth = 0.6;
+      ctx.beginPath();
+      ctx.moveTo(cx + rx * 0.5, cy - ry * 0.62);
+      ctx.lineTo(lx - 3, ly + labelSize * 4.2);
+      ctx.lineTo(lx - 3, ly - labelSize * 0.4);
+      ctx.stroke();
+      ctx.globalAlpha = 0.85;
+      ctx.fillStyle = colors.text;
+      ctx.font = `${labelSize}px monospace`;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      lines.forEach((line, index) =>
+        ctx.fillText(line, lx, ly - labelSize * 0.5 + index * labelSize * 1.25),
+      );
       ctx.globalAlpha = 1;
-      const coordinate = `['pupil:u'] ${((eye.x + 1) / 2).toFixed(6)}\n${((eye.y + 1) / 2).toFixed(6)}`;
-      if (coordinate !== lastCoordinate) {
-        document.getElementById("eye-coordinate").textContent = coordinate;
-        lastCoordinate = coordinate;
+      if (state !== eye.state) {
+        eye.state = state;
+        const label = document.getElementById("eye-state");
+        if (label) label.textContent = state;
       }
-      const state = !motion()
-        ? "still"
-        : eye.blink > 0.4
-          ? "blink"
-          : "tracking";
-      if (state !== lastEyeState) {
-        document.getElementById("eye-state").textContent = state;
-        lastEyeState = state;
-      }
+    }
+
+    // The eye's line of sight: dashed ray from the pupil to a small reticle.
+    function drawSight(ctx, colors) {
+      const layer = surfaces.eye;
+      if (!layer.width || eye.open < 0.25 || !sight.ready) return;
+      const fromX = layer.left + eye.px;
+      const fromY = layer.top + eye.py;
+      const toX = sight.x;
+      const toY = sight.y;
+      const length = Math.hypot(toX - fromX, toY - fromY);
+      if (length < 40) return;
+      ctx.save();
+      ctx.strokeStyle = colors.text;
+      ctx.lineWidth = 0.7;
+      ctx.globalAlpha = 0.42;
+      ctx.setLineDash([3, 4]);
+      ctx.lineDashOffset = -clock * 0.02;
+      ctx.beginPath();
+      ctx.moveTo(fromX, fromY);
+      ctx.lineTo(toX, toY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 0.75;
+      ctx.strokeRect(Math.round(toX - 12) + 0.5, Math.round(toY - 8) + 0.5, 24, 16);
+      ctx.restore();
     }
 
     function measureKeys() {
@@ -288,7 +406,7 @@
             index * layer.width * 0.061 +
             rowIndex * layer.width * 0.018;
           const fallbackY = 12 + rowIndex * 19;
-          keyPositions.set(label, {
+          keyPositions.set(label === "space" ? "space" : label, {
             x: bounds.width
               ? bounds.left + bounds.width / 2 - layer.left
               : label === "space"
@@ -301,6 +419,15 @@
           });
         });
       });
+      let right = 0;
+      let homeY = 0;
+      for (const [label, position] of keyPositions) {
+        right = Math.max(right, position.x);
+        if (label === "j") homeY = position.y;
+      }
+      mouse.x = right + 52;
+      mouse.y = homeY + 30;
+      mouse.ready = right > 0;
     }
 
     function handRest(side) {
@@ -367,7 +494,7 @@
 
     function drawHands(time, dt) {
       const layer = surfaces.hands;
-      if (!layer.context || !layer.width || workspaceMode) return;
+      if (!layer.context || !layer.width || !workspaceMode) return;
       const { context: ctx, width, height } = layer;
       const colors = palette();
       ctx.clearRect(0, 0, width, height);
@@ -400,12 +527,50 @@
         [18, 19],
         [19, 20],
       ];
+      const onMouse = mouseActive() && mouse.ready;
+      if (!onMouse) {
+        mouse.ox *= 0.92;
+        mouse.oy *= 0.92;
+      }
+      const mouseX = mouse.x + mouse.ox;
+      const mouseY = mouse.y + mouse.oy;
+      if (mouse.ready) {
+        ctx.strokeStyle = colors.muted;
+        ctx.lineWidth = 0.7;
+        ctx.globalAlpha = 0.6;
+        ctx.beginPath();
+        ctx.roundRect
+          ? ctx.roundRect(mouseX - 11, mouseY - 12, 22, 34, 11)
+          : ctx.rect(mouseX - 11, mouseY - 12, 22, 34);
+        ctx.moveTo(mouseX, mouseY - 12);
+        ctx.lineTo(mouseX, mouseY - 1);
+        ctx.stroke();
+        ctx.strokeRect(mouseX - 1.5, mouseY - 9, 3, 5);
+        if (onMouse) {
+          ctx.fillStyle = colors.muted;
+          ctx.globalAlpha = 0.64;
+          ctx.font = `${width < 350 ? 5 : 6}px monospace`;
+          ctx.textAlign = "left";
+          ctx.fillText(
+            `['mouse:u'] ${(pointer.x / innerWidth).toFixed(7)}`,
+            mouseX + 16,
+            mouseY - 4,
+          );
+          ctx.fillText((pointer.y / innerHeight).toFixed(7), mouseX + 16, mouseY + 4);
+        }
+      }
       for (let side = 0; side < 2; side++) {
         const rest = handRest(side);
         if (!rest) continue;
         const hand = hands[side];
-        const gain = motion() ? 1 - Math.exp(-dt * 27) : 1;
-        if (hand.fingers.every((finger) => time > finger.until + 90)) {
+        const gain = motion() ? 1 - Math.exp(-dt * (side && onMouse ? 10 : 27)) : 1;
+        if (side && onMouse) {
+          const tips = [8, 12, 16, 20].map((index) => rest.points[index]);
+          const tipX = tips.reduce((sum, point) => sum + point.x, 0) / 4;
+          const tipY = tips.reduce((sum, point) => sum + point.y, 0) / 4;
+          hand.targetX = mouseX - tipX;
+          hand.targetY = mouseY - 12 - tipY;
+        } else if (hand.fingers.every((finger) => time > finger.until + 90)) {
           hand.targetX = 0;
           hand.targetY = 0;
         }
@@ -473,56 +638,70 @@
       ctx.clearRect(0, 0, width, height);
       ctx.strokeStyle = colors.text;
       ctx.fillStyle = colors.text;
-      ctx.lineWidth = 0.7;
+      ctx.lineCap = "round";
       const roots = [];
       for (let index = 0; index < 70; index++) {
         const y = 18 + ((height - 43) * index) / 69;
         const sway =
-          Math.sin(index * 0.12 + time * 0.00038 + wheelPosition * 0.28) * 15;
+          Math.sin(index * 0.12 + time * 0.00038 + wheelPosition * 0.28) * 13;
         roots.push({
-          x: 75 + sway + Math.sin(index * 0.39 + wheelPosition * 0.2) * 4,
+          x: 82 + sway + Math.sin(index * 0.39 + wheelPosition * 0.2) * 4,
           y,
         });
       }
-      ctx.globalAlpha = 0.67;
-      ctx.beginPath();
-      roots.forEach((point, index) =>
-        index ? ctx.lineTo(point.x, point.y) : ctx.moveTo(point.x, point.y),
-      );
-      ctx.stroke();
+      // Trunk: thicker in the middle, tapering at both ends.
+      for (let index = 1; index < roots.length; index++) {
+        const t = index / roots.length;
+        ctx.globalAlpha = 0.8;
+        ctx.lineWidth = 0.8 + Math.sin(t * Math.PI) * 2.2;
+        ctx.beginPath();
+        ctx.moveTo(roots[index - 1].x, roots[index - 1].y);
+        ctx.lineTo(roots[index].x, roots[index].y);
+        ctx.stroke();
+      }
       roots.forEach((root, index) => {
         const cluster = (Math.sin(index * 0.29 - wheelPosition * 0.21) + 1) / 2;
-        if (cluster < 0.54 || index % 2) return;
-        const count = 7 + Math.floor(cluster * 12);
+        if (cluster < 0.55 || index % 2) return;
+        const count = 9 + Math.floor(cluster * 16);
         for (let ray = 0; ray < count; ray++) {
-          const phase = noise(index * 51 + ray);
-          const direction = phase > 0.38 ? -1 : 1;
-          const length = 12 + noise(index * 7 + ray + 90) * 68 * cluster;
-          const endX = root.x + length * direction;
-          const endY = root.y + (noise(index * 61 + ray + 21) - 0.5) * 75;
-          const bendX = root.x + direction * length * 0.3;
-          const bendY =
-            root.y +
-            (endY - root.y) * 0.32 +
-            Math.sin(time * 0.00055 + ray) * 1.4;
-          ctx.globalAlpha = 0.15 + noise(ray * 11 + index) * 0.35;
+          const seed = index * 51 + ray;
+          const direction = noise(seed) > 0.32 ? -1 : 1;
+          const length = 8 + noise(seed + 90) ** 1.6 * 78 * cluster;
+          const angle =
+            (noise(seed + 21) - 0.5) * 1.5 + Math.sin(time * 0.0006 + ray) * 0.04;
+          const endX = root.x + Math.cos(angle) * length * direction;
+          const endY = root.y + Math.sin(angle) * length;
+          const midX = root.x + (endX - root.x) * 0.45;
+          const midY = root.y + (endY - root.y) * 0.45 - 2;
+          ctx.globalAlpha = 0.35 + noise(seed + 7) * 0.5;
+          ctx.lineWidth = 1.7;
           ctx.beginPath();
           ctx.moveTo(root.x, root.y);
-          ctx.lineTo(bendX, bendY);
+          ctx.lineTo(midX, midY);
+          ctx.stroke();
+          ctx.lineWidth = 0.6;
+          ctx.beginPath();
+          ctx.moveTo(midX, midY);
           ctx.lineTo(endX, endY);
           ctx.stroke();
-          ctx.globalAlpha = 0.65;
-          ctx.fillRect(endX, endY, 1.1, 1.1);
-          if (ray % 3 === 0) {
-            ctx.globalAlpha = 0.18;
+          if (noise(seed + 3) > 0.45) {
+            ctx.globalAlpha = 0.85;
             ctx.beginPath();
-            ctx.moveTo(endX, endY);
-            ctx.lineTo(root.x + direction * length * 0.68, endY - 15);
-            ctx.stroke();
+            ctx.arc(endX, endY, 0.6 + noise(seed + 5) * 1.6, 0, Math.PI * 2);
+            ctx.fill();
           }
         }
-        ctx.globalAlpha = 0.74;
-        ctx.fillRect(root.x - 1, root.y - 1, 2, 2);
+        // Ink blot where the cluster leaves the stem.
+        ctx.globalAlpha = 0.9;
+        ctx.beginPath();
+        for (let step = 0; step <= 12; step++) {
+          const a = (step / 12) * Math.PI * 2;
+          const r = 2.5 + cluster * 4 + noise(index * 13 + step) * 3;
+          const x = root.x + Math.cos(a) * r;
+          const y = root.y + Math.sin(a) * r * 0.8;
+          step ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        }
+        ctx.fill();
       });
       ctx.globalAlpha = 1;
     }
@@ -585,8 +764,8 @@
       resize();
       const origin = surfaces.eye;
       drawEye(clock, 1 / 60, true);
-      const pupilX = origin.width / 2 + eye.x * origin.width * 0.46 * 0.32;
-      const pupilY = origin.height * 0.47 + eye.y * origin.height * 0.36 * 0.33;
+      const pupilX = eye.px;
+      const pupilY = eye.py;
       entry = {
         started: time,
         duration,
@@ -691,11 +870,12 @@
       if (!layer.context || !layer.width) return;
       const { context: ctx, width, height } = layer;
       ctx.clearRect(0, 0, width, height);
+      const colors = palette();
+      drawSight(ctx, colors);
       if (!motion()) {
         trail.length = 0;
         return;
       }
-      const colors = palette();
       while (trail.length && time - trail[0].born > 650) trail.shift();
       ctx.fillStyle = colors.accent;
       ctx.font = "8px monospace";
@@ -711,6 +891,8 @@
     return {
       resize,
       setKey,
+      setEyeText,
+      mouseActive,
       trackPointer,
       beginEntry,
       endEntry,

@@ -244,6 +244,9 @@
       "claudio — " + panel.dataset.path;
     document.getElementById("status-section").textContent =
       items[currentIndex].querySelector(".wheel-title").textContent;
+    visuals.setEyeText(panel.innerText);
+    resetGhost(panel);
+    updateStats(panel);
     commandOutput.replaceChildren();
     scroller.scrollTop = 0;
     if (options.history !== false) setHash(panelId);
@@ -267,6 +270,8 @@
     if (options.history !== false) setHash("");
     window.scrollTo({ top: 0, behavior: "instant" });
     visuals.resize();
+    visuals.setEyeText(snippets[snippetIndex].code.join(" "));
+    setGhostState("idle");
     renderCode();
     paintFrame(sceneTime);
     if (options.focus)
@@ -431,8 +436,6 @@
           String(button.dataset.themeChoice === theme),
         ),
       );
-    document.getElementById("status-theme").textContent =
-      theme === "fosforo" ? "fósforo" : theme;
     readPalette();
     document
       .querySelector('meta[name="theme-color"]')
@@ -767,7 +770,7 @@
 
   const snippets = [
     {
-      file: "portfolio / claudio.py",
+      file: "~/portfolio/claudio.py",
       code: [
         "# Claudio Meireles — código, dados e ideias.",
         "# Backend / Data Engineering / Artificial Intelligence",
@@ -815,7 +818,7 @@
       ],
     },
     {
-      file: "portfolio / pipeline.py",
+      file: "~/portfolio/pipeline.py",
       code: [
         "# Tudo começa com um evento.",
         "from collections import deque",
@@ -871,7 +874,7 @@
   function highlightLine(text) {
     const fragment = document.createDocumentFragment();
     const tokens =
-      /(#.*$|"[^"]*"|'[^']*'|\b(?:from|import|class|def|return|for|in|if|while|yield|is|not|None|True|False)\b)/g;
+      /(#.*$|"[^"]*"|'[^']*'|\b\d+\b|\b(?:from|import|class|def|return|for|in|if|while|yield|is|not|None|True|False|self)\b)/g;
     let position = 0;
     for (const match of text.matchAll(tokens)) {
       fragment.append(
@@ -882,7 +885,9 @@
         ? "code-comment"
         : /^["']/.test(match[0])
           ? "code-string"
-          : "code-keyword";
+          : /^\d/.test(match[0])
+            ? "code-number-literal"
+            : "code-keyword";
       span.textContent = match[0];
       fragment.append(span);
       position = match.index + match[0].length;
@@ -893,7 +898,9 @@
 
   function renderCode() {
     const snippet = snippets[snippetIndex];
-    document.getElementById("source-label").textContent = snippet.file;
+    document.getElementById("source-path").textContent = snippet.file;
+    document.getElementById("landing-file").textContent =
+      snippet.file.replace("~/", "") + ":" + (activeLine + 1);
     const fragment = document.createDocumentFragment();
     snippet.code.forEach((line, index) => {
       const row = document.createElement("div");
@@ -907,26 +914,26 @@
       number.textContent = String(index + 1);
       const source = document.createElement("span");
       source.className = "code-source";
-      source.append(
-        highlightLine(
-          future
-            ? ""
-            : index === activeLine && motionEnabled
-              ? line.slice(0, activeCharacter)
-              : line,
-        ),
-      );
+      const typing = index === activeLine && motionEnabled;
+      source.append(highlightLine(typing ? line.slice(0, activeCharacter) : line));
       if (index === activeLine) {
         const caret = document.createElement("span");
         caret.className = "code-caret";
         source.append(caret);
+        if (typing && activeCharacter < line.length) {
+          const rest = document.createElement("span");
+          rest.className = "code-rest";
+          rest.textContent = line.slice(activeCharacter + 1);
+          source.append(rest);
+        }
       }
       row.append(number, source);
       fragment.append(row);
     });
     codeTrack.replaceChildren(fragment);
+    const percent = Math.round(((activeLine + 1) / snippet.code.length) * 100);
     document.getElementById("code-position").textContent =
-      `${activeLine + 1}:${activeCharacter + 1}`;
+      `${activeLine + 1}:${activeCharacter + 1}  ${percent}%`;
   }
 
   function updateCode(time) {
@@ -946,6 +953,7 @@
         activeLine++;
         if (activeLine >= snippets[snippetIndex].code.length) {
           snippetIndex = (snippetIndex + 1) % snippets.length;
+          visuals.setEyeText(snippets[snippetIndex].code.join(" "));
           activeLine = 3;
           codeScroll.value = 0;
           codeScroll.target = 0;
@@ -962,16 +970,23 @@
     if (highlightedKey) highlightedKey.classList.add("key-lit");
   }
 
-  function updateCodeScroll(dt) {
-    const typedLines = motionEnabled
-      ? activeLine + 1
-      : snippets[snippetIndex].code.length;
-    const available = Math.max(
+  function rowHeight() {
+    return codeTrack.firstElementChild?.offsetHeight || 15;
+  }
+  function maxCodeScroll() {
+    return Math.max(
       0,
-      typedLines * 15 - codeStage.clientHeight + 45,
+      snippets[snippetIndex].code.length * rowHeight() - codeStage.clientHeight + 30,
+    );
+  }
+  function updateCodeScroll(dt) {
+    // Keep the line being typed a little above the middle, like a real editor.
+    const available = Math.min(
+      maxCodeScroll(),
+      Math.max(0, activeLine * rowHeight() - codeStage.clientHeight * 0.42),
     );
     if (sceneTime > codeScroll.manualUntil) codeScroll.target = available;
-    codeScroll.target = Math.max(0, Math.min(available, codeScroll.target));
+    codeScroll.target = Math.max(0, Math.min(maxCodeScroll(), codeScroll.target));
     codeScroll.value +=
       (codeScroll.target - codeScroll.value) *
       (motionEnabled ? 1 - Math.exp(-dt * 10) : 1);
@@ -988,13 +1003,7 @@
           : event.deltaMode === 2
             ? codeStage.clientHeight
             : 1;
-      const max = Math.max(
-        0,
-        (motionEnabled ? activeLine + 1 : snippets[snippetIndex].code.length) *
-          15 -
-          codeStage.clientHeight +
-          45,
-      );
+      const max = maxCodeScroll();
       codeScroll.target = Math.max(
         0,
         Math.min(max, codeScroll.target + event.deltaY * unit),
@@ -1005,10 +1014,148 @@
     { passive: false },
   );
 
+  function centerOf(element) {
+    if (!element) return null;
+    const rect = element.getBoundingClientRect();
+    if (!rect.width && !rect.height) return null;
+    return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+  }
   const visuals = window.PortfolioVisuals.create({
     palette: () => palette,
     motion: () => motionEnabled,
+    // When the visitor's mouse is still, the eye watches the work:
+    // the caret on the landing, the selected card in the workspace.
+    focus: () =>
+      inWorkspace
+        ? centerOf(items[currentIndex])
+        : centerOf(codeTrack.querySelector(".code-caret")),
   });
+  visuals.setEyeText(snippets[snippetIndex].code.join(" "));
+
+  // Ghost: when the visitor is idle, the hands type the open panel.
+  const ghost = { text: "", position: 0, next: 0, burstLeft: 0, state: "" };
+  function setGhostState(state) {
+    if (ghost.state === state) return;
+    ghost.state = state;
+    document.getElementById("ghost-state").textContent = state;
+  }
+  function resetGhost(panel) {
+    ghost.text = panel.innerText.replace(/\s+/g, " ").trim().toLowerCase();
+    ghost.position = 0;
+    ghost.next = sceneTime + 1800;
+    ghost.burstLeft = 0;
+  }
+  function updateGhost(time) {
+    const idle = !visuals.mouseActive() && !drag;
+    if (!idle || !ghost.text) {
+      setGhostState("idle");
+      ghost.next = Math.max(ghost.next, time + 900);
+      return;
+    }
+    if (time < ghost.next) {
+      if (ghost.burstLeft <= 0) setGhostState("idle");
+      return;
+    }
+    if (ghost.burstLeft <= 0) ghost.burstLeft = 30 + Math.floor(Math.random() * 60);
+    const character = ghost.text[ghost.position % ghost.text.length];
+    ghost.position++;
+    ghost.burstLeft--;
+    visuals.setKey(character === " " ? " " : character);
+    setGhostState("typing");
+    ghost.next =
+      time +
+      (ghost.burstLeft <= 0
+        ? 1600 + Math.random() * 2200
+        : character === " "
+          ? 140 + Math.random() * 90
+          : 55 + Math.random() * 85);
+  }
+
+  // Real numbers from GitHub for the status bar.
+  const github = { user: null, repos: null, loading: null };
+  function loadGithub() {
+    if (github.loading) return github.loading;
+    try {
+      const cached = JSON.parse(sessionStorage.getItem("cm-github") || "null");
+      if (cached && Date.now() - cached.at < 30 * 60 * 1000) {
+        Object.assign(github, cached);
+        github.loading = Promise.resolve();
+        return github.loading;
+      }
+    } catch {
+      /* No cache available. */
+    }
+    github.loading = Promise.all([
+      fetch("https://api.github.com/users/ClaudioAMF1").then((r) =>
+        r.ok ? r.json() : null,
+      ),
+      fetch("https://api.github.com/users/ClaudioAMF1/repos?per_page=100").then(
+        (r) => (r.ok ? r.json() : null),
+      ),
+    ])
+      .then(([user, repos]) => {
+        github.user = user;
+        github.repos = Array.isArray(repos) ? repos : null;
+        try {
+          sessionStorage.setItem(
+            "cm-github",
+            JSON.stringify({ at: Date.now(), user, repos: github.repos }),
+          );
+        } catch {
+          /* Cache is optional. */
+        }
+      })
+      .catch(() => {});
+    return github.loading;
+  }
+  function setStats(entries) {
+    ["a", "b", "c"].forEach((key, index) => {
+      document.getElementById("stat-" + key + "-label").textContent =
+        entries[index][0];
+      document.getElementById("stat-" + key).textContent = entries[index][1];
+    });
+  }
+  function format(number) {
+    return typeof number === "number"
+      ? number.toLocaleString("pt-BR").replace(/\./g, "'")
+      : "—";
+  }
+  function updateStats(panel) {
+    const repoName = panel.dataset.repo;
+    if (repoName === "private") {
+      setStats([
+        ["stars", "—"],
+        ["forks", "—"],
+        ["repo", "privado"],
+      ]);
+      return;
+    }
+    if (repoName) {
+      const repo = github.repos?.find(
+        (entry) => entry.name.toLowerCase() === repoName.toLowerCase(),
+      );
+      setStats([
+        ["stars", format(repo?.stargazers_count)],
+        ["forks", format(repo?.forks_count)],
+        ["lang", repo?.language?.toLowerCase() || "—"],
+      ]);
+    } else {
+      const stars = github.repos?.reduce(
+        (sum, entry) => sum + (entry.fork ? 0 : entry.stargazers_count),
+        0,
+      );
+      setStats([
+        ["repos", format(github.user?.public_repos)],
+        ["stars", format(stars)],
+        ["followers", format(github.user?.followers)],
+      ]);
+    }
+    if (!github.user && !github.repos)
+      loadGithub().then(() => {
+        if (inWorkspace && panels.find((entry) => !entry.hidden) === panel)
+          updateStats(panel);
+      });
+  }
   function resizeCanvases() {
     visuals.resize();
   }
@@ -1021,7 +1168,10 @@
     if (time - lastFrame >= 16) {
       const dt = lastFrame ? Math.min(0.05, (time - lastFrame) / 1000) : 1 / 60;
       sceneTime += dt * 1000;
-      if (inWorkspace) animateWheel(dt);
+      if (inWorkspace) {
+        animateWheel(dt);
+        updateGhost(sceneTime);
+      }
       else if (!entering) {
         updateCode(sceneTime);
         updateCodeScroll(dt);

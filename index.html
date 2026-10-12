@@ -147,57 +147,13 @@
           <div class="code-track" id="code-track"></div>
         </div>
         <div class="editor-mode">
-          <span class="mode-badge">NORMAL</span><span>python</span
-          ><span>utf-8</span><span id="code-position">1:1</span>
-        </div>
-      </div>
-      <div class="landing-keyboard" aria-hidden="true">
-        <div class="key-row">
-          <span>esc</span><span>1</span><span>2</span><span>3</span
-          ><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span
-          ><span>9</span><span>0</span><span>-</span><span>=</span
-          ><span>←</span>
-        </div>
-        <div class="key-row">
-          <span>tab</span><span>q</span><span>w</span><span>e</span
-          ><span>r</span><span>t</span><span>y</span><span>u</span><span>i</span
-          ><span>o</span><span>p</span><span>[</span><span>]</span
-          ><span>\</span>
-        </div>
-        <div class="key-row">
-          <span>caps</span><span>a</span><span>s</span><span>d</span
-          ><span>f</span><span>g</span><span>h</span><span>j</span><span>k</span
-          ><span>l</span><span>;</span><span>'</span><span>↵</span>
-        </div>
-        <div class="key-row">
-          <span>⇧</span><span>z</span><span>x</span><span>c</span><span>v</span
-          ><span>b</span><span>n</span><span>m</span><span>,</span><span>.</span
-          ><span>/</span><span>⇧</span>
-        </div>
-        <div class="key-row space-row"><span>space</span></div>
-        <div class="keyboard-traces">
-          <canvas id="hands-canvas" aria-hidden="true"></canvas>
-          <svg viewBox="0 0 310 74">
-            <g fill="none" stroke="currentColor" stroke-width=".65">
-              <path
-                d="M12 5H116V69H12ZM194 5H298V69H194ZM12 5 50 50 80 69 116 5M194 5 227 69 263 50 298 5M12 5 46 8 52 41 82 43 89 8 116 5M194 5 222 8 229 43 259 41 265 8 298 5M116 34H194M155 5V69"
-              />
-            </g>
-            <g fill="currentColor">
-              <circle cx="46" cy="8" r="1.4" />
-              <circle cx="52" cy="41" r="1.4" />
-              <circle cx="82" cy="43" r="1.4" />
-              <circle cx="89" cy="8" r="1.4" />
-              <circle cx="222" cy="8" r="1.4" />
-              <circle cx="229" cy="43" r="1.4" />
-              <circle cx="259" cy="41" r="1.4" />
-              <circle cx="265" cy="8" r="1.4" />
-            </g>
-          </svg>
+          <span class="mode-badge">NORMAL</span
+          ><span id="source-path">~/portfolio/claudio.py</span
+          ><span id="code-position">1:1</span>
         </div>
       </div>
       <div class="landing-footer">
-        <p>// código, dados e ideias.</p>
+        <p id="landing-file">portfolio/claudio.py:1</p>
         <div>
           <button
             class="text-button theme-trigger"
@@ -475,6 +431,7 @@
           <article
             class="content-panel"
             id="clinica"
+            data-repo="private"
             data-path="~/projetos/vm-clinica"
             aria-labelledby="clinica-title"
           >
@@ -592,6 +549,7 @@
           <article
             class="content-panel"
             id="camf"
+            data-repo="CAMF"
             data-path="~/projetos/camf-boletos"
             aria-labelledby="camf-title"
           >
@@ -713,6 +671,7 @@
           <article
             class="content-panel"
             id="scoutlink"
+            data-repo="IDP-Scoutlink"
             data-path="~/projetos/scoutlink"
             aria-labelledby="scoutlink-title"
           >
@@ -824,6 +783,7 @@
           <article
             class="content-panel"
             id="legitrack"
+            data-repo="private"
             data-path="~/projetos/legitrack"
             aria-labelledby="legitrack-title"
           >
@@ -929,6 +889,7 @@
           <article
             class="content-panel"
             id="crypto"
+            data-repo="crypto-analytics-pipeline"
             data-path="~/projetos/crypto-pipeline"
             aria-labelledby="crypto-title"
           >
@@ -1038,6 +999,7 @@
           <article
             class="content-panel"
             id="soccer"
+            data-repo="soccer-video-analytics"
             data-path="~/projetos/soccer-vision"
             aria-labelledby="soccer-title"
           >
@@ -1143,6 +1105,7 @@
           <article
             class="content-panel"
             id="pesquisa"
+            data-repo="TCC"
             data-path="~/pesquisa/tcc"
             aria-labelledby="pesquisa-title"
           >
@@ -1613,20 +1576,28 @@
         </div>
         <dl>
           <div>
-            <dt>projetos</dt>
-            <dd>07</dd>
+            <dt id="stat-a-label">repos</dt>
+            <dd id="stat-a">—</dd>
+          </div>
+          <div>
+            <dt id="stat-b-label">stars</dt>
+            <dd id="stat-b">—</dd>
+          </div>
+          <div>
+            <dt id="stat-c-label">followers</dt>
+            <dd id="stat-c">—</dd>
           </div>
           <div>
             <dt>seção</dt>
             <dd id="status-section">whoami</dd>
           </div>
           <div>
-            <dt>tema</dt>
-            <dd id="status-theme">noite</dd>
+            <dt>eye</dt>
+            <dd id="eye-state">tracking</dd>
           </div>
           <div>
-            <dt>olho</dt>
-            <dd id="eye-state">tracking</dd>
+            <dt>ghost</dt>
+            <dd id="ghost-state">idle</dd>
           </div>
         </dl>
         <button
@@ -1640,6 +1611,51 @@
           ><span id="motion-label" data-motion-label>movimento on</span>
         </button>
       </footer>
+      <div class="landing-keyboard desk" aria-hidden="true">
+        <div class="key-row">
+          <span>esc</span><span>1</span><span>2</span><span>3</span
+          ><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span
+          ><span>9</span><span>0</span><span>-</span><span>=</span
+          ><span>←</span>
+        </div>
+        <div class="key-row">
+          <span>tab</span><span>q</span><span>w</span><span>e</span
+          ><span>r</span><span>t</span><span>y</span><span>u</span><span>i</span
+          ><span>o</span><span>p</span><span>[</span><span>]</span
+          ><span>\</span>
+        </div>
+        <div class="key-row">
+          <span>caps</span><span>a</span><span>s</span><span>d</span
+          ><span>f</span><span>g</span><span>h</span><span>j</span><span>k</span
+          ><span>l</span><span>;</span><span>'</span><span>↵</span>
+        </div>
+        <div class="key-row">
+          <span>⇧</span><span>z</span><span>x</span><span>c</span><span>v</span
+          ><span>b</span><span>n</span><span>m</span><span>,</span><span>.</span
+          ><span>/</span><span>⇧</span>
+        </div>
+        <div class="key-row space-row"><span>space</span></div>
+        <div class="keyboard-traces">
+          <canvas id="hands-canvas" aria-hidden="true"></canvas>
+          <svg viewBox="0 0 310 74">
+            <g fill="none" stroke="currentColor" stroke-width=".65">
+              <path
+                d="M12 5H116V69H12ZM194 5H298V69H194ZM12 5 50 50 80 69 116 5M194 5 227 69 263 50 298 5M12 5 46 8 52 41 82 43 89 8 116 5M194 5 222 8 229 43 259 41 265 8 298 5M116 34H194M155 5V69"
+              />
+            </g>
+            <g fill="currentColor">
+              <circle cx="46" cy="8" r="1.4" />
+              <circle cx="52" cy="41" r="1.4" />
+              <circle cx="82" cy="43" r="1.4" />
+              <circle cx="89" cy="8" r="1.4" />
+              <circle cx="222" cy="8" r="1.4" />
+              <circle cx="229" cy="43" r="1.4" />
+              <circle cx="259" cy="41" r="1.4" />
+              <circle cx="265" cy="8" r="1.4" />
+            </g>
+          </svg>
+        </div>
+      </div>
     </main>
     <dialog
       class="theme-dialog"
