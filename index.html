@@ -63,17 +63,34 @@
         <circle class="filled" cx="49" cy="10" r="1.5" />
         <circle class="filled" cx="19" cy="26" r="1.5" />
       </symbol>
-      <symbol id="icon-air" viewBox="0 0 80 40">
-        <path
-          d="M2 12H52C65 12 65 2 58 2M2 21H70C80 21 80 10 72 10M2 30H45C58 30 58 39 51 39"
-        />
-        <path class="faint-stroke" d="M11 7V35M24 7V35M37 7V35" />
+      <symbol id="icon-clinic" viewBox="0 0 80 40">
+        <path d="M2 22H22L27 10 33 34 39 4 45 28 49 22H78" />
+        <path class="faint-stroke" d="M64 6V18M58 12H70" />
       </symbol>
-      <symbol id="icon-certificate" viewBox="0 0 80 40">
-        <rect x="15" y="2" width="50" height="35" rx="1" />
-        <path d="M24 10H56M24 16H50M24 22H42" />
-        <circle cx="53" cy="28" r="5" />
-        <path d="M50 33 49 39 53 37 57 39 56 33" />
+      <symbol id="icon-invoice" viewBox="0 0 80 40">
+        <rect x="6" y="3" width="68" height="34" rx="1" />
+        <path
+          d="M14 10V30M18 10V30M21 10V30M27 10V30M30 10V30M36 10V30M39 10V30M44 10V30M49 10V30M52 10V30M58 10V30M62 10V30M66 10V30"
+        />
+      </symbol>
+      <symbol id="icon-scout" viewBox="0 0 80 40">
+        <path class="faint-stroke" d="M2 8H40M2 16H30" />
+        <path d="M4 34 24 24 46 30 76 12" />
+        <circle cx="24" cy="24" r="4" />
+        <circle cx="46" cy="30" r="4" />
+        <circle class="filled" cx="76" cy="12" r="2" />
+      </symbol>
+      <symbol id="icon-gov" viewBox="0 0 80 40">
+        <path
+          d="M14 12 40 3 66 12ZM14 37H66M20 14V33M30 14V33M40 14V33M50 14V33M60 14V33"
+        />
+      </symbol>
+      <symbol id="icon-research" viewBox="0 0 80 40">
+        <rect x="24" y="2" width="20" height="36" rx="3" />
+        <path d="M30 33H38" />
+        <circle cx="54" cy="18" r="9" />
+        <path d="M60 25 70 35" />
+        <path class="faint-stroke" d="M2 10H18M2 18H14M2 26H18" />
       </symbol>
       <symbol id="icon-stack" viewBox="0 0 80 40">
         <path d="m22 8-14 12 14 12M58 8l14 12-14 12M47 4 33 36" />
@@ -130,57 +147,13 @@
           <div class="code-track" id="code-track"></div>
         </div>
         <div class="editor-mode">
-          <span class="mode-badge">NORMAL</span><span>python</span
-          ><span>utf-8</span><span id="code-position">1:1</span>
-        </div>
-      </div>
-      <div class="landing-keyboard" aria-hidden="true">
-        <div class="key-row">
-          <span>esc</span><span>1</span><span>2</span><span>3</span
-          ><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span
-          ><span>9</span><span>0</span><span>-</span><span>=</span
-          ><span>←</span>
-        </div>
-        <div class="key-row">
-          <span>tab</span><span>q</span><span>w</span><span>e</span
-          ><span>r</span><span>t</span><span>y</span><span>u</span><span>i</span
-          ><span>o</span><span>p</span><span>[</span><span>]</span
-          ><span>\</span>
-        </div>
-        <div class="key-row">
-          <span>caps</span><span>a</span><span>s</span><span>d</span
-          ><span>f</span><span>g</span><span>h</span><span>j</span><span>k</span
-          ><span>l</span><span>;</span><span>'</span><span>↵</span>
-        </div>
-        <div class="key-row">
-          <span>⇧</span><span>z</span><span>x</span><span>c</span><span>v</span
-          ><span>b</span><span>n</span><span>m</span><span>,</span><span>.</span
-          ><span>/</span><span>⇧</span>
-        </div>
-        <div class="key-row space-row"><span>space</span></div>
-        <div class="keyboard-traces">
-          <canvas id="hands-canvas" aria-hidden="true"></canvas>
-          <svg viewBox="0 0 310 74">
-            <g fill="none" stroke="currentColor" stroke-width=".65">
-              <path
-                d="M12 5H116V69H12ZM194 5H298V69H194ZM12 5 50 50 80 69 116 5M194 5 227 69 263 50 298 5M12 5 46 8 52 41 82 43 89 8 116 5M194 5 222 8 229 43 259 41 265 8 298 5M116 34H194M155 5V69"
-              />
-            </g>
-            <g fill="currentColor">
-              <circle cx="46" cy="8" r="1.4" />
-              <circle cx="52" cy="41" r="1.4" />
-              <circle cx="82" cy="43" r="1.4" />
-              <circle cx="89" cy="8" r="1.4" />
-              <circle cx="222" cy="8" r="1.4" />
-              <circle cx="229" cy="43" r="1.4" />
-              <circle cx="259" cy="41" r="1.4" />
-              <circle cx="265" cy="8" r="1.4" />
-            </g>
-          </svg>
+          <span class="mode-badge">NORMAL</span
+          ><span id="source-path">~/portfolio/claudio.py</span
+          ><span id="code-position">1:1</span>
         </div>
       </div>
       <div class="landing-footer">
-        <p>// código, dados e ideias.</p>
+        <p id="landing-file">portfolio/claudio.py:1</p>
         <div>
           <button
             class="text-button theme-trigger"
@@ -215,7 +188,7 @@
           aria-hidden="true"
         ></canvas>
         <div class="explorer-heading">
-          <span>~/portfolio</span><span class="muted">09 arquivos</span>
+          <span>~/portfolio</span><span class="muted">12 arquivos</span>
         </div>
         <nav
           class="project-wheel"
@@ -232,54 +205,71 @@
             ><span class="wheel-title">whoami</span
             ><span class="wheel-index">00</span></a
           >
+          <a class="wheel-item" href="#clinica" data-panel="clinica"
+            ><span class="wheel-preview"
+              ><img src="assets/shots/thumbs/vm-dashboard.webp" alt="" width="320" height="200" loading="lazy" /></span
+            ><span class="wheel-title">vm-clinica</span
+            ><span class="wheel-index">01</span></a
+          >
+          <a class="wheel-item" href="#camf" data-panel="camf"
+            ><span class="wheel-preview"
+              ><img src="assets/shots/thumbs/camf-dashboard.webp" alt="" width="320" height="200" loading="lazy" /></span
+            ><span class="wheel-title">camf-boletos</span
+            ><span class="wheel-index">02</span></a
+          >
+          <a class="wheel-item" href="#scoutlink" data-panel="scoutlink"
+            ><span class="wheel-preview"
+              ><img src="assets/shots/thumbs/sl-comunicacao.webp" alt="" width="320" height="200" loading="lazy" /></span
+            ><span class="wheel-title">scoutlink</span
+            ><span class="wheel-index">03</span></a
+          >
+          <a class="wheel-item" href="#legitrack" data-panel="legitrack"
+            ><span class="wheel-preview"
+              ><svg aria-hidden="true"><use href="#icon-gov" /></svg></span
+            ><span class="wheel-title">legitrack</span
+            ><span class="wheel-index">04</span></a
+          >
           <a class="wheel-item" href="#crypto" data-panel="crypto"
             ><span class="wheel-preview"
               ><svg aria-hidden="true"><use href="#icon-data" /></svg></span
             ><span class="wheel-title">crypto-pipeline</span
-            ><span class="wheel-index">01</span></a
+            ><span class="wheel-index">05</span></a
           >
           <a class="wheel-item" href="#soccer" data-panel="soccer"
             ><span class="wheel-preview"
               ><svg aria-hidden="true"><use href="#icon-football" /></svg></span
             ><span class="wheel-title">soccer-vision</span
-            ><span class="wheel-index">02</span></a
+            ><span class="wheel-index">06</span></a
           >
-          <a class="wheel-item" href="#air" data-panel="air"
+          <a class="wheel-item" href="#pesquisa" data-panel="pesquisa"
             ><span class="wheel-preview"
-              ><svg aria-hidden="true"><use href="#icon-air" /></svg></span
-            ><span class="wheel-title">air-quality</span
-            ><span class="wheel-index">03</span></a
-          >
-          <a class="wheel-item" href="#carreta" data-panel="carreta"
-            ><span class="wheel-preview"
-              ><svg aria-hidden="true">
-                <use href="#icon-certificate" /></svg></span
-            ><span class="wheel-title">carreta-digital</span
-            ><span class="wheel-index">04</span></a
+              ><svg aria-hidden="true"><use href="#icon-research" /></svg></span
+            ><span class="wheel-title">tcc-pesquisa</span
+            ><span class="wheel-index">07</span></a
           >
           <a class="wheel-item" href="#skills" data-panel="skills"
             ><span class="wheel-preview"
               ><svg aria-hidden="true"><use href="#icon-stack" /></svg></span
             ><span class="wheel-title">stack/</span
-            ><span class="wheel-index">05</span></a
+            ><span class="wheel-index">08</span></a
           >
           <a class="wheel-item" href="#experience" data-panel="experience"
             ><span class="wheel-preview"
               ><svg aria-hidden="true"><use href="#icon-log" /></svg></span
             ><span class="wheel-title">trajetoria.log</span
-            ><span class="wheel-index">06</span></a
+            ><span class="wheel-index">09</span></a
           >
           <a class="wheel-item" href="#contact" data-panel="contact"
             ><span class="wheel-preview"
               ><svg aria-hidden="true"><use href="#icon-mail" /></svg></span
             ><span class="wheel-title">contato/</span
-            ><span class="wheel-index">07</span></a
+            ><span class="wheel-index">10</span></a
           >
           <a class="wheel-item" href="#themes" data-panel="themes"
             ><span class="wheel-preview theme-preview" aria-hidden="true"
               ><i></i><i></i><i></i><i></i><i></i><i></i></span
             ><span class="wheel-title">themes/</span
-            ><span class="wheel-index">08</span></a
+            ><span class="wheel-index">11</span></a
           >
         </nav>
         <div class="explorer-footer">
@@ -375,6 +365,7 @@
                 class="identity-canvas"
                 aria-hidden="true"
               ></canvas>
+              <p class="sr-only" id="contrib-summary"></p>
               <div class="identity-bottomline">
                 <span>01 / construir</span><span>02 / aprender</span
                 ><span>03 / compartilhar</span>
@@ -386,9 +377,10 @@
               <span class="prompt-arrow">›</span> whoami
             </p>
             <p>
-              Sou Claudio, estudante de Ciência da Computação no IDP. Trabalho
-              com desenvolvimento backend, engenharia de dados e arquiteturas
-              escaláveis.
+              Sou Claudio, estudante de Ciência da Computação no IDP e tech lead
+              da VM Medicina e Saúde Mental, uma clínica psiquiátrica em
+              Brasília. Trabalho com desenvolvimento backend, engenharia de
+              dados e inteligência artificial aplicada.
             </p>
             <p>
               Gosto de transformar ideias em sistemas: da coleta de dados à API,
@@ -413,8 +405,8 @@
                 <dd>Português / English</dd>
               </div>
               <div>
-                <dt>experiência</dt>
-                <dd>RBCIP · Carreta Digital</dd>
+                <dt>agora</dt>
+                <dd>Tech Lead · VM Medicina e Saúde Mental</dd>
               </div>
             </dl>
             <p class="prompt">
@@ -439,7 +431,564 @@
           </article>
           <article
             class="content-panel"
+            id="clinica"
+            data-repo="private"
+            data-path="~/projetos/vm-clinica"
+            aria-labelledby="clinica-title"
+          >
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~/projetos/vm-clinica</span>
+              <span class="prompt-arrow">›</span> cat README.md
+            </p>
+            <p class="eyebrow">01 / HEALTHTECH · LGPD · IA APLICADA</p>
+            <h2 id="clinica-title">Gestão Clínica — VM Medicina</h2>
+            <p>
+              Sistema web interno da VM Medicina e Saúde Mental, clínica
+              psiquiátrica em Brasília, onde atuo como tech lead. Pacientes,
+              médicos, agenda com controle de conflitos de horário e financeiro,
+              com a privacidade dos pacientes tratada como requisito de
+              arquitetura, não como detalhe.
+            </p>
+            <p>
+              Cada perfil (administrador, médico, recepção) só vê o que precisa:
+              a regra mora no backend, em cada rota. Todo acesso a dado pessoal
+              fica numa trilha de auditoria, e a base analítica é anonimizada
+              com pseudônimos HMAC-SHA256 e medida por k-anonimato antes de
+              alimentar qualquer modelo.
+            </p>
+            <dl class="terminal-facts">
+              <div>
+                <dt>backend</dt>
+                <dd>FastAPI async + SQLAlchemy + Alembic</dd>
+              </div>
+              <div>
+                <dt>frontend</dt>
+                <dd>React 18 + TypeScript</dd>
+              </div>
+              <div>
+                <dt>privacidade</dt>
+                <dd>RBAC por perfil + trilha de auditoria (LGPD)</dd>
+              </div>
+              <div>
+                <dt>dados</dt>
+                <dd>anonimização HMAC-SHA256 + k-anonimato</dd>
+              </div>
+              <div>
+                <dt>IA</dt>
+                <dd>modelo de faltas (scikit-learn) + chatbot de acolhimento com barreira de crise</dd>
+              </div>
+              <div>
+                <dt>qualidade</dt>
+                <dd>34 testes automatizados (pytest)</dd>
+              </div>
+            </dl>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open screenshots/
+            </p>
+            <figure class="project-visual film" data-film>
+              <div class="visual-caption">
+                <span>film <b data-film-index>1</b>/4</span
+                ><span class="accent">↔ shot</span>
+              </div>
+              <div class="film-frame">
+                <img
+                  class="shot"
+                  src="assets/shots/vm-dashboard.webp"
+                  alt="Painel do administrador: indicadores, receita e agenda do dia (base de demonstração, pacientes fictícios)."
+                  data-caption="Painel do administrador: indicadores, receita e agenda do dia (base de demonstração, pacientes fictícios)."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="shot"
+                  src="assets/shots/vm-agenda.webp"
+                  alt="Agenda com o status de cada consulta."
+                  data-caption="Agenda com o status de cada consulta."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="shot"
+                  src="assets/shots/vm-chatbot.webp"
+                  alt="Chatbot de acolhimento: só administrativo, com aviso de crise (CVV 188 / SAMU 192)."
+                  data-caption="Chatbot de acolhimento: só administrativo, com aviso de crise (CVV 188 / SAMU 192)."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="shot shot-diagram" data-caption="Visão simplificada; o repositório é privado para proteger os dados da clínica.">
+                <svg
+                viewBox="0 0 560 240"
+                role="img"
+                aria-labelledby="clinica-diagram-title"
+              >
+                <title id="clinica-diagram-title">
+                  Perfis administrador, médico e recepção acessam a API FastAPI,
+                  que aplica controle de acesso e grava no PostgreSQL, na trilha
+                  de auditoria e na base anonimizada
+                </title>
+                <g class="diagram-grid">
+                  <path
+                    d="M0 40H560M0 80H560M0 120H560M0 160H560M0 200H560M40 0V240M80 0V240M120 0V240M160 0V240M200 0V240M240 0V240M280 0V240M320 0V240M360 0V240M400 0V240M440 0V240M480 0V240M520 0V240"
+                  />
+                </g>
+                <g class="diagram-lines">
+                  <path
+                    d="M120 52H160V115H200M120 117H200M120 182H160V117M350 115H385V52H420M350 117H420M385 117V182H420"
+                  />
+                </g>
+                <g class="diagram-boxes">
+                  <rect x="20" y="30" width="100" height="44" />
+                  <rect x="20" y="95" width="100" height="44" />
+                  <rect x="20" y="160" width="100" height="44" />
+                  <rect x="200" y="80" width="150" height="70" />
+                  <rect x="420" y="30" width="120" height="44" />
+                  <rect x="420" y="95" width="120" height="44" />
+                  <rect x="420" y="160" width="120" height="44" />
+                </g>
+                <g class="diagram-text">
+                  <text x="70" y="56">ADMIN</text>
+                  <text x="70" y="121">MÉDICO</text>
+                  <text x="70" y="186">RECEPÇÃO</text>
+                  <text x="275" y="110">FASTAPI</text>
+                  <text class="diagram-sub" x="275" y="128">require_roles()</text>
+                  <text x="480" y="56">POSTGRESQL</text>
+                  <text x="480" y="114">AUDIT_LOGS</text>
+                  <text class="diagram-sub" x="480" y="129">quem · quando · o quê</text>
+                  <text x="480" y="179">ANONIMIZAÇÃO</text>
+                  <text class="diagram-sub" x="480" y="194">→ modelo de faltas</text>
+                </g>
+                <g class="flow-points">
+                  <circle cx="160" cy="115" r="3" />
+                  <circle cx="385" cy="117" r="3" />
+                </g>
+              </svg>
+                </div>
+              </div>
+              <figcaption class="film-caption">Painel do administrador: indicadores, receita e agenda do dia (base de demonstração, pacientes fictícios).</figcaption>
+              <div class="film-tabs"><button type="button" aria-label="Imagem 1 de 4" aria-pressed="true">1</button><button type="button" aria-label="Imagem 2 de 4" aria-pressed="false">2</button><button type="button" aria-label="Imagem 3 de 4" aria-pressed="false">3</button><button type="button" aria-label="Imagem 4 de 4" aria-pressed="false">4</button><span class="film-progress"><i></i></span></div>
+            </figure>
+            <div class="tech-list">
+              <span>Python</span><span>FastAPI</span><span>React</span><span>TypeScript</span><span>PostgreSQL</span><span>Docker</span><span>Scikit-learn</span><span>LLM</span>
+            </div>
+          </article>
+          <article
+            class="content-panel"
+            id="camf"
+            data-repo="CAMF"
+            data-path="~/projetos/camf-boletos"
+            aria-labelledby="camf-title"
+          >
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~/projetos/camf-boletos</span>
+              <span class="prompt-arrow">›</span> cat README.md
+            </p>
+            <p class="eyebrow">02 / FINTECH · AUTOMAÇÃO · CLIENTE REAL</p>
+            <h2 id="camf-title">CAMF — Contas a Receber</h2>
+            <p>
+              Aplicação full-stack que transforma PDFs de boletos Sicoob em uma
+              base de contas a receber auditável para a CAMF Construtora. Cada
+              boleto é conferido contra a própria linha digitável: dígitos
+              verificadores módulo 10 e 11, valor e fator de vencimento, já com a
+              virada FEBRABAN de 2025.
+            </p>
+            <p>
+              Nada é aceito em silêncio: qualquer divergência entre o texto
+              impresso e a linha digitável manda o boleto para revisão manual,
+              com o motivo registrado.
+            </p>
+            <dl class="terminal-facts">
+              <div>
+                <dt>extração</dt>
+                <dd>pdfplumber + regex, dois layouts de página</dd>
+              </div>
+              <div>
+                <dt>validação</dt>
+                <dd>linha digitável como fonte da verdade</dd>
+              </div>
+              <div>
+                <dt>integridade</dt>
+                <dd>deduplicação SHA-256, soft delete, auditoria append-only</dd>
+              </div>
+              <div>
+                <dt>relatórios</dt>
+                <dd>XLSX, CSV e PDF respeitando os filtros da tela</dd>
+              </div>
+              <div>
+                <dt>deploy</dt>
+                <dd>Docker → Render, API e frontend num serviço só</dd>
+              </div>
+            </dl>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open screenshots/
+            </p>
+            <figure class="project-visual film" data-film>
+              <div class="visual-caption">
+                <span>film <b data-film-index>1</b>/4</span
+                ><span class="accent">↔ shot</span>
+              </div>
+              <div class="film-frame">
+                <img
+                  class="shot"
+                  src="assets/shots/camf-dashboard.webp"
+                  alt="Dashboard com total, recebido, vencido e revisão manual (pagadores fictícios)."
+                  data-caption="Dashboard com total, recebido, vencido e revisão manual (pagadores fictícios)."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="shot"
+                  src="assets/shots/camf-vencimentos.webp"
+                  alt="Vencimentos agrupados por dia, com atrasados em destaque."
+                  data-caption="Vencimentos agrupados por dia, com atrasados em destaque."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="shot"
+                  src="assets/shots/camf-boletos.webp"
+                  alt="Boletos por pessoa: composição pago / vencido / em aberto."
+                  data-caption="Boletos por pessoa: composição pago / vencido / em aberto."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="shot shot-diagram" data-caption="Visão simplificada do fluxo de importação.">
+                <svg
+                viewBox="0 0 560 240"
+                role="img"
+                aria-labelledby="camf-diagram-title"
+              >
+                <title id="camf-diagram-title">
+                  Fluxo: PDF do boleto, extração, validação da linha digitável,
+                  PostgreSQL e dashboard; divergências seguem para revisão manual
+                </title>
+                <g class="diagram-grid">
+                  <path
+                    d="M0 40H560M0 80H560M0 120H560M0 160H560M0 200H560M40 0V240M80 0V240M120 0V240M160 0V240M200 0V240M240 0V240M280 0V240M320 0V240M360 0V240M400 0V240M440 0V240M480 0V240M520 0V240"
+                  />
+                </g>
+                <g class="diagram-lines">
+                  <path
+                    d="M120 75H160M260 75H300M410 75H440M355 102V160M490 102V160"
+                  />
+                </g>
+                <g class="diagram-boxes">
+                  <rect x="20" y="48" width="100" height="54" />
+                  <rect x="160" y="48" width="100" height="54" />
+                  <rect x="300" y="48" width="110" height="54" />
+                  <rect x="440" y="48" width="100" height="54" />
+                  <rect x="290" y="160" width="130" height="48" />
+                  <rect x="440" y="160" width="100" height="48" />
+                </g>
+                <g class="diagram-text">
+                  <text x="70" y="72">PDF</text>
+                  <text class="diagram-sub" x="70" y="89">boletos Sicoob</text>
+                  <text x="210" y="72">EXTRAÇÃO</text>
+                  <text class="diagram-sub" x="210" y="89">pdfplumber</text>
+                  <text x="355" y="72">VALIDAÇÃO</text>
+                  <text class="diagram-sub" x="355" y="89">DV mód. 10 / 11</text>
+                  <text x="490" y="72">POSTGRES</text>
+                  <text class="diagram-sub" x="490" y="89">auditoria</text>
+                  <text x="355" y="188">REVISÃO MANUAL</text>
+                  <text x="490" y="181">DASHBOARD</text>
+                  <text class="diagram-sub" x="490" y="197">XLSX · PDF</text>
+                </g>
+                <g class="flow-points">
+                  <circle cx="140" cy="75" r="3" />
+                  <circle cx="280" cy="75" r="3" />
+                  <circle cx="425" cy="75" r="3" />
+                </g>
+              </svg>
+                </div>
+              </div>
+              <figcaption class="film-caption">Dashboard com total, recebido, vencido e revisão manual (pagadores fictícios).</figcaption>
+              <div class="film-tabs"><button type="button" aria-label="Imagem 1 de 4" aria-pressed="true">1</button><button type="button" aria-label="Imagem 2 de 4" aria-pressed="false">2</button><button type="button" aria-label="Imagem 3 de 4" aria-pressed="false">3</button><button type="button" aria-label="Imagem 4 de 4" aria-pressed="false">4</button><span class="film-progress"><i></i></span></div>
+            </figure>
+            <div class="tech-list">
+              <span>FastAPI</span><span>PostgreSQL</span><span>pdfplumber</span><span>pandas</span><span>React</span><span>Recharts</span><span>Docker</span>
+            </div>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open repo
+            </p>
+            <a
+              class="repo-link"
+              href="https://github.com/ClaudioAMF1/CAMF"
+              target="_blank"
+              rel="noopener noreferrer"
+              >github.com/ClaudioAMF1/CAMF ↗</a
+            >
+          </article>
+          <article
+            class="content-panel"
+            id="scoutlink"
+            data-repo="IDP-Scoutlink"
+            data-path="~/projetos/scoutlink"
+            aria-labelledby="scoutlink-title"
+          >
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~/projetos/scoutlink</span>
+              <span class="prompt-arrow">›</span> cat README.md
+            </p>
+            <p class="eyebrow">03 / MOBILE · WEB · IMPACTO SOCIAL</p>
+            <h2 id="scoutlink-title">ScoutLink — Escoteiros do DF</h2>
+            <p>
+              Plataforma integrada da Região Escoteira do Distrito Federal: um
+              app mobile para os associados, um painel web para a equipe
+              regional e uma API compartilhada entre os dois.
+            </p>
+            <p>
+              Troca avisos dispersos e processos em papel por notificações
+              segmentadas por perfil e grupo, mapa dos grupos escoteiros,
+              chamados com chat em tempo real, gestão de malotes e o termo de
+              autorização (TAAEC) digital, com geração de PDF.
+            </p>
+            <dl class="terminal-facts">
+              <div>
+                <dt>mobile</dt>
+                <dd>Expo (React Native) + TypeScript</dd>
+              </div>
+              <div>
+                <dt>painel web</dt>
+                <dd>React + Vite + TypeScript</dd>
+              </div>
+              <div>
+                <dt>API</dt>
+                <dd>FastAPI + SQLAlchemy</dd>
+              </div>
+              <div>
+                <dt>banco</dt>
+                <dd>PostgreSQL (Supabase)</dd>
+              </div>
+            </dl>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open screenshots/
+            </p>
+            <figure class="project-visual film" data-film>
+              <div class="visual-caption">
+                <span>film <b data-film-index>1</b>/4</span
+                ><span class="accent">↔ shot</span>
+              </div>
+              <div class="film-frame">
+                <img
+                  class="shot"
+                  src="assets/shots/sl-comunicacao.webp"
+                  alt="Disparo de notificações por categoria, UEL e perfil (conteúdo de demonstração)."
+                  data-caption="Disparo de notificações por categoria, UEL e perfil (conteúdo de demonstração)."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="shot"
+                  src="assets/shots/sl-malotes.webp"
+                  alt="Malotes aguardando retirada no Escritório Regional."
+                  data-caption="Malotes aguardando retirada no Escritório Regional."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="shot"
+                  src="assets/shots/sl-dashboard.webp"
+                  alt="Visão geral do painel da equipe regional."
+                  data-caption="Visão geral do painel da equipe regional."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="shot shot-diagram" data-caption="Visão simplificada da plataforma.">
+                <svg
+                viewBox="0 0 560 240"
+                role="img"
+                aria-labelledby="scoutlink-diagram-title"
+              >
+                <title id="scoutlink-diagram-title">
+                  App mobile dos associados e painel web da equipe regional
+                  consomem a mesma API FastAPI, que usa PostgreSQL no Supabase
+                </title>
+                <g class="diagram-grid">
+                  <path
+                    d="M0 40H560M0 80H560M0 120H560M0 160H560M0 200H560M40 0V240M80 0V240M120 0V240M160 0V240M200 0V240M240 0V240M280 0V240M320 0V240M360 0V240M400 0V240M440 0V240M480 0V240M520 0V240"
+                  />
+                </g>
+                <g class="diagram-lines">
+                  <path d="M150 70H190V118H230M150 166H190V118M350 118H400" />
+                </g>
+                <g class="diagram-boxes">
+                  <rect x="20" y="44" width="130" height="54" />
+                  <rect x="20" y="140" width="130" height="54" />
+                  <rect x="230" y="91" width="120" height="54" />
+                  <rect x="400" y="91" width="130" height="54" />
+                </g>
+                <g class="diagram-text">
+                  <text x="85" y="68">APP MOBILE</text>
+                  <text class="diagram-sub" x="85" y="85">associados</text>
+                  <text x="85" y="164">PAINEL WEB</text>
+                  <text class="diagram-sub" x="85" y="181">equipe regional</text>
+                  <text x="290" y="115">FASTAPI</text>
+                  <text class="diagram-sub" x="290" y="132">API REST</text>
+                  <text x="465" y="115">SUPABASE</text>
+                  <text class="diagram-sub" x="465" y="132">PostgreSQL</text>
+                  <text class="diagram-sub" x="280" y="30">
+                    FEED · MAPA · CHAMADOS · MALOTES · TAAEC
+                  </text>
+                </g>
+                <g class="flow-points">
+                  <circle cx="190" cy="118" r="3" />
+                  <circle cx="375" cy="118" r="3" />
+                </g>
+              </svg>
+                </div>
+              </div>
+              <figcaption class="film-caption">Disparo de notificações por categoria, UEL e perfil (conteúdo de demonstração).</figcaption>
+              <div class="film-tabs"><button type="button" aria-label="Imagem 1 de 4" aria-pressed="true">1</button><button type="button" aria-label="Imagem 2 de 4" aria-pressed="false">2</button><button type="button" aria-label="Imagem 3 de 4" aria-pressed="false">3</button><button type="button" aria-label="Imagem 4 de 4" aria-pressed="false">4</button><span class="film-progress"><i></i></span></div>
+            </figure>
+            <div class="tech-list">
+              <span>React Native</span><span>Expo</span><span>React</span><span>TypeScript</span><span>FastAPI</span><span>Supabase</span>
+            </div>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open repo
+            </p>
+            <a
+              class="repo-link"
+              href="https://github.com/ClaudioAMF1/IDP-Scoutlink"
+              target="_blank"
+              rel="noopener noreferrer"
+              >github.com/ClaudioAMF1/IDP-Scoutlink ↗</a
+            >
+          </article>
+          <article
+            class="content-panel"
+            id="legitrack"
+            data-repo="private"
+            data-path="~/projetos/legitrack"
+            aria-labelledby="legitrack-title"
+          >
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~/projetos/legitrack</span>
+              <span class="prompt-arrow">›</span> cat README.md
+            </p>
+            <p class="eyebrow">04 / CIVIC TECH · MOBILE · DADOS ABERTOS</p>
+            <h2 id="legitrack-title">LegiTrack — Projetos de Lei</h2>
+            <p>
+              App para qualquer cidadão acompanhar a tramitação de Projetos de Lei
+              na Câmara dos Deputados. Um worker consulta periodicamente a API de
+              dados abertos da Câmara, atualiza a base e avisa quem favoritou
+              cada projeto quando há uma nova movimentação.
+            </p>
+            <p>
+              O feed é filtrado pelas áreas de interesse de cada pessoa (saúde,
+              tecnologia, economia…), com busca em tempo real e a linha do tempo
+              de cada proposição. Desenvolvido em dupla.
+            </p>
+            <dl class="terminal-facts">
+              <div>
+                <dt>app</dt>
+                <dd>Flutter (Material 3)</dd>
+              </div>
+              <div>
+                <dt>API</dt>
+                <dd>Flask + Swagger (Flasgger)</dd>
+              </div>
+              <div>
+                <dt>worker</dt>
+                <dd>coleta periódica da API da Câmara + notificações</dd>
+              </div>
+              <div>
+                <dt>banco</dt>
+                <dd>PostgreSQL + SQLAlchemy</dd>
+              </div>
+              <div>
+                <dt>auth</dt>
+                <dd>JWT + armazenamento seguro no app</dd>
+              </div>
+            </dl>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open tramitacao.svg
+            </p>
+            <figure class="project-visual">
+              <div class="visual-caption">
+                <span>legitrack / da Câmara ao celular</span
+                ><span class="accent">notificações →</span>
+              </div>
+              <svg
+                viewBox="0 0 560 240"
+                role="img"
+                aria-labelledby="legitrack-diagram-title"
+              >
+                <title id="legitrack-diagram-title">
+                  Worker coleta a API da Câmara dos Deputados, grava no
+                  PostgreSQL, e a API Flask entrega o feed e as notificações ao
+                  app Flutter
+                </title>
+                <g class="diagram-grid">
+                  <path
+                    d="M0 40H560M0 80H560M0 120H560M0 160H560M0 200H560M40 0V240M80 0V240M120 0V240M160 0V240M200 0V240M240 0V240M280 0V240M320 0V240M360 0V240M400 0V240M440 0V240M480 0V240M520 0V240"
+                  />
+                </g>
+                <g class="diagram-lines">
+                  <path d="M130 75H210M320 75H400M265 102V160M320 185H400M465 102V160" />
+                </g>
+                <g class="diagram-boxes">
+                  <rect x="20" y="48" width="110" height="54" />
+                  <rect x="210" y="48" width="110" height="54" />
+                  <rect x="400" y="48" width="130" height="54" />
+                  <rect x="210" y="160" width="110" height="50" />
+                  <rect x="400" y="160" width="130" height="50" />
+                </g>
+                <g class="diagram-text">
+                  <text x="75" y="72">CÂMARA</text>
+                  <text class="diagram-sub" x="75" y="89">dados abertos</text>
+                  <text x="265" y="72">WORKER</text>
+                  <text class="diagram-sub" x="265" y="89">coleta periódica</text>
+                  <text x="465" y="72">POSTGRESQL</text>
+                  <text class="diagram-sub" x="465" y="89">tramitações</text>
+                  <text x="265" y="190">ALERTAS</text>
+                  <text x="465" y="182">APP FLUTTER</text>
+                  <text class="diagram-sub" x="465" y="198">API Flask</text>
+                </g>
+                <g class="flow-points">
+                  <circle cx="170" cy="75" r="3" />
+                  <circle cx="360" cy="75" r="3" />
+                  <circle cx="360" cy="185" r="3" />
+                </g>
+              </svg>
+              <figcaption>
+                Visão simplificada da arquitetura.
+              </figcaption>
+            </figure>
+            <div class="tech-list">
+              <span>Flutter</span><span>Dart</span><span>Python</span><span>Flask</span><span>PostgreSQL</span><span>Docker</span><span>JWT</span>
+            </div>
+          </article>
+          <article
+            class="content-panel"
             id="crypto"
+            data-repo="crypto-analytics-pipeline"
             data-path="~/projetos/crypto-pipeline"
             aria-labelledby="crypto-title"
           >
@@ -448,7 +997,7 @@
               <span class="path">~/projetos/crypto-pipeline</span>
               <span class="prompt-arrow">›</span> cat README.md
             </p>
-            <p class="eyebrow">01 / BIG DATA · MICROSSERVIÇOS</p>
+            <p class="eyebrow">05 / BIG DATA · MICROSSERVIÇOS</p>
             <h2 id="crypto-title">Pipeline de Criptomoedas</h2>
             <p>
               Coleta, processamento e análise de dados de criptomoedas em tempo
@@ -549,6 +1098,7 @@
           <article
             class="content-panel"
             id="soccer"
+            data-repo="soccer-video-analytics"
             data-path="~/projetos/soccer-vision"
             aria-labelledby="soccer-title"
           >
@@ -557,7 +1107,7 @@
               <span class="path">~/projetos/soccer-vision</span>
               <span class="prompt-arrow">›</span> cat README.md
             </p>
-            <p class="eyebrow">02 / COMPUTER VISION · MACHINE LEARNING</p>
+            <p class="eyebrow">06 / COMPUTER VISION · MACHINE LEARNING</p>
             <h2 id="soccer-title">Análise Tática de Futebol</h2>
             <p>
               Visão computacional aplicada à análise tática: detecção e
@@ -653,91 +1203,117 @@
           </article>
           <article
             class="content-panel"
-            id="air"
-            data-path="~/projetos/air-quality"
-            aria-labelledby="air-title"
+            id="pesquisa"
+            data-repo="TCC"
+            data-path="~/pesquisa/tcc"
+            aria-labelledby="pesquisa-title"
           >
             <p class="prompt">
               <span>claudio<span class="muted">@dev</span></span>
-              <span class="path">~/projetos/air-quality</span>
-              <span class="prompt-arrow">›</span> cat README.md
+              <span class="path">~/pesquisa/tcc</span>
+              <span class="prompt-arrow">›</span> cat proposta.md
             </p>
-            <p class="eyebrow">03 / IOT · BIG DATA</p>
-            <h2 id="air-title">Pipeline de Qualidade do Ar</h2>
+            <p class="eyebrow">07 / PESQUISA · SEGURANÇA · PRIVACIDADE · EM ANDAMENTO</p>
+            <h2 id="pesquisa-title">Quem mais está dentro do aplicativo?</h2>
             <p>
-              Pipeline para análise de qualidade do ar em tempo real, com coleta
-              de dados, processamento assíncrono e alertas automáticos. Kafka na
-              ingestão, Celery e Redis no processamento, RabbitMQ na comunicação
-              de eventos.
+              Meu TCC investiga se aplicativos móveis oficiais do governo
+              brasileiro, inclusive os que tratam dados de saúde, biometria e
+              previdência, embarcam SDKs de rastreamento de terceiros que enviam
+              identificadores de cidadãos para infraestrutura no exterior. E
+              compara com aplicativos comerciais pareados por categoria e
+              porte, a linha de base que estudos anteriores não tinham.
+            </p>
+            <p>
+              O cidadão pode trocar de app de banco; não pode trocar de INSS. Por
+              isso o trabalho também mede a própria régua: se ferramentas
+              diferentes de detecção concordam sobre o mesmo APK.
             </p>
             <dl class="terminal-facts">
               <div>
-                <dt>ingestão</dt>
-                <dd>Apache Kafka</dd>
+                <dt>corpus</dt>
+                <dd>396 apps de 71 órgãos públicos, nas três esferas</dd>
               </div>
               <div>
-                <dt>tarefas</dt>
-                <dd>Celery + Redis</dd>
+                <dt>dado sensível</dt>
+                <dd>152 apps (38,4%) tratam dados do Art. 11 da LGPD</dd>
               </div>
               <div>
-                <dt>API / armazenamento</dt>
-                <dd>Flask / MinIO</dd>
+                <dt>primeiro achado</dt>
+                <dd>0 de 396 apps de governo exibem anúncio, contra 33,2% do controle comercial</dd>
+              </div>
+              <div>
+                <dt>instrumentos</dt>
+                <dd>MobSF, Androguard e assinaturas do Exodus, APKs via AndroZoo</dd>
+              </div>
+              <div>
+                <dt>estatística</dt>
+                <dd>hipóteses falsificáveis, razão de taxas, κ de Fleiss</dd>
               </div>
             </dl>
             <p class="prompt">
               <span>claudio<span class="muted">@dev</span></span>
-              <span class="prompt-arrow">›</span> open pipeline.svg
+              <span class="prompt-arrow">›</span> open metodo.svg
             </p>
             <figure class="project-visual">
               <div class="visual-caption">
-                <span>air-quality / fluxo de eventos</span
-                ><span class="accent">async →</span>
+                <span>tcc / do catálogo à evidência</span
+                ><span class="accent">análise estática →</span>
               </div>
               <svg
                 viewBox="0 0 560 240"
                 role="img"
-                aria-labelledby="air-diagram-title"
+                aria-labelledby="pesquisa-diagram-title"
               >
-                <title id="air-diagram-title">
-                  Pipeline de qualidade do ar: dados, Kafka, Celery, Redis,
-                  RabbitMQ, Flask e MinIO
+                <title id="pesquisa-diagram-title">
+                  Método: catálogo da Play Store, corpus de apps governamentais e
+                  grupo de controle comercial, download dos APKs, três detectores
+                  de SDK e teste das hipóteses
                 </title>
+                <g class="diagram-grid">
+                  <path
+                    d="M0 40H560M0 80H560M0 120H560M0 160H560M0 200H560M40 0V240M80 0V240M120 0V240M160 0V240M200 0V240M240 0V240M280 0V240M320 0V240M360 0V240M400 0V240M440 0V240M480 0V240M520 0V240"
+                  />
+                </g>
                 <g class="diagram-lines">
                   <path
-                    d="M130 75H222M330 75H425M275 102V157M275 183H160M330 183H425"
+                    d="M120 118H150V70H180M150 118V166H180M290 70H320V118H350M290 166H320V118M405 145V163H480V182"
                   />
                 </g>
                 <g class="diagram-boxes">
-                  <rect x="20" y="48" width="110" height="54" />
-                  <rect x="222" y="48" width="108" height="54" />
-                  <rect x="425" y="48" width="110" height="54" />
-                  <rect x="220" y="157" width="110" height="52" />
-                  <rect x="50" y="157" width="110" height="52" />
-                  <rect x="425" y="157" width="110" height="52" />
+                  <rect x="20" y="91" width="100" height="54" />
+                  <rect x="180" y="43" width="110" height="54" />
+                  <rect x="180" y="139" width="110" height="54" />
+                  <rect x="350" y="91" width="110" height="54" />
+                  <rect x="420" y="182" width="120" height="40" />
                 </g>
                 <g class="diagram-text">
-                  <text x="75" y="80">DADOS</text>
-                  <text x="275" y="80">KAFKA</text>
-                  <text x="480" y="72">CELERY</text>
-                  <text class="diagram-sub" x="480" y="90">Redis</text>
-                  <text x="275" y="188">RABBITMQ</text>
-                  <text x="105" y="188">ALERTAS</text>
-                  <text x="480" y="180">FLASK</text>
-                  <text class="diagram-sub" x="480" y="198">MinIO</text>
+                  <text x="70" y="115">PLAY STORE</text>
+                  <text class="diagram-sub" x="70" y="132">catálogo</text>
+                  <text x="235" y="67">GOVERNO</text>
+                  <text class="diagram-sub" x="235" y="84">396 apps</text>
+                  <text x="235" y="163">CONTROLE</text>
+                  <text class="diagram-sub" x="235" y="180">comerciais pareados</text>
+                  <text x="405" y="115">DETECTORES</text>
+                  <text class="diagram-sub" x="405" y="132">MobSF · Exodus</text>
+                  <text x="480" y="206">H1 – H4</text>
+                  <text class="diagram-sub" x="280" y="26">
+                    APKs VIA ANDROZOO · ANÁLISE ESTÁTICA
+                  </text>
                 </g>
                 <g class="flow-points">
-                  <circle cx="168" cy="75" r="3" />
-                  <circle cx="364" cy="75" r="3" />
-                  <circle cx="275" cy="127" r="3" />
+                  <circle cx="150" cy="118" r="3" />
+                  <circle cx="320" cy="118" r="3" />
                 </g>
               </svg>
               <figcaption>
-                Visão simplificada dos componentes do pipeline.
+                Desenho do estudo. Achados atribuíveis a um órgão só serão
+                publicados após divulgação responsável.
               </figcaption>
             </figure>
             <div class="tech-list">
-              <span>Kafka</span><span>Flask</span><span>Redis</span
-              ><span>RabbitMQ</span><span>Celery</span><span>MinIO</span>
+              <span>Python</span><span>Android</span><span>MobSF</span
+              ><span>Androguard</span><span>Exodus</span><span>Estatística</span
+              ><span>LGPD</span>
             </div>
             <p class="prompt">
               <span>claudio<span class="muted">@dev</span></span>
@@ -745,100 +1321,11 @@
             </p>
             <a
               class="repo-link"
-              href="https://github.com/ClaudioAMF1/air-quality-pipeline"
+              href="https://github.com/ClaudioAMF1/TCC"
               target="_blank"
               rel="noopener noreferrer"
-              >github.com/ClaudioAMF1/air-quality-pipeline ↗</a
+              >github.com/ClaudioAMF1/TCC ↗</a
             >
-          </article>
-          <article
-            class="content-panel"
-            id="carreta"
-            data-path="~/projetos/carreta-digital"
-            aria-labelledby="carreta-title"
-          >
-            <p class="prompt">
-              <span>claudio<span class="muted">@dev</span></span>
-              <span class="path">~/projetos/carreta-digital</span>
-              <span class="prompt-arrow">›</span> cat README.md
-            </p>
-            <p class="eyebrow">04 / FULL STACK · WEB</p>
-            <h2 id="carreta-title">Carreta Digital — RBCIP</h2>
-            <p>
-              Interface web para acesso e download de certificados, desenvolvida
-              durante meu estágio na RBCIP. Banco de dados PostgreSQL e APIs
-              RESTful em Python com Flask para conectar os dados à experiência
-              dos alunos.
-            </p>
-            <dl class="terminal-facts">
-              <div>
-                <dt>organização</dt>
-                <dd>RBCIP</dd>
-              </div>
-              <div>
-                <dt>backend</dt>
-                <dd>Python + Flask + REST APIs</dd>
-              </div>
-              <div>
-                <dt>banco de dados</dt>
-                <dd>PostgreSQL</dd>
-              </div>
-            </dl>
-            <p class="prompt">
-              <span>claudio<span class="muted">@dev</span></span>
-              <span class="prompt-arrow">›</span> open fluxo.svg
-            </p>
-            <figure class="project-visual certificate-visual">
-              <div class="visual-caption">
-                <span>carreta-digital / jornada do aluno</span
-                ><span class="accent">certificados</span>
-              </div>
-              <svg
-                viewBox="0 0 560 240"
-                role="img"
-                aria-labelledby="certificate-diagram-title"
-              >
-                <title id="certificate-diagram-title">
-                  Fluxo de acesso ao certificado: consultar dados, localizar
-                  certificado e baixar PDF
-                </title>
-                <g class="diagram-boxes">
-                  <rect x="185" y="20" width="190" height="110" />
-                  <rect x="20" y="174" width="144" height="42" />
-                  <rect x="207" y="174" width="144" height="42" />
-                  <rect x="395" y="174" width="144" height="42" />
-                </g>
-                <g class="diagram-lines">
-                  <path
-                    d="M164 195H207M351 195H395M210 44H350M235 63H325M245 80H315"
-                  />
-                  <circle cx="280" cy="104" r="10" />
-                </g>
-                <g class="diagram-text">
-                  <text class="diagram-sub" x="92" y="199">01 / CONSULTAR</text>
-                  <text class="diagram-sub" x="279" y="199">
-                    02 / LOCALIZAR
-                  </text>
-                  <text class="diagram-sub" x="467" y="199">
-                    03 / BAIXAR PDF
-                  </text>
-                  <text class="diagram-sub" x="280" y="154">
-                    POSTGRESQL + FLASK
-                  </text>
-                </g>
-              </svg>
-              <figcaption>
-                Fluxo ilustrativo de acesso aos certificados.
-              </figcaption>
-            </figure>
-            <div class="tech-list">
-              <span>PostgreSQL</span><span>Python</span><span>Flask</span
-              ><span>REST APIs</span>
-            </div>
-            <div class="inline-links">
-              <a href="#experience">ver experiência →</a
-              ><a href="#contact">conversar sobre o projeto →</a>
-            </div>
           </article>
           <article
             class="content-panel"
@@ -918,6 +1405,22 @@
             <p class="eyebrow">EXPERIÊNCIA &amp; FORMAÇÃO</p>
             <h2 id="experience-title">Trajetória</h2>
             <ol class="timeline">
+              <li>
+                <p class="timeline-date">
+                  2026 — atual <span>experiência</span>
+                </p>
+                <h3>
+                  Tech Lead <span class="muted">/ VM Medicina e Saúde Mental</span>
+                </h3>
+                <p>
+                  Responsável pela tecnologia de uma clínica psiquiátrica em
+                  Brasília: arquitetura e desenvolvimento do sistema de gestão
+                  clínica (FastAPI, React, PostgreSQL, Docker), adequação à LGPD
+                  com controle de acesso por perfil e trilha de auditoria,
+                  anonimização de dados, automação de relatórios e prototipação
+                  de IA aplicada à operação da clínica.
+                </p>
+              </li>
               <li>
                 <p class="timeline-date">
                   mar — ago 2025 <span>experiência</span>
@@ -1167,25 +1670,33 @@
         <div class="status-identity">
           <span>ClaudioAMF1</span
           ><span class="muted status-shortcuts"
-            >↑↓ seção · / terminal · T tema · Esc início</span
+            >↑↓ seção · ↔ shot · / terminal · T tema · Esc início</span
           >
         </div>
         <dl>
           <div>
-            <dt>projetos</dt>
-            <dd>04</dd>
+            <dt id="stat-a-label">repos</dt>
+            <dd id="stat-a">—</dd>
+          </div>
+          <div>
+            <dt id="stat-b-label">stars</dt>
+            <dd id="stat-b">—</dd>
+          </div>
+          <div>
+            <dt id="stat-c-label">followers</dt>
+            <dd id="stat-c">—</dd>
           </div>
           <div>
             <dt>seção</dt>
             <dd id="status-section">whoami</dd>
           </div>
           <div>
-            <dt>tema</dt>
-            <dd id="status-theme">noite</dd>
+            <dt>eye</dt>
+            <dd id="eye-state">tracking</dd>
           </div>
           <div>
-            <dt>olho</dt>
-            <dd id="eye-state">tracking</dd>
+            <dt>ghost</dt>
+            <dd id="ghost-state">idle</dd>
           </div>
         </dl>
         <button
@@ -1199,6 +1710,51 @@
           ><span id="motion-label" data-motion-label>movimento on</span>
         </button>
       </footer>
+      <div class="landing-keyboard desk" aria-hidden="true">
+        <div class="key-row">
+          <span>esc</span><span>1</span><span>2</span><span>3</span
+          ><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span
+          ><span>9</span><span>0</span><span>-</span><span>=</span
+          ><span>←</span>
+        </div>
+        <div class="key-row">
+          <span>tab</span><span>q</span><span>w</span><span>e</span
+          ><span>r</span><span>t</span><span>y</span><span>u</span><span>i</span
+          ><span>o</span><span>p</span><span>[</span><span>]</span
+          ><span>\</span>
+        </div>
+        <div class="key-row">
+          <span>caps</span><span>a</span><span>s</span><span>d</span
+          ><span>f</span><span>g</span><span>h</span><span>j</span><span>k</span
+          ><span>l</span><span>;</span><span>'</span><span>↵</span>
+        </div>
+        <div class="key-row">
+          <span>⇧</span><span>z</span><span>x</span><span>c</span><span>v</span
+          ><span>b</span><span>n</span><span>m</span><span>,</span><span>.</span
+          ><span>/</span><span>⇧</span>
+        </div>
+        <div class="key-row space-row"><span>space</span></div>
+        <div class="keyboard-traces">
+          <canvas id="hands-canvas" aria-hidden="true"></canvas>
+          <svg viewBox="0 0 310 74">
+            <g fill="none" stroke="currentColor" stroke-width=".65">
+              <path
+                d="M12 5H116V69H12ZM194 5H298V69H194ZM12 5 50 50 80 69 116 5M194 5 227 69 263 50 298 5M12 5 46 8 52 41 82 43 89 8 116 5M194 5 222 8 229 43 259 41 265 8 298 5M116 34H194M155 5V69"
+              />
+            </g>
+            <g fill="currentColor">
+              <circle cx="46" cy="8" r="1.4" />
+              <circle cx="52" cy="41" r="1.4" />
+              <circle cx="82" cy="43" r="1.4" />
+              <circle cx="89" cy="8" r="1.4" />
+              <circle cx="222" cy="8" r="1.4" />
+              <circle cx="229" cy="43" r="1.4" />
+              <circle cx="259" cy="41" r="1.4" />
+              <circle cx="265" cy="8" r="1.4" />
+            </g>
+          </svg>
+        </div>
+      </div>
     </main>
     <dialog
       class="theme-dialog"

@@ -34,12 +34,19 @@
   const aliases = {
     hero: "about",
     whoami: "about",
-    projects: "crypto",
-    projetos: "crypto",
+    projects: "clinica",
+    projetos: "clinica",
+    "vm-clinica": "clinica",
+    clinica: "clinica",
+    vm: "clinica",
+    "camf-boletos": "camf",
+    boletos: "camf",
+    scout: "scoutlink",
+    tcc: "pesquisa",
+    "tcc-pesquisa": "pesquisa",
+    research: "pesquisa",
     "crypto-pipeline": "crypto",
     "soccer-vision": "soccer",
-    "air-quality": "air",
-    "carreta-digital": "carreta",
     stack: "skills",
     experiencia: "experience",
     trajetoria: "experience",
@@ -237,6 +244,11 @@
       "claudio — " + panel.dataset.path;
     document.getElementById("status-section").textContent =
       items[currentIndex].querySelector(".wheel-title").textContent;
+    visuals.setEyeText(panel.innerText);
+    resetGhost(panel);
+    const film = films.find((entry) => panel.contains(entry.element));
+    if (film) showShot(film, 0);
+    updateStats(panel);
     commandOutput.replaceChildren();
     scroller.scrollTop = 0;
     if (options.history !== false) setHash(panelId);
@@ -260,6 +272,8 @@
     if (options.history !== false) setHash("");
     window.scrollTo({ top: 0, behavior: "instant" });
     visuals.resize();
+    visuals.setEyeText(snippets[snippetIndex].code.join(" "));
+    setGhostState("idle");
     renderCode();
     paintFrame(sceneTime);
     if (options.focus)
@@ -407,7 +421,7 @@
 
   function readPalette() {
     const styles = getComputedStyle(root);
-    ["bg", "text", "accent", "dim", "muted", "warm"].forEach((key) => {
+    ["bg", "surface", "text", "accent", "dim", "muted", "warm"].forEach((key) => {
       palette[key] = styles.getPropertyValue("--" + key).trim();
     });
   }
@@ -424,8 +438,6 @@
           String(button.dataset.themeChoice === theme),
         ),
       );
-    document.getElementById("status-theme").textContent =
-      theme === "fosforo" ? "fósforo" : theme;
     readPalette();
     document
       .querySelector('meta[name="theme-color"]')
@@ -469,10 +481,13 @@
     "help                 todos os comandos",
     "whoami               sobre mim",
     "ls / projetos        lista de projetos",
+    "open clinica         gestão clínica (VM Medicina)",
+    "open camf            contas a receber (boletos)",
+    "open scoutlink       escoteiros do DF",
+    "open legitrack       projetos de lei",
     "open crypto          pipeline de criptomoedas",
     "open soccer          análise tática de futebol",
-    "open air             qualidade do ar",
-    "open carreta         Carreta Digital",
+    "open tcc             pesquisa: rastreamento em apps do governo",
     "stack                tecnologias",
     "experiencia          trajetória e formação",
     "contato              vamos conversar",
@@ -548,11 +563,14 @@
     if (command === "help" || command === "ajuda" || command === "?")
       appendOutput(raw, helpText);
     else if (["ls", "projetos", "projects"].includes(command)) {
-      appendOutput(raw, "04 projetos / escolha um arquivo:", [
-        { label: "01 crypto-pipeline", href: "#crypto" },
-        { label: "02 soccer-vision", href: "#soccer" },
-        { label: "03 air-quality", href: "#air" },
-        { label: "04 carreta-digital", href: "#carreta" },
+      appendOutput(raw, "06 projetos + 01 pesquisa / escolha um arquivo:", [
+        { label: "01 vm-clinica", href: "#clinica" },
+        { label: "02 camf-boletos", href: "#camf" },
+        { label: "03 scoutlink", href: "#scoutlink" },
+        { label: "04 legitrack", href: "#legitrack" },
+        { label: "05 crypto-pipeline", href: "#crypto" },
+        { label: "06 soccer-vision", href: "#soccer" },
+        { label: "07 tcc-pesquisa", href: "#pesquisa" },
       ]);
     } else if (command === "tema" || command === "theme") {
       if (!argument) {
@@ -631,10 +649,13 @@
         "help",
         "whoami",
         "projetos",
+        "open clinica",
+        "open camf",
+        "open scoutlink",
+        "open legitrack",
         "open crypto",
         "open soccer",
-        "open air",
-        "open carreta",
+        "open tcc",
         "stack",
         "experiencia",
         "contato",
@@ -693,6 +714,14 @@
     } else if (inWorkspace && event.key === "Escape") {
       event.preventDefault();
       showLanding({ focus: true });
+    } else if (
+      inWorkspace &&
+      (event.key === "ArrowLeft" || event.key === "ArrowRight") &&
+      currentFilm()
+    ) {
+      event.preventDefault();
+      const film = currentFilm();
+      showShot(film, film.index + (event.key === "ArrowRight" ? 1 : -1));
     } else if (inWorkspace && event.key === "/") {
       event.preventDefault();
       commandInput.focus();
@@ -751,7 +780,7 @@
 
   const snippets = [
     {
-      file: "portfolio / claudio.py",
+      file: "~/portfolio/claudio.py",
       code: [
         "# Claudio Meireles — código, dados e ideias.",
         "# Backend / Data Engineering / Artificial Intelligence",
@@ -785,10 +814,10 @@
         '    return {"data": event, "processed": True}',
         "",
         "projects = (",
-        '    "crypto-pipeline",',
-        '    "soccer-vision",',
-        '    "air-quality",',
-        '    "carreta-digital",',
+        '    "vm-clinica",',
+        '    "camf-boletos",',
+        '    "scoutlink",',
+        '    "legitrack",',
         ")",
         "",
         "claudio = Developer()",
@@ -799,7 +828,7 @@
       ],
     },
     {
-      file: "portfolio / pipeline.py",
+      file: "~/portfolio/pipeline.py",
       code: [
         "# Tudo começa com um evento.",
         "from collections import deque",
@@ -855,7 +884,7 @@
   function highlightLine(text) {
     const fragment = document.createDocumentFragment();
     const tokens =
-      /(#.*$|"[^"]*"|'[^']*'|\b(?:from|import|class|def|return|for|in|if|while|yield|is|not|None|True|False)\b)/g;
+      /(#.*$|"[^"]*"|'[^']*'|\b\d+\b|\b(?:from|import|class|def|return|for|in|if|while|yield|is|not|None|True|False|self)\b)/g;
     let position = 0;
     for (const match of text.matchAll(tokens)) {
       fragment.append(
@@ -866,7 +895,9 @@
         ? "code-comment"
         : /^["']/.test(match[0])
           ? "code-string"
-          : "code-keyword";
+          : /^\d/.test(match[0])
+            ? "code-number-literal"
+            : "code-keyword";
       span.textContent = match[0];
       fragment.append(span);
       position = match.index + match[0].length;
@@ -877,7 +908,9 @@
 
   function renderCode() {
     const snippet = snippets[snippetIndex];
-    document.getElementById("source-label").textContent = snippet.file;
+    document.getElementById("source-path").textContent = snippet.file;
+    document.getElementById("landing-file").textContent =
+      snippet.file.replace("~/", "") + ":" + (activeLine + 1);
     const fragment = document.createDocumentFragment();
     snippet.code.forEach((line, index) => {
       const row = document.createElement("div");
@@ -891,26 +924,26 @@
       number.textContent = String(index + 1);
       const source = document.createElement("span");
       source.className = "code-source";
-      source.append(
-        highlightLine(
-          future
-            ? ""
-            : index === activeLine && motionEnabled
-              ? line.slice(0, activeCharacter)
-              : line,
-        ),
-      );
+      const typing = index === activeLine && motionEnabled;
+      source.append(highlightLine(typing ? line.slice(0, activeCharacter) : line));
       if (index === activeLine) {
         const caret = document.createElement("span");
         caret.className = "code-caret";
         source.append(caret);
+        if (typing && activeCharacter < line.length) {
+          const rest = document.createElement("span");
+          rest.className = "code-rest";
+          rest.textContent = line.slice(activeCharacter + 1);
+          source.append(rest);
+        }
       }
       row.append(number, source);
       fragment.append(row);
     });
     codeTrack.replaceChildren(fragment);
+    const percent = Math.round(((activeLine + 1) / snippet.code.length) * 100);
     document.getElementById("code-position").textContent =
-      `${activeLine + 1}:${activeCharacter + 1}`;
+      `${activeLine + 1}:${activeCharacter + 1}  ${percent}%`;
   }
 
   function updateCode(time) {
@@ -930,6 +963,7 @@
         activeLine++;
         if (activeLine >= snippets[snippetIndex].code.length) {
           snippetIndex = (snippetIndex + 1) % snippets.length;
+          visuals.setEyeText(snippets[snippetIndex].code.join(" "));
           activeLine = 3;
           codeScroll.value = 0;
           codeScroll.target = 0;
@@ -946,16 +980,23 @@
     if (highlightedKey) highlightedKey.classList.add("key-lit");
   }
 
-  function updateCodeScroll(dt) {
-    const typedLines = motionEnabled
-      ? activeLine + 1
-      : snippets[snippetIndex].code.length;
-    const available = Math.max(
+  function rowHeight() {
+    return codeTrack.firstElementChild?.offsetHeight || 15;
+  }
+  function maxCodeScroll() {
+    return Math.max(
       0,
-      typedLines * 15 - codeStage.clientHeight + 45,
+      snippets[snippetIndex].code.length * rowHeight() - codeStage.clientHeight + 30,
+    );
+  }
+  function updateCodeScroll(dt) {
+    // Keep the line being typed a little above the middle, like a real editor.
+    const available = Math.min(
+      maxCodeScroll(),
+      Math.max(0, activeLine * rowHeight() - codeStage.clientHeight * 0.42),
     );
     if (sceneTime > codeScroll.manualUntil) codeScroll.target = available;
-    codeScroll.target = Math.max(0, Math.min(available, codeScroll.target));
+    codeScroll.target = Math.max(0, Math.min(maxCodeScroll(), codeScroll.target));
     codeScroll.value +=
       (codeScroll.target - codeScroll.value) *
       (motionEnabled ? 1 - Math.exp(-dt * 10) : 1);
@@ -972,13 +1013,7 @@
           : event.deltaMode === 2
             ? codeStage.clientHeight
             : 1;
-      const max = Math.max(
-        0,
-        (motionEnabled ? activeLine + 1 : snippets[snippetIndex].code.length) *
-          15 -
-          codeStage.clientHeight +
-          45,
-      );
+      const max = maxCodeScroll();
       codeScroll.target = Math.max(
         0,
         Math.min(max, codeScroll.target + event.deltaY * unit),
@@ -989,10 +1024,193 @@
     { passive: false },
   );
 
+  function centerOf(element) {
+    if (!element) return null;
+    const rect = element.getBoundingClientRect();
+    if (!rect.width && !rect.height) return null;
+    return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+  }
   const visuals = window.PortfolioVisuals.create({
     palette: () => palette,
     motion: () => motionEnabled,
+    // When the visitor's mouse is still, the eye watches the work:
+    // the caret on the landing, the selected card in the workspace.
+    focus: () =>
+      inWorkspace
+        ? centerOf(items[currentIndex])
+        : centerOf(codeTrack.querySelector(".code-caret")),
   });
+  visuals.setEyeText(snippets[snippetIndex].code.join(" "));
+  fetch("assets/data/contributions.json")
+    .then((response) => (response.ok ? response.json() : null))
+    .then((data) => {
+      if (!data) return;
+      visuals.setContributions(data);
+      const days = Object.values(data.days);
+      const total = days.reduce((sum, value) => sum + value, 0);
+      document.getElementById("contrib-summary").textContent =
+        `${total} ${data.label} entre ${data.from} e ${data.to}, em ${days.length} dias ativos.`;
+    })
+    .catch(() => {});
+
+  // Film: screenshot carousel inside project panels (↔ to change shot).
+  const SHOT_DURATION = 5200;
+  const films = [...document.querySelectorAll("[data-film]")].map((element) => ({
+    element,
+    shots: [...element.querySelectorAll(".shot")],
+    tabs: [...element.querySelectorAll(".film-tabs button")],
+    bar: element.querySelector(".film-progress i"),
+    index: 0,
+    since: 0,
+  }));
+  function showShot(film, index) {
+    film.index = (index + film.shots.length) % film.shots.length;
+    film.since = sceneTime;
+    film.shots.forEach((shot, i) => shot.classList.toggle("is-current", i === film.index));
+    film.tabs.forEach((tab, i) => tab.setAttribute("aria-pressed", String(i === film.index)));
+    film.element.querySelector("[data-film-index]").textContent = String(film.index + 1);
+    film.element.querySelector(".film-caption").textContent =
+      film.shots[film.index].dataset.caption || "";
+  }
+  function currentFilm() {
+    return films.find((film) => !film.element.closest(".content-panel").hidden);
+  }
+  function updateFilms(time) {
+    const film = currentFilm();
+    if (!film) return;
+    const progress = Math.min(1, (time - film.since) / SHOT_DURATION);
+    film.bar.style.width = (progress * 100).toFixed(1) + "%";
+    if (progress >= 1) showShot(film, film.index + 1);
+  }
+  films.forEach((film) => {
+    showShot(film, 0);
+    film.tabs.forEach((tab, i) => tab.addEventListener("click", () => showShot(film, i)));
+  });
+
+  // Ghost: when the visitor is idle, the hands type the open panel.
+  const ghost = { text: "", position: 0, next: 0, burstLeft: 0, state: "" };
+  function setGhostState(state) {
+    if (ghost.state === state) return;
+    ghost.state = state;
+    document.getElementById("ghost-state").textContent = state;
+  }
+  function resetGhost(panel) {
+    ghost.text = panel.innerText.replace(/\s+/g, " ").trim().toLowerCase();
+    ghost.position = 0;
+    ghost.next = sceneTime + 1800;
+    ghost.burstLeft = 0;
+  }
+  function updateGhost(time) {
+    const idle = !visuals.mouseActive() && !drag;
+    if (!idle || !ghost.text) {
+      setGhostState("idle");
+      ghost.next = Math.max(ghost.next, time + 900);
+      return;
+    }
+    if (time < ghost.next) {
+      if (ghost.burstLeft <= 0) setGhostState("idle");
+      return;
+    }
+    if (ghost.burstLeft <= 0) ghost.burstLeft = 30 + Math.floor(Math.random() * 60);
+    const character = ghost.text[ghost.position % ghost.text.length];
+    ghost.position++;
+    ghost.burstLeft--;
+    visuals.setKey(character === " " ? " " : character);
+    setGhostState("typing");
+    ghost.next =
+      time +
+      (ghost.burstLeft <= 0
+        ? 1600 + Math.random() * 2200
+        : character === " "
+          ? 140 + Math.random() * 90
+          : 55 + Math.random() * 85);
+  }
+
+  // Real numbers from GitHub for the status bar.
+  const github = { user: null, repos: null, loading: null };
+  function loadGithub() {
+    if (github.loading) return github.loading;
+    try {
+      const cached = JSON.parse(sessionStorage.getItem("cm-github") || "null");
+      if (cached && Date.now() - cached.at < 30 * 60 * 1000) {
+        Object.assign(github, cached);
+        github.loading = Promise.resolve();
+        return github.loading;
+      }
+    } catch {
+      /* No cache available. */
+    }
+    github.loading = Promise.all([
+      fetch("https://api.github.com/users/ClaudioAMF1").then((r) =>
+        r.ok ? r.json() : null,
+      ),
+      fetch("https://api.github.com/users/ClaudioAMF1/repos?per_page=100").then(
+        (r) => (r.ok ? r.json() : null),
+      ),
+    ])
+      .then(([user, repos]) => {
+        github.user = user;
+        github.repos = Array.isArray(repos) ? repos : null;
+        try {
+          sessionStorage.setItem(
+            "cm-github",
+            JSON.stringify({ at: Date.now(), user, repos: github.repos }),
+          );
+        } catch {
+          /* Cache is optional. */
+        }
+      })
+      .catch(() => {});
+    return github.loading;
+  }
+  function setStats(entries) {
+    ["a", "b", "c"].forEach((key, index) => {
+      document.getElementById("stat-" + key + "-label").textContent =
+        entries[index][0];
+      document.getElementById("stat-" + key).textContent = entries[index][1];
+    });
+  }
+  function format(number) {
+    return typeof number === "number"
+      ? number.toLocaleString("pt-BR").replace(/\./g, "'")
+      : "—";
+  }
+  function updateStats(panel) {
+    const repoName = panel.dataset.repo;
+    if (repoName === "private") {
+      setStats([
+        ["stars", "—"],
+        ["forks", "—"],
+        ["repo", "privado"],
+      ]);
+      return;
+    }
+    if (repoName) {
+      const repo = github.repos?.find(
+        (entry) => entry.name.toLowerCase() === repoName.toLowerCase(),
+      );
+      setStats([
+        ["stars", format(repo?.stargazers_count)],
+        ["forks", format(repo?.forks_count)],
+        ["lang", repo?.language?.toLowerCase() || "—"],
+      ]);
+    } else {
+      const stars = github.repos?.reduce(
+        (sum, entry) => sum + (entry.fork ? 0 : entry.stargazers_count),
+        0,
+      );
+      setStats([
+        ["repos", format(github.user?.public_repos)],
+        ["stars", format(stars)],
+        ["followers", format(github.user?.followers)],
+      ]);
+    }
+    if (!github.user && !github.repos)
+      loadGithub().then(() => {
+        if (inWorkspace && panels.find((entry) => !entry.hidden) === panel)
+          updateStats(panel);
+      });
+  }
   function resizeCanvases() {
     visuals.resize();
   }
@@ -1005,7 +1223,11 @@
     if (time - lastFrame >= 16) {
       const dt = lastFrame ? Math.min(0.05, (time - lastFrame) / 1000) : 1 / 60;
       sceneTime += dt * 1000;
-      if (inWorkspace) animateWheel(dt);
+      if (inWorkspace) {
+        animateWheel(dt);
+        updateGhost(sceneTime);
+        updateFilms(sceneTime);
+      }
       else if (!entering) {
         updateCode(sceneTime);
         updateCodeScroll(dt);
