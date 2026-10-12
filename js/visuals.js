@@ -24,6 +24,7 @@
       branch: surface("branch-canvas"),
       mesh: surface("identity-canvas"),
       cursor: surface("cursor-canvas"),
+      entry: surface("entry-canvas"),
     };
     const eye = { x: 0, y: 0, blink: 0 };
     const pointer = {
@@ -31,9 +32,55 @@
       y: innerHeight * 0.48,
       seen: false,
     };
-    const fingers = Array.from({ length: 2 }, () =>
-      Array.from({ length: 5 }, () => ({ x: 0, y: 0 })),
-    );
+    const hands = Array.from({ length: 2 }, () => ({
+      x: 0,
+      y: 0,
+      targetX: 0,
+      targetY: 0,
+      fingers: Array.from({ length: 5 }, () => ({
+        x: 0,
+        y: 0,
+        targetX: 0,
+        targetY: 0,
+        until: -1,
+      })),
+    }));
+    const keyPositions = new Map();
+    const pressedNodes = new Map();
+    const shiftedKeys = {
+      "~": "`",
+      "!": "1",
+      "@": "2",
+      "#": "3",
+      $: "4",
+      "%": "5",
+      "^": "6",
+      "&": "7",
+      "*": "8",
+      "(": "9",
+      ")": "0",
+      _: "-",
+      "+": "=",
+      "{": "[",
+      "}": "]",
+      "|": "\\",
+      ":": ";",
+      '"': "'",
+      "<": ",",
+      ">": ".",
+      "?": "/",
+    };
+    const fingerKeys = [
+      [0, 4, "esc1qaz⇧"],
+      [0, 3, "2wsx"],
+      [0, 2, "3edc"],
+      [0, 1, "45rtfgvb"],
+      [1, 1, "67yuhjnm"],
+      [1, 2, "8ik,"],
+      [1, 3, "9ol."],
+      [1, 4, "0-=p[]\\;' /↵←"],
+    ];
+    let entry = null;
     const trail = [];
     let key = "";
     let keyAt = -1000;
@@ -74,11 +121,30 @@
         layer.canvas.height = Math.round(bounds.height * scale);
         layer.context.setTransform(scale, 0, 0, scale, 0, 0);
       }
+      if (surfaces.hands.width) measureKeys();
     }
 
     function setKey(value) {
-      key = value.toLowerCase();
+      key = value;
       keyAt = clock;
+      const base = shiftedKeys[value] || value.toLowerCase();
+      const mapped = base === " " ? "space" : base === "\n" ? "↵" : base;
+      const position = keyPositions.get(mapped);
+      if (!position || !motion()) return;
+      const assignment =
+        mapped === "space"
+          ? [1, 0]
+          : fingerKeys.find(([, , keys]) => keys.includes(mapped));
+      if (!assignment) return;
+      reachKey(assignment[0], assignment[1], position);
+      if (
+        shiftedKeys[value] ||
+        (value.length === 1 && value !== value.toLowerCase())
+      ) {
+        const other = 1 - assignment[0];
+        const shift = keyPositions.get(other ? "shift-right" : "shift-left");
+        if (shift) reachKey(other, 4, shift);
+      }
     }
     function trackPointer(event) {
       pointer.x = event.clientX;
@@ -98,7 +164,7 @@
       }
     }
 
-    function drawEye(time, dt) {
+    function drawEye(time, dt, forceOpen = false) {
       const layer = surfaces.eye;
       if (!layer.context || !layer.width) return;
       const { context: ctx, width, height } = layer;
@@ -126,7 +192,7 @@
       eye.y += (targetY - eye.y) * smoothing;
       const cycle = (time + 1000) % 6400;
       eye.blink =
-        motion() && cycle > 6110
+        !forceOpen && motion() && cycle > 6110
           ? Math.sin(((cycle - 6110) / 290) * Math.PI) ** 2
           : 0;
       const open = Math.max(0.025, 1 - eye.blink);
@@ -207,85 +273,192 @@
       }
     }
 
+    function measureKeys() {
+      const layer = surfaces.hands;
+      keyPositions.clear();
+      const rows = [...document.querySelectorAll(".key-row")];
+      rows.forEach((row, rowIndex) => {
+        const nodes = [...row.querySelectorAll("span")];
+        nodes.forEach((node, index) => {
+          let label = node.textContent.trim();
+          if (label === "⇧") label = index === 0 ? "shift-left" : "shift-right";
+          const bounds = node.getBoundingClientRect();
+          const fallbackX =
+            layer.width * 0.06 +
+            index * layer.width * 0.061 +
+            rowIndex * layer.width * 0.018;
+          const fallbackY = 12 + rowIndex * 19;
+          keyPositions.set(label, {
+            x: bounds.width
+              ? bounds.left + bounds.width / 2 - layer.left
+              : label === "space"
+                ? layer.width / 2
+                : fallbackX,
+            y: bounds.height
+              ? bounds.top + bounds.height / 2 - layer.top
+              : fallbackY,
+            node,
+          });
+        });
+      });
+    }
+
+    function handRest(side) {
+      const layer = surfaces.hands;
+      const scale = clamp(layer.width / 420, 0.65, 1.15);
+      const names = side ? ["j", "k", "l", ";"] : ["f", "d", "s", "a"];
+      const tips = names.map((name) => keyPositions.get(name));
+      if (tips.some((tip) => !tip)) return null;
+      const center = tips.reduce((sum, point) => sum + point.x, 0) / 4;
+      const home = tips.reduce((sum, point) => sum + point.y, 0) / 4;
+      const direction = side ? -1 : 1;
+      const wrist = { x: center + direction * 7 * scale, y: home + 91 * scale };
+      const thumb = keyPositions.get("space");
+      const points = [wrist];
+      const thumbTip = {
+        x: (thumb?.x || layer.width / 2) - direction * 17 * scale,
+        y: (thumb?.y || home + 40) + 13 * scale,
+      };
+      points.push(
+        { x: wrist.x + direction * 9 * scale, y: wrist.y - 22 * scale },
+        { x: thumbTip.x - direction * 15 * scale, y: thumbTip.y + 22 * scale },
+        { x: thumbTip.x - direction * 6 * scale, y: thumbTip.y + 9 * scale },
+        thumbTip,
+      );
+      tips.forEach((tip, index) => {
+        const knuckle = {
+          x: tip.x * 0.83 + center * 0.17,
+          y: home + 34 * scale - Math.abs(index - 1.3) * 2 * scale,
+        };
+        points.push(
+          knuckle,
+          {
+            x: knuckle.x + (tip.x - knuckle.x) * 0.43,
+            y: knuckle.y + (tip.y - knuckle.y) * 0.5,
+          },
+          {
+            x: knuckle.x + (tip.x - knuckle.x) * 0.78,
+            y: knuckle.y + (tip.y - knuckle.y) * 0.82,
+          },
+          { x: tip.x, y: tip.y + 3 * scale },
+        );
+      });
+      return { points, scale };
+    }
+
+    function reachKey(side, finger, position) {
+      const rest = handRest(side);
+      if (!rest) return;
+      const hand = hands[side];
+      const tip = rest.points[4 + finger * 4];
+      const dx = position.x - tip.x;
+      const dy = position.y + 3 * rest.scale - tip.y;
+      hand.targetX = dx * 0.22;
+      hand.targetY = dy * 0.22;
+      const state = hand.fingers[finger];
+      state.targetX = dx;
+      state.targetY = dy;
+      state.until = clock + 145;
+      if (position.node) {
+        position.node.classList.add("key-pressed");
+        pressedNodes.set(position.node, clock + 145);
+      }
+    }
+
     function drawHands(time, dt) {
       const layer = surfaces.hands;
       if (!layer.context || !layer.width || workspaceMode) return;
       const { context: ctx, width, height } = layer;
       const colors = palette();
       ctx.clearRect(0, 0, width, height);
-      ctx.strokeStyle = colors.muted;
-      ctx.fillStyle = colors.text;
-      ctx.lineWidth = 0.65;
-      const leftKeys = ["qaz1", "wsx2", "edc3", "rfvtgb45", " "];
-      const rightKeys = ["p0[];'", "ol9", "ik8", "yhnujm67", " "];
-      const pressed = motion() && time - keyAt < 155;
-      for (let side = 0; side < 2; side++) {
-        const center = width * (side ? 0.71 : 0.29);
-        const flip = side ? -1 : 1;
-        const spread = width * 0.22;
-        const wrist = { x: center + flip * spread * 0.04, y: height * 0.88 };
-        const targets = side ? rightKeys : leftKeys;
-        const active = targets.findIndex(
-          (group) => group.includes(key) && key.length === 1,
-        );
-        const points = [];
-        for (let finger = 0; finger < 5; finger++) {
-          const restX =
-            center +
-            flip * spread * (finger === 4 ? 0.56 : (finger - 1.6) * 0.24);
-          const restY =
-            height *
-            (finger === 4 ? 0.43 : 0.11 + Math.abs(finger - 1.8) * 0.055);
-          const target =
-            pressed && finger === active
-              ? {
-                  x:
-                    flip *
-                    (finger === 4 ? 4 : ((key.charCodeAt(0) % 5) - 2) * 2.2),
-                  y: -11 - (key.charCodeAt(0) % 3) * 3,
-                }
-              : { x: 0, y: 0 };
-          const joint = fingers[side][finger];
-          const gain = motion() ? 1 - Math.exp(-dt * 22) : 1;
-          joint.x += (target.x - joint.x) * gain;
-          joint.y += (target.y - joint.y) * gain;
-          const tip = { x: restX + joint.x, y: restY + joint.y };
-          const knuckle = {
-            x: center + (restX - center) * 0.63,
-            y: height * 0.43,
-          };
-          const middle = {
-            x: knuckle.x + (tip.x - knuckle.x) * 0.63,
-            y: knuckle.y + (tip.y - knuckle.y) * 0.56,
-          };
-          points.push(tip, middle, knuckle);
-          ctx.globalAlpha = finger === active && pressed ? 0.9 : 0.42;
-          ctx.beginPath();
-          ctx.moveTo(wrist.x, wrist.y);
-          ctx.lineTo(knuckle.x, knuckle.y);
-          ctx.lineTo(middle.x, middle.y);
-          ctx.lineTo(tip.x, tip.y);
-          ctx.stroke();
-          for (const point of [tip, middle, knuckle])
-            ctx.fillRect(point.x - 0.75, point.y - 0.75, 1.5, 1.5);
+      for (const [node, until] of pressedNodes) {
+        if (time > until) {
+          node.classList.remove("key-pressed");
+          pressedNodes.delete(node);
         }
-        ctx.globalAlpha = 0.27;
-        ctx.strokeRect(center - spread * 0.57, 0, spread * 1.17, height * 0.94);
+      }
+      const bones = [
+        [0, 1],
+        [1, 2],
+        [2, 3],
+        [3, 4],
+        [0, 5],
+        [5, 6],
+        [6, 7],
+        [7, 8],
+        [5, 9],
+        [9, 10],
+        [10, 11],
+        [11, 12],
+        [9, 13],
+        [13, 14],
+        [14, 15],
+        [15, 16],
+        [13, 17],
+        [0, 17],
+        [17, 18],
+        [18, 19],
+        [19, 20],
+      ];
+      for (let side = 0; side < 2; side++) {
+        const rest = handRest(side);
+        if (!rest) continue;
+        const hand = hands[side];
+        const gain = motion() ? 1 - Math.exp(-dt * 27) : 1;
+        if (hand.fingers.every((finger) => time > finger.until + 90)) {
+          hand.targetX = 0;
+          hand.targetY = 0;
+        }
+        hand.x += (hand.targetX - hand.x) * gain;
+        hand.y += (hand.targetY - hand.y) * gain;
+        const points = rest.points.map((point) => ({
+          x: point.x + hand.x,
+          y: point.y + hand.y,
+        }));
+        for (let finger = 0; finger < 5; finger++) {
+          const state = hand.fingers[finger];
+          if (time > state.until) {
+            state.targetX = hand.targetX;
+            state.targetY = hand.targetY;
+          }
+          state.x += (state.targetX - state.x) * gain;
+          state.y += (state.targetY - state.y) * gain;
+          const start = 1 + finger * 4;
+          for (let joint = 0; joint < 4; joint++) {
+            const weight = [0.08, 0.37, 0.73, 1][joint];
+            points[start + joint].x += (state.x - hand.x) * weight;
+            points[start + joint].y += (state.y - hand.y) * weight;
+          }
+        }
+        ctx.strokeStyle = colors.muted;
+        ctx.fillStyle = colors.text;
+        ctx.lineWidth = 0.65;
+        ctx.globalAlpha = 0.57;
         ctx.beginPath();
-        points
-          .filter((_, index) => index % 3 === 2)
-          .forEach((point, index) =>
-            index ? ctx.lineTo(point.x, point.y) : ctx.moveTo(point.x, point.y),
-          );
+        for (const [a, b] of bones) {
+          ctx.moveTo(points[a].x, points[a].y);
+          ctx.lineTo(points[b].x, points[b].y);
+        }
         ctx.stroke();
-        ctx.globalAlpha = 0.65;
+        points.forEach((point, index) => {
+          ctx.globalAlpha = index % 4 === 0 ? 0.9 : 0.48;
+          const size = index % 4 === 0 ? 1.6 : 1.15;
+          ctx.fillRect(point.x - size / 2, point.y - size / 2, size, size);
+        });
+        const minX = Math.min(...points.map((point) => point.x)) - 7;
+        const maxX = Math.max(...points.map((point) => point.x)) + 7;
+        const minY = Math.min(...points.map((point) => point.y)) - 8;
+        const maxY = Math.max(...points.map((point) => point.y)) + 7;
+        ctx.globalAlpha = 0.28;
+        ctx.strokeRect(minX, minY, maxX - minX, maxY - minY);
+        ctx.globalAlpha = 0.64;
         ctx.fillStyle = colors.muted;
-        ctx.font = "6px monospace";
-        ctx.textAlign = "center";
+        ctx.font = `${width < 350 ? 5 : 6}px monospace`;
+        ctx.textAlign = side ? "right" : "left";
         ctx.fillText(
-          `['hand:${side}'] ${(center / width).toFixed(4)}`,
-          center,
-          height - 1,
+          `['hand${side}:u'] ${((layer.left + points[0].x) / innerWidth).toFixed(7)}`,
+          side ? width - 2 : 2,
+          Math.max(7, minY - 4),
         );
       }
       ctx.globalAlpha = 1;
@@ -405,6 +578,114 @@
       ctx.globalAlpha = 1;
     }
 
+    function beginEntry(time, duration = 2400) {
+      const layer = surfaces.entry;
+      if (!layer.context || !surfaces.eye.context) return false;
+      layer.canvas.hidden = false;
+      resize();
+      const origin = surfaces.eye;
+      drawEye(clock, 1 / 60, true);
+      const pupilX = origin.width / 2 + eye.x * origin.width * 0.46 * 0.32;
+      const pupilY = origin.height * 0.47 + eye.y * origin.height * 0.36 * 0.33;
+      entry = {
+        started: time,
+        duration,
+        pupilX,
+        pupilY,
+        x: origin.left + pupilX,
+        y: origin.top + pupilY,
+      };
+      layer.canvas.dataset.progress = "0";
+      return true;
+    }
+
+    function endEntry() {
+      entry = null;
+      const layer = surfaces.entry;
+      if (layer.context)
+        layer.context.clearRect(0, 0, layer.width, layer.height);
+      if (layer.canvas) {
+        layer.canvas.hidden = true;
+        layer.canvas.removeAttribute("data-progress");
+      }
+    }
+
+    function drawEntry(time) {
+      if (!entry) return;
+      const layer = surfaces.entry;
+      const { context: ctx, width, height } = layer;
+      if (!ctx || !width) return;
+      const colors = palette();
+      const elapsed = Math.max(0, time - entry.started);
+      const progress = clamp(elapsed / entry.duration, 0, 1);
+      const smooth = (value) => value * value * (3 - 2 * value);
+      const open = smooth(clamp(progress / 0.28, 0, 1));
+      const zoom = smooth(clamp((progress - 0.28) / 0.72, 0, 1));
+      const centerX = entry.x + (width / 2 - entry.x) * open;
+      const centerY = entry.y + (height / 2 - entry.y) * open;
+      const reach = Math.hypot(width, height) * 0.65 + 100;
+      const startRadius = Math.max(8, surfaces.eye.width * 0.062);
+      const radius =
+        startRadius * Math.exp(Math.log(reach / startRadius) * zoom);
+      const scale = radius / startRadius;
+      ctx.clearRect(0, 0, width, height);
+      ctx.globalAlpha = 0.78 * open;
+      ctx.fillStyle = colors.bg;
+      ctx.fillRect(0, 0, width, height);
+      ctx.globalAlpha = Math.min(1, 0.4 + open);
+      ctx.drawImage(
+        surfaces.eye.canvas,
+        centerX - entry.pupilX * scale,
+        centerY - entry.pupilY * scale,
+        surfaces.eye.width * scale,
+        surfaces.eye.height * scale,
+      );
+      if (progress > 0.23) {
+        ctx.strokeStyle = colors.text;
+        ctx.lineWidth = 0.7;
+        const spin = elapsed * 0.00034;
+        const outer = reach * 1.45;
+        for (let bucket = 0; bucket < 5; bucket++) {
+          ctx.globalAlpha = (bucket + 1) * 0.11 * open;
+          ctx.beginPath();
+          for (let particle = bucket; particle < 900; particle += 5) {
+            const speed = 0.4 + noise(particle + 24);
+            const phase = (noise(particle * 3) + elapsed * 0.00042 * speed) % 1;
+            const distance = radius + 18 + (1 - phase) * (outer - radius);
+            const angle = particle * 2.399963 + spin * speed;
+            const tail = Math.min(90, 3 + phase * 22 + zoom * 42);
+            const cos = Math.cos(angle),
+              sin = Math.sin(angle);
+            ctx.moveTo(
+              centerX + cos * (distance + tail),
+              centerY + sin * (distance + tail),
+            );
+            ctx.lineTo(centerX + cos * distance, centerY + sin * distance);
+          }
+          ctx.stroke();
+        }
+        for (const [lineWidth, alpha] of [
+          [15, 0.04],
+          [7, 0.08],
+          [2.4, 0.43],
+          [0.8, 0.96],
+        ]) {
+          ctx.lineWidth = lineWidth;
+          ctx.globalAlpha = alpha * open;
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = colors.bg;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius - 0.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      layer.canvas.dataset.progress = progress.toFixed(3);
+    }
+
     function drawCursor(time) {
       const layer = surfaces.cursor;
       if (!layer.context || !layer.width) return;
@@ -431,9 +712,15 @@
       resize,
       setKey,
       trackPointer,
+      beginEntry,
+      endEntry,
       draw(time, dt, workspace, wheelPosition = 0) {
         clock = time;
         workspaceMode = workspace;
+        if (entry) {
+          drawEntry(performance.now());
+          return;
+        }
         drawEye(time, dt);
         drawHands(time, dt);
         drawBranch(time, wheelPosition);

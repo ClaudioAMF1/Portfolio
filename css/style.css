@@ -2102,3 +2102,106 @@ body:not(.enhanced) #hands-canvas {
     display: block;
   }
 }
+
+.landing-keyboard {
+  position: relative;
+  width: 420px;
+}
+.keyboard-traces {
+  height: 106px;
+  width: 100%;
+  margin: 0;
+}
+.keyboard-traces canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+.key-row span {
+  position: relative;
+  z-index: 3;
+}
+.key-row span.key-pressed {
+  color: var(--text);
+  border-color: var(--dim);
+  background: var(--raised);
+}
+.space-row {
+  padding: 0;
+}
+.space-row span {
+  min-width: 118px;
+  font-size: 8px;
+  line-height: 13px;
+}
+.entry-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100svh;
+  z-index: 50;
+  pointer-events: none;
+}
+.is-entering .landing {
+  pointer-events: none;
+}
+.is-entering .landing-editor,
+.is-entering .landing-keyboard,
+.is-entering .landing-footer,
+.is-entering .site-header {
+  opacity: 0.08;
+  filter: blur(1px);
+  transition:
+    opacity 0.7s,
+    filter 0.7s;
+}
+.is-entering .eye-overlay,
+.is-entering .cursor-canvas {
+  opacity: 0;
+}
+@media (min-width: 651px) {
+  .project-wheel {
+    overflow: clip;
+  }
+}
+@media (max-width: 650px) {
+  .landing-keyboard {
+    width: min(330px, 100%);
+  }
+  .keyboard-traces {
+    height: 92px;
+  }
+  .key-row span {
+    min-width: 17px;
+  }
+  .space-row span {
+    min-width: 95px;
+  }
+}
+@media (max-height: 700px) and (min-width: 651px) {
+  .keyboard-traces {
+    height: 79px;
+  }
+}
+@media print {
+  .entry-canvas {
+    display: none !important;
+  }
+}
+
+.keyboard-traces {
+  height: 72px;
+}
+@media (max-width: 650px) {
+  .keyboard-traces {
+    height: 68px;
+  }
+}
+@media (max-height: 700px) and (min-width: 651px) {
+  .keyboard-traces {
+    height: 62px;
+  }
+}
