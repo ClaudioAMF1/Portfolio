@@ -2356,3 +2356,14 @@ body:not(.enhanced) .desk {
     grid-template-rows: minmax(380px, calc(100svh - 190px)) auto auto;
   }
 }
+
+.identity-canvas {
+  height: 250px;
+  margin: 4px -6px 0;
+  width: calc(100% + 12px);
+}
+@media (max-width: 650px) {
+  .identity-canvas {
+    height: 230px;
+  }
+}

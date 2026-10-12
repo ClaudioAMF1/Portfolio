@@ -706,54 +706,245 @@
       ctx.globalAlpha = 1;
     }
 
+    // Contribution "terrain": one ridge per week, one bump per day.
+    let contributions = null;
+    let contributionsShownAt = -1;
+    function setContributions(data) {
+      if (!data || !data.days) return;
+      const from = new Date(data.from + "T12:00:00");
+      const to = new Date(data.to + "T12:00:00");
+      // Align rows to Mondays so each ridge is a real calendar week.
+      const first = new Date(from);
+      first.setDate(first.getDate() - ((first.getDay() + 6) % 7));
+      const weeks = [];
+      let total = 0;
+      let activeDays = 0;
+      let best = { date: "", count: 0 };
+      let streak = 0;
+      let bestStreak = 0;
+      for (let day = new Date(first); day <= to; day.setDate(day.getDate() + 1)) {
+        const key = day.toISOString().slice(0, 10);
+        const count = day < from ? 0 : data.days[key] || 0;
+        const index = Math.floor((day - first) / 864e5 / 7);
+        (weeks[index] ||= { start: new Date(day), days: [] }).days.push(count);
+        total += count;
+        if (count) activeDays++;
+        streak = count ? streak + 1 : 0;
+        bestStreak = Math.max(bestStreak, streak);
+        if (count > best.count) best = { date: key, count };
+      }
+      let peakWeek = 0;
+      weeks.forEach((week, index) => {
+        week.total = week.days.reduce((sum, value) => sum + value, 0);
+        if (week.total > weeks[peakWeek].total) peakWeek = index;
+      });
+      contributions = {
+        weeks,
+        total,
+        activeDays,
+        best,
+        bestStreak,
+        peakWeek,
+        max: Math.max(1, ...weeks.flatMap((week) => week.days)),
+        label: data.label || "commits",
+        source: data.source,
+        from,
+        to,
+      };
+      contributionsShownAt = -1;
+    }
+
     function drawMesh(time) {
       const layer = surfaces.mesh;
       if (
         !layer.context ||
         !layer.width ||
         !workspaceMode ||
+        !contributions ||
         document.getElementById("about").hidden
       )
         return;
       const { context: ctx, width, height } = layer;
       const colors = palette();
+      const data = contributions;
+      if (contributionsShownAt < 0) contributionsShownAt = time;
+      const grow = motion()
+        ? Math.min(1, (time - contributionsShownAt) / 1600)
+        : 1;
+      const ease = 1 - (1 - grow) ** 3;
       ctx.clearRect(0, 0, width, height);
-      ctx.lineWidth = 0.55;
-      ctx.strokeStyle = colors.accent;
-      for (let row = 0; row < 15; row++) {
-        ctx.globalAlpha = 0.16 + row / 38;
-        ctx.beginPath();
-        for (let column = 0; column < 62; column++) {
-          const u = column / 61;
-          const x = 12 + u * (width - 24);
-          const wave =
-            Math.exp(
-              -(((u - 0.31 - Math.sin(time * 0.00016) * 0.09) * 7) ** 2),
-            ) *
-              Math.sin(row * 0.24 + time * 0.00035) *
-              27 +
-            Math.exp(-(((u - 0.68) * 9) ** 2)) * 16;
-          const y =
-            height * 0.27 +
-            row * 4.3 -
-            wave * (1 - row / 25) +
-            Math.sin(u * 16 + row * 0.35 + time * 0.00025) * 2;
-          column ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
-        }
-        ctx.stroke();
-      }
-      ctx.globalAlpha = 0.4;
-      ctx.strokeStyle = colors.dim;
-      ctx.beginPath();
-      ctx.moveTo(12, height - 21);
-      ctx.lineTo(width - 12, height - 21);
-      ctx.stroke();
+      const plotW = width * 0.6;
+      const left = 18;
+      const right = plotW - 6;
+      const top = 44;
+      const bottom = height - 22;
+      const rows = data.weeks.length;
+      const step = (bottom - top - 26) / rows;
+      const amplitude = Math.min(46, step * 9);
+      const samples = 84;
+      const months = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+
       ctx.font = "7px monospace";
-      ctx.fillStyle = colors.muted;
+      ctx.textBaseline = "alphabetic";
+      ctx.fillStyle = colors.text;
+      ctx.globalAlpha = 0.9;
       ctx.textAlign = "left";
-      ctx.fillText("CM / código em movimento", 12, height - 8);
+      ctx.font = "bold 9px monospace";
+      ctx.fillText("CM", left, 14);
+      ctx.font = "8px monospace";
+      ctx.fillText(`cresceu até ${data.total} pontos`, left + 22, 14);
+      ctx.fillStyle = colors.muted;
+      ctx.font = "7px monospace";
+      ctx.fillText(
+        `1 ponto = 1 ${data.source === "github" ? "contribuição" : "commit"} · ${months[data.from.getMonth()]} ${data.from.getFullYear()} — ${months[data.to.getMonth()]} ${data.to.getFullYear()}`,
+        left + 22,
+        24,
+      );
+
+      let lastMonth = -1;
+      data.weeks.forEach((week, row) => {
+        const baseY = top + 26 + row * step;
+        const points = [];
+        for (let sample = 0; sample <= samples; sample++) {
+          const u = sample / samples;
+          const dayPosition = u * 6.999;
+          let value = 0;
+          week.days.forEach((count, day) => {
+            value += count * Math.exp(-(((dayPosition - day) / 0.55) ** 2));
+          });
+          const wobble = Math.sin(u * 13 + row * 0.7 + time * 0.0006) * 0.6;
+          const y =
+            baseY - (Math.sqrt(value / data.max) * amplitude + wobble) * ease;
+          points.push([left + u * (right - left), y]);
+        }
+        // Fill under the ridge so nearer weeks hide the ones behind them.
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = colors.surface || colors.bg;
+        ctx.beginPath();
+        points.forEach(([x, y], index) =>
+          index ? ctx.lineTo(x, y) : ctx.moveTo(x, y),
+        );
+        ctx.lineTo(right, baseY + 2);
+        ctx.lineTo(left, baseY + 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = row === data.peakWeek ? colors.accent : colors.text;
+        ctx.lineWidth = row === data.peakWeek ? 1 : 0.55;
+        ctx.globalAlpha = row === data.peakWeek ? 0.95 : 0.3 + (row / rows) * 0.5;
+        ctx.beginPath();
+        points.forEach(([x, y], index) =>
+          index ? ctx.lineTo(x, y) : ctx.moveTo(x, y),
+        );
+        ctx.stroke();
+        const month = week.start.getMonth();
+        if (month !== lastMonth && week.start.getDate() <= 7) {
+          lastMonth = month;
+          ctx.globalAlpha = 0.65;
+          ctx.fillStyle = colors.muted;
+          ctx.font = "6px monospace";
+          ctx.textAlign = "right";
+          ctx.fillText(months[month], left - 3, baseY);
+        }
+      });
+
+      // Section A–A across the busiest week.
+      const peakY = top + 26 + data.peakWeek * step;
+      ctx.globalAlpha = 0.7;
+      ctx.strokeStyle = colors.text;
+      ctx.lineWidth = 0.6;
+      ctx.setLineDash([6, 3, 1, 3]);
+      ctx.beginPath();
+      ctx.moveTo(left, peakY + 3);
+      ctx.lineTo(right, peakY + 3);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = colors.text;
+      ctx.font = "7px monospace";
+      ctx.textAlign = "center";
+      ctx.fillText("A", left + 2, peakY - 3);
+      ctx.fillText("A", right - 2, peakY - 3);
+      const weekdays = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"];
+      ctx.globalAlpha = 0.55;
+      ctx.font = "6px monospace";
+      ctx.textAlign = "center";
+      weekdays.forEach((name, day) =>
+        ctx.fillText(name, left + ((day + 0.5) / 7) * (right - left), height - 8),
+      );
+
+      // Right column: section A–A profile and the numeric twin.
+      const panelX = plotW + 14;
+      const panelW = width - panelX - 8;
+      ctx.globalAlpha = 0.9;
+      ctx.fillStyle = colors.text;
+      ctx.font = "8px monospace";
+      ctx.textAlign = "left";
+      ctx.fillText("seção A–A", panelX, 14);
       ctx.textAlign = "right";
-      ctx.fillText("data → code → ideas", width - 12, height - 8);
+      ctx.fillStyle = colors.muted;
+      ctx.fillText(
+        `${panelW > 170 ? "semana de pico · " : ""}${data.weeks[data.peakWeek].total}`,
+        panelX + panelW,
+        14,
+      );
+      const boxY = 22;
+      const boxH = 46;
+      ctx.strokeStyle = colors.dim;
+      ctx.globalAlpha = 0.9;
+      ctx.strokeRect(panelX + 0.5, boxY + 0.5, panelW, boxH);
+      const peak = data.weeks[data.peakWeek].days;
+      const peakMax = Math.max(1, ...peak);
+      ctx.fillStyle = colors.text;
+      ctx.globalAlpha = 0.75;
+      ctx.beginPath();
+      ctx.moveTo(panelX + 4, boxY + boxH - 3);
+      for (let sample = 0; sample <= 60; sample++) {
+        const u = sample / 60;
+        let value = 0;
+        peak.forEach((count, day) => {
+          value += count * Math.exp(-(((u * 6.999 - day) / 0.55) ** 2));
+        });
+        ctx.lineTo(
+          panelX + 4 + u * (panelW - 8),
+          boxY + boxH - 3 - Math.min(1, value / peakMax) * (boxH - 10) * ease,
+        );
+      }
+      ctx.lineTo(panelX + panelW - 4, boxY + boxH - 3);
+      ctx.fill();
+
+      const best = data.best.date.split("-").reverse().slice(0, 2).join("/");
+      const rowsText = [
+        ["gêmeo numérico", "em números"],
+        ["pontos", String(data.total)],
+        ["dias ativos", String(data.activeDays)],
+        ["maior sequência", `${data.bestStreak} dias`],
+        ["dia mais forte", `${best} · ${data.best.count}`],
+        ["média / dia ativo", (data.total / Math.max(1, data.activeDays)).toFixed(1)],
+      ];
+      rowsText.forEach(([key, value], index) => {
+        const y = boxY + boxH + 20 + index * 15;
+        ctx.globalAlpha = index ? 0.85 : 0.95;
+        ctx.font = "7px monospace";
+        ctx.textAlign = "left";
+        ctx.fillStyle = index ? colors.muted : colors.text;
+        ctx.fillText(key, panelX, y);
+        ctx.textAlign = "right";
+        ctx.fillStyle = colors.text;
+        ctx.fillText(value, panelX + panelW, y);
+        if (index) {
+          ctx.globalAlpha = 0.35;
+          ctx.strokeStyle = colors.dim;
+          ctx.beginPath();
+          ctx.moveTo(panelX, y + 4.5);
+          ctx.lineTo(panelX + panelW, y + 4.5);
+          ctx.stroke();
+        }
+      });
+      const footY = height - 8;
+      ctx.globalAlpha = 0.6;
+      ctx.fillStyle = colors.muted;
+      ctx.font = "6px monospace";
+      ctx.textAlign = "left";
+      ctx.fillText(data.label, panelX, footY);
       ctx.globalAlpha = 1;
     }
 
@@ -892,6 +1083,7 @@
       resize,
       setKey,
       setEyeText,
+      setContributions,
       mouseActive,
       trackPointer,
       beginEntry,

@@ -419,7 +419,7 @@
 
   function readPalette() {
     const styles = getComputedStyle(root);
-    ["bg", "text", "accent", "dim", "muted", "warm"].forEach((key) => {
+    ["bg", "surface", "text", "accent", "dim", "muted", "warm"].forEach((key) => {
       palette[key] = styles.getPropertyValue("--" + key).trim();
     });
   }
@@ -1031,6 +1031,17 @@
         : centerOf(codeTrack.querySelector(".code-caret")),
   });
   visuals.setEyeText(snippets[snippetIndex].code.join(" "));
+  fetch("assets/data/contributions.json")
+    .then((response) => (response.ok ? response.json() : null))
+    .then((data) => {
+      if (!data) return;
+      visuals.setContributions(data);
+      const days = Object.values(data.days);
+      const total = days.reduce((sum, value) => sum + value, 0);
+      document.getElementById("contrib-summary").textContent =
+        `${total} ${data.label} entre ${data.from} e ${data.to}, em ${days.length} dias ativos.`;
+    })
+    .catch(() => {});
 
   // Ghost: when the visitor is idle, the hands type the open panel.
   const ghost = { text: "", position: 0, next: 0, burstLeft: 0, state: "" };
