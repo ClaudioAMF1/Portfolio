@@ -13,7 +13,6 @@
   const commandInput = document.getElementById("command-input");
   const commandOutput = document.getElementById("command-output");
   const themeDialog = document.getElementById("theme-dialog");
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const mobile = window.matchMedia("(max-width: 650px)");
   const storage = {
     read(key) {
@@ -60,8 +59,9 @@
   let inWorkspace = false;
   let animationFrame = 0;
   let lastFrame = 0;
-  let motionEnabled =
-    storage.read("cm-motion") !== "off" && !reducedMotion.matches;
+  // A cena da entrada sempre começa em movimento, como na referência.
+  // O botão "movimento" pausa só durante a visita atual.
+  let motionEnabled = true;
   let palette = {};
   let toastTimer;
 
@@ -1023,7 +1023,7 @@
     if (motionEnabled && !document.hidden)
       animationFrame = requestAnimationFrame(animate);
   }
-  function updateMotion(persist = false) {
+  function updateMotion() {
     if (!motionEnabled && entering) finishEntry();
     body.classList.toggle("motion-paused", !motionEnabled);
     body.dataset.motion = motionEnabled ? "on" : "off";
@@ -1037,7 +1037,6 @@
     document.querySelectorAll("[data-motion-label]").forEach((label) => {
       label.textContent = "movimento " + (motionEnabled ? "on" : "off");
     });
-    if (persist) storage.write("cm-motion", motionEnabled ? "on" : "off");
     renderCode();
     if (!motionEnabled && highlightedKey)
       highlightedKey.classList.remove("key-lit");
@@ -1054,13 +1053,9 @@
   document.querySelectorAll("[data-motion-toggle]").forEach((button) =>
     button.addEventListener("click", () => {
       motionEnabled = !motionEnabled;
-      updateMotion(true);
+      updateMotion();
     }),
   );
-  reducedMotion.addEventListener("change", (event) => {
-    motionEnabled = !event.matches && storage.read("cm-motion") !== "off";
-    updateMotion();
-  });
   document.addEventListener("visibilitychange", resumeAnimation);
   let resizeFrame;
   window.addEventListener(
