@@ -2,7 +2,7 @@
 
 Portfólio em HTML, CSS e JavaScript, com uma interface de terminal inspirada na experiência visual de [hancore.dev](https://hancore.dev/). O código, as ilustrações e a identidade desta versão foram implementados para Claudio Meireles.
 
-A entrada apresenta um editor Python animado. Depois de entrar, a navegação combina uma roda de projetos, conteúdo no terminal, uma árvore de ramificações e uma esfera orbital desenhadas em canvas. No celular, a roda vira uma faixa horizontal e as seções usam a rolagem normal da página.
+A entrada revela o código por digitação progressiva, com rolagem automática e mãos articuladas reagindo às teclas. Um olho formado por glifos acompanha o ponteiro e pisca. Depois de entrar, a navegação combina uma roda circular de projetos com inércia, conteúdo no terminal, uma árvore de ramificações e uma malha animada no painel de apresentação. No celular, a roda vira uma faixa horizontal e as seções usam a rolagem normal da página.
 
 ## Executar
 
@@ -58,7 +58,7 @@ Setas dentro do conteúdo mantêm a rolagem normal. A roda também aceita scroll
 - **Fósforo:** terminal verde.
 - **Papel:** fundo claro e tinta escura.
 
-Tema e preferência de animação são salvos no navegador quando o armazenamento está disponível. `prefers-reduced-motion` desliga as animações por padrão, e o botão da barra de status permite pausá-las. A animação JavaScript para quando a aba está oculta.
+Tema e preferência de animação são salvos no navegador quando o armazenamento está disponível. `prefers-reduced-motion` desliga as animações por padrão. Os controles de movimento na entrada e na barra de status permitem pausá-las ou ativá-las explicitamente. A animação JavaScript para quando a aba está oculta.
 
 O conteúdo usa HTML semântico, nomes acessíveis, indicadores de foco e anúncios de mudança de seção. Sem JavaScript, os textos, projetos, contatos e currículo continuam disponíveis em uma página contínua.
 
@@ -71,6 +71,7 @@ O formulário valida os campos e prepara um link `mailto:` com assunto e mensage
 - `index.html`: textos, links, seções e ilustrações SVG dos projetos.
 - `css/style.css`: layout, temas, foco, responsividade e impressão.
 - `js/main.js`: navegação, comandos, preferências e animações.
+- `js/visuals.js`: olho, mãos, árvore, malha e rastro do cursor em canvas.
 - `assets/profile.jpg`: foto do perfil.
 - `assets/Claudio_Meireles_CV.pdf`: currículo.
 - `assets/favicon.svg`: ícone do site.
@@ -81,7 +82,7 @@ As imagens dos projetos são ilustrações da arquitetura e do funcionamento, id
 
 ## Validação desta versão
 
-Foram verificados a sintaxe JavaScript, a estrutura HTML, os links e assets locais e 39 cenários de integração em DOM simulado, incluindo navegação, comandos, temas, formulário, preferências, redução de movimento e indisponibilidade de armazenamento ou canvas. A simulação não verifica layout visual, rolagem física ou renderização em dispositivos reais; a inspeção visual em navegador permanece pendente.
+Foram verificados a sintaxe JavaScript, a estrutura HTML, os links e assets locais e 51 cenários de integração em DOM simulado. Além da navegação, comandos e formulário, os testes cobrem avanço da digitação, rolagem do código, acompanhamento do ponteiro pelo olho, piscadas, inércia e arraste da roda, pausa e ativação explícita de movimento. A simulação não substitui a inspeção visual de layout e movimento em um navegador.
 
 ## Licença
 
