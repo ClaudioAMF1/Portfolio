@@ -246,6 +246,8 @@
       items[currentIndex].querySelector(".wheel-title").textContent;
     visuals.setEyeText(panel.innerText);
     resetGhost(panel);
+    const film = films.find((entry) => panel.contains(entry.element));
+    if (film) showShot(film, 0);
     updateStats(panel);
     commandOutput.replaceChildren();
     scroller.scrollTop = 0;
@@ -712,6 +714,14 @@
     } else if (inWorkspace && event.key === "Escape") {
       event.preventDefault();
       showLanding({ focus: true });
+    } else if (
+      inWorkspace &&
+      (event.key === "ArrowLeft" || event.key === "ArrowRight") &&
+      currentFilm()
+    ) {
+      event.preventDefault();
+      const film = currentFilm();
+      showShot(film, film.index + (event.key === "ArrowRight" ? 1 : -1));
     } else if (inWorkspace && event.key === "/") {
       event.preventDefault();
       commandInput.focus();
@@ -1043,6 +1053,40 @@
     })
     .catch(() => {});
 
+  // Film: screenshot carousel inside project panels (↔ to change shot).
+  const SHOT_DURATION = 5200;
+  const films = [...document.querySelectorAll("[data-film]")].map((element) => ({
+    element,
+    shots: [...element.querySelectorAll(".shot")],
+    tabs: [...element.querySelectorAll(".film-tabs button")],
+    bar: element.querySelector(".film-progress i"),
+    index: 0,
+    since: 0,
+  }));
+  function showShot(film, index) {
+    film.index = (index + film.shots.length) % film.shots.length;
+    film.since = sceneTime;
+    film.shots.forEach((shot, i) => shot.classList.toggle("is-current", i === film.index));
+    film.tabs.forEach((tab, i) => tab.setAttribute("aria-pressed", String(i === film.index)));
+    film.element.querySelector("[data-film-index]").textContent = String(film.index + 1);
+    film.element.querySelector(".film-caption").textContent =
+      film.shots[film.index].dataset.caption || "";
+  }
+  function currentFilm() {
+    return films.find((film) => !film.element.closest(".content-panel").hidden);
+  }
+  function updateFilms(time) {
+    const film = currentFilm();
+    if (!film) return;
+    const progress = Math.min(1, (time - film.since) / SHOT_DURATION);
+    film.bar.style.width = (progress * 100).toFixed(1) + "%";
+    if (progress >= 1) showShot(film, film.index + 1);
+  }
+  films.forEach((film) => {
+    showShot(film, 0);
+    film.tabs.forEach((tab, i) => tab.addEventListener("click", () => showShot(film, i)));
+  });
+
   // Ghost: when the visitor is idle, the hands type the open panel.
   const ghost = { text: "", position: 0, next: 0, burstLeft: 0, state: "" };
   function setGhostState(state) {
@@ -1182,6 +1226,7 @@
       if (inWorkspace) {
         animateWheel(dt);
         updateGhost(sceneTime);
+        updateFilms(sceneTime);
       }
       else if (!entering) {
         updateCode(sceneTime);

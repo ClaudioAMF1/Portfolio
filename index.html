@@ -207,19 +207,19 @@
           >
           <a class="wheel-item" href="#clinica" data-panel="clinica"
             ><span class="wheel-preview"
-              ><svg aria-hidden="true"><use href="#icon-clinic" /></svg></span
+              ><img src="assets/shots/thumbs/vm-dashboard.webp" alt="" width="320" height="200" loading="lazy" /></span
             ><span class="wheel-title">vm-clinica</span
             ><span class="wheel-index">01</span></a
           >
           <a class="wheel-item" href="#camf" data-panel="camf"
             ><span class="wheel-preview"
-              ><svg aria-hidden="true"><use href="#icon-invoice" /></svg></span
+              ><img src="assets/shots/thumbs/camf-dashboard.webp" alt="" width="320" height="200" loading="lazy" /></span
             ><span class="wheel-title">camf-boletos</span
             ><span class="wheel-index">02</span></a
           >
           <a class="wheel-item" href="#scoutlink" data-panel="scoutlink"
             ><span class="wheel-preview"
-              ><svg aria-hidden="true"><use href="#icon-scout" /></svg></span
+              ><img src="assets/shots/thumbs/sl-comunicacao.webp" alt="" width="320" height="200" loading="lazy" /></span
             ><span class="wheel-title">scoutlink</span
             ><span class="wheel-index">03</span></a
           >
@@ -485,14 +485,46 @@
             </dl>
             <p class="prompt">
               <span>claudio<span class="muted">@dev</span></span>
-              <span class="prompt-arrow">›</span> open arquitetura.svg
+              <span class="prompt-arrow">›</span> open screenshots/
             </p>
-            <figure class="project-visual">
+            <figure class="project-visual film" data-film>
               <div class="visual-caption">
-                <span>vm-clinica / acesso por perfil</span
-                ><span class="accent">need-to-know →</span>
+                <span>film <b data-film-index>1</b>/4</span
+                ><span class="accent">↔ shot</span>
               </div>
-              <svg
+              <div class="film-frame">
+                <img
+                  class="shot"
+                  src="assets/shots/vm-dashboard.webp"
+                  alt="Painel do administrador: indicadores, receita e agenda do dia (base de demonstração, pacientes fictícios)."
+                  data-caption="Painel do administrador: indicadores, receita e agenda do dia (base de demonstração, pacientes fictícios)."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="shot"
+                  src="assets/shots/vm-agenda.webp"
+                  alt="Agenda com o status de cada consulta."
+                  data-caption="Agenda com o status de cada consulta."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="shot"
+                  src="assets/shots/vm-chatbot.webp"
+                  alt="Chatbot de acolhimento: só administrativo, com aviso de crise (CVV 188 / SAMU 192)."
+                  data-caption="Chatbot de acolhimento: só administrativo, com aviso de crise (CVV 188 / SAMU 192)."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="shot shot-diagram" data-caption="Visão simplificada; o repositório é privado para proteger os dados da clínica.">
+                <svg
                 viewBox="0 0 560 240"
                 role="img"
                 aria-labelledby="clinica-diagram-title"
@@ -538,10 +570,10 @@
                   <circle cx="385" cy="117" r="3" />
                 </g>
               </svg>
-              <figcaption>
-                Visão simplificada; o repositório é privado para proteger os
-                dados da clínica.
-              </figcaption>
+                </div>
+              </div>
+              <figcaption class="film-caption">Painel do administrador: indicadores, receita e agenda do dia (base de demonstração, pacientes fictícios).</figcaption>
+              <div class="film-tabs"><button type="button" aria-label="Imagem 1 de 4" aria-pressed="true">1</button><button type="button" aria-label="Imagem 2 de 4" aria-pressed="false">2</button><button type="button" aria-label="Imagem 3 de 4" aria-pressed="false">3</button><button type="button" aria-label="Imagem 4 de 4" aria-pressed="false">4</button><span class="film-progress"><i></i></span></div>
             </figure>
             <div class="tech-list">
               <span>Python</span><span>FastAPI</span><span>React</span><span>TypeScript</span><span>PostgreSQL</span><span>Docker</span><span>Scikit-learn</span><span>LLM</span>
@@ -597,14 +629,46 @@
             </dl>
             <p class="prompt">
               <span>claudio<span class="muted">@dev</span></span>
-              <span class="prompt-arrow">›</span> open fluxo.svg
+              <span class="prompt-arrow">›</span> open screenshots/
             </p>
-            <figure class="project-visual">
+            <figure class="project-visual film" data-film>
               <div class="visual-caption">
-                <span>camf / do PDF ao recebível</span
-                ><span class="accent">validação →</span>
+                <span>film <b data-film-index>1</b>/4</span
+                ><span class="accent">↔ shot</span>
               </div>
-              <svg
+              <div class="film-frame">
+                <img
+                  class="shot"
+                  src="assets/shots/camf-dashboard.webp"
+                  alt="Dashboard com total, recebido, vencido e revisão manual (pagadores fictícios)."
+                  data-caption="Dashboard com total, recebido, vencido e revisão manual (pagadores fictícios)."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="shot"
+                  src="assets/shots/camf-vencimentos.webp"
+                  alt="Vencimentos agrupados por dia, com atrasados em destaque."
+                  data-caption="Vencimentos agrupados por dia, com atrasados em destaque."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="shot"
+                  src="assets/shots/camf-boletos.webp"
+                  alt="Boletos por pessoa: composição pago / vencido / em aberto."
+                  data-caption="Boletos por pessoa: composição pago / vencido / em aberto."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="shot shot-diagram" data-caption="Visão simplificada do fluxo de importação.">
+                <svg
                 viewBox="0 0 560 240"
                 role="img"
                 aria-labelledby="camf-diagram-title"
@@ -650,9 +714,10 @@
                   <circle cx="425" cy="75" r="3" />
                 </g>
               </svg>
-              <figcaption>
-                Visão simplificada do fluxo de importação.
-              </figcaption>
+                </div>
+              </div>
+              <figcaption class="film-caption">Dashboard com total, recebido, vencido e revisão manual (pagadores fictícios).</figcaption>
+              <div class="film-tabs"><button type="button" aria-label="Imagem 1 de 4" aria-pressed="true">1</button><button type="button" aria-label="Imagem 2 de 4" aria-pressed="false">2</button><button type="button" aria-label="Imagem 3 de 4" aria-pressed="false">3</button><button type="button" aria-label="Imagem 4 de 4" aria-pressed="false">4</button><span class="film-progress"><i></i></span></div>
             </figure>
             <div class="tech-list">
               <span>FastAPI</span><span>PostgreSQL</span><span>pdfplumber</span><span>pandas</span><span>React</span><span>Recharts</span><span>Docker</span>
@@ -714,14 +779,46 @@
             </dl>
             <p class="prompt">
               <span>claudio<span class="muted">@dev</span></span>
-              <span class="prompt-arrow">›</span> open plataforma.svg
+              <span class="prompt-arrow">›</span> open screenshots/
             </p>
-            <figure class="project-visual">
+            <figure class="project-visual film" data-film>
               <div class="visual-caption">
-                <span>scoutlink / uma API, dois públicos</span
-                ><span class="accent">associados · equipe</span>
+                <span>film <b data-film-index>1</b>/4</span
+                ><span class="accent">↔ shot</span>
               </div>
-              <svg
+              <div class="film-frame">
+                <img
+                  class="shot"
+                  src="assets/shots/sl-comunicacao.webp"
+                  alt="Disparo de notificações por categoria, UEL e perfil (conteúdo de demonstração)."
+                  data-caption="Disparo de notificações por categoria, UEL e perfil (conteúdo de demonstração)."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="shot"
+                  src="assets/shots/sl-malotes.webp"
+                  alt="Malotes aguardando retirada no Escritório Regional."
+                  data-caption="Malotes aguardando retirada no Escritório Regional."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="shot"
+                  src="assets/shots/sl-dashboard.webp"
+                  alt="Visão geral do painel da equipe regional."
+                  data-caption="Visão geral do painel da equipe regional."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="shot shot-diagram" data-caption="Visão simplificada da plataforma.">
+                <svg
                 viewBox="0 0 560 240"
                 role="img"
                 aria-labelledby="scoutlink-diagram-title"
@@ -762,9 +859,10 @@
                   <circle cx="375" cy="118" r="3" />
                 </g>
               </svg>
-              <figcaption>
-                Visão simplificada da plataforma.
-              </figcaption>
+                </div>
+              </div>
+              <figcaption class="film-caption">Disparo de notificações por categoria, UEL e perfil (conteúdo de demonstração).</figcaption>
+              <div class="film-tabs"><button type="button" aria-label="Imagem 1 de 4" aria-pressed="true">1</button><button type="button" aria-label="Imagem 2 de 4" aria-pressed="false">2</button><button type="button" aria-label="Imagem 3 de 4" aria-pressed="false">3</button><button type="button" aria-label="Imagem 4 de 4" aria-pressed="false">4</button><span class="film-progress"><i></i></span></div>
             </figure>
             <div class="tech-list">
               <span>React Native</span><span>Expo</span><span>React</span><span>TypeScript</span><span>FastAPI</span><span>Supabase</span>
@@ -1572,7 +1670,7 @@
         <div class="status-identity">
           <span>ClaudioAMF1</span
           ><span class="muted status-shortcuts"
-            >↑↓ seção · / terminal · T tema · Esc início</span
+            >↑↓ seção · ↔ shot · / terminal · T tema · Esc início</span
           >
         </div>
         <dl>

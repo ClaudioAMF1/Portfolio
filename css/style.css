@@ -2367,3 +2367,89 @@ body:not(.enhanced) .desk {
     height: 230px;
   }
 }
+
+/* ---------- film: screenshots carousel ---------- */
+.film-frame {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--bg);
+  overflow: hidden;
+}
+.film-frame .shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+  opacity: 0;
+  transition: opacity 0.45s;
+}
+.film-frame .shot.is-current {
+  opacity: 1;
+}
+.film-frame .shot-diagram {
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+}
+.film-frame .shot-diagram svg {
+  width: 100%;
+}
+body:not(.enhanced) .film-frame {
+  aspect-ratio: auto;
+}
+body:not(.enhanced) .film-frame .shot {
+  position: static;
+  opacity: 1;
+  height: auto;
+}
+.film-caption {
+  min-height: 3.2em;
+}
+.film-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px 12px;
+}
+.film-tabs button {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  min-width: 22px;
+  line-height: 18px;
+  padding: 0 5px;
+  cursor: pointer;
+  font-size: 10px;
+}
+.film-tabs button[aria-pressed="true"] {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+.film-progress {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  margin-left: 8px;
+  position: relative;
+}
+.film-progress i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  background: var(--text);
+}
+.wheel-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+  filter: grayscale(0.7) brightness(0.8) contrast(1.05);
+  transition: filter 0.2s;
+}
+.wheel-item.is-active .wheel-preview img {
+  filter: none;
+}
