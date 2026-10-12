@@ -60,7 +60,7 @@
   let wheelVelocity = 0;
   let wheelSnapTimer;
   let sceneTime = 0;
-  const ENTRY_DURATION = 2400;
+  const ENTRY_DURATION = 2800;
   let entering = null;
   let enterTimer;
   let inWorkspace = false;
@@ -223,6 +223,7 @@
         (panel) => panel.id !== panelId && panel.contains(previousFocus),
       );
     inWorkspace = true;
+    placeDesk(workspace);
     body.classList.add("is-workspace");
     landing.hidden = true;
     workspace.hidden = false;
@@ -263,8 +264,17 @@
       window.scrollTo({ top: 0, behavior: "instant" });
   }
 
+  // One keyboard for both views: below the editor on the landing,
+  // below the status bar in the workspace.
+  const desk = document.querySelector(".desk");
+  function placeDesk(target, before = null) {
+    if (desk.parentElement !== target || desk.nextElementSibling !== before)
+      target.insertBefore(desk, before);
+  }
+
   function showLanding(options = {}) {
     cancelEntry();
+    placeDesk(landing, landing.querySelector(".landing-footer"));
     inWorkspace = false;
     body.classList.remove("is-workspace");
     workspace.hidden = true;
@@ -721,6 +731,14 @@
       event.preventDefault();
       enterPortfolio("about");
     } else if (
+      !inWorkspace &&
+      !entering &&
+      (event.key.length === 1 || event.key === "Backspace") &&
+      !event.target.closest("a, button")
+    ) {
+      event.preventDefault();
+      typeOnLanding(event.key);
+    } else if (
       event.key.toLowerCase() === "t" &&
       !event.target.closest("a, button")
     ) {
@@ -924,6 +942,8 @@
   function renderCode() {
     const snippet = snippets[snippetIndex];
     document.getElementById("source-path").textContent = snippet.file;
+    document.getElementById("source-label").textContent =
+      "// " + snippet.file.replace("~/", "");
     document.getElementById("landing-file").textContent =
       snippet.file.replace("~/", "") + ":" + (activeLine + 1);
     const fragment = document.createDocumentFragment();
@@ -959,6 +979,28 @@
     const percent = Math.round(((activeLine + 1) / snippet.code.length) * 100);
     document.getElementById("code-position").textContent =
       `${activeLine + 1}:${activeCharacter + 1}  ${percent}%`;
+  }
+
+  // The visitor types into the editor: the text lands at the caret,
+  // the hands press the same keys and the autotyper waits a moment.
+  function typeOnLanding(key) {
+    const lines = snippets[snippetIndex].code;
+    const line = lines[activeLine];
+    if (key === "Backspace") {
+      if (activeCharacter > 0) {
+        lines[activeLine] =
+          line.slice(0, activeCharacter - 1) + line.slice(activeCharacter);
+        activeCharacter--;
+      }
+    } else {
+      lines[activeLine] =
+        line.slice(0, activeCharacter) + key + line.slice(activeCharacter);
+      activeCharacter++;
+    }
+    snippetHoldUntil = sceneTime + 2600;
+    visuals.setKey(key === "Backspace" ? "←" : key);
+    renderCode();
+    if (!motionEnabled) paintFrame(sceneTime);
   }
 
   function updateCode(time) {
@@ -1190,7 +1232,36 @@
       ? number.toLocaleString("pt-BR").replace(/\./g, "'")
       : "—";
   }
+  function fillFetch() {
+    const values = {
+      followers: format(github.user?.followers),
+      repos: format(github.user?.public_repos),
+      stars: format(
+        github.repos?.reduce(
+          (sum, entry) => sum + (entry.fork ? 0 : entry.stargazers_count),
+          0,
+        ),
+      ),
+      languages: github.repos
+        ? Object.entries(
+            github.repos.reduce((count, entry) => {
+              if (entry.language && !entry.fork)
+                count[entry.language] = (count[entry.language] || 0) + 1;
+              return count;
+            }, {}),
+          )
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 4)
+            .map(([name, total]) => `${name.toLowerCase()} ${total}`)
+            .join(" · ")
+        : "—",
+    };
+    document.querySelectorAll("[data-fetch]").forEach((cell) => {
+      cell.textContent = values[cell.dataset.fetch] || "—";
+    });
+  }
   function updateStats(panel) {
+    fillFetch();
     const repoName = panel.dataset.repo;
     if (repoName === "private") {
       setStats([
@@ -1222,6 +1293,7 @@
     }
     if (!github.user && !github.repos)
       loadGithub().then(() => {
+        fillFetch();
         if (inWorkspace && panels.find((entry) => !entry.hidden) === panel)
           updateStats(panel);
       });

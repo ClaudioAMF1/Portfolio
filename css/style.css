@@ -2358,7 +2358,7 @@ body:not(.enhanced) .desk {
 }
 
 .identity-canvas {
-  height: 250px;
+  height: 280px;
   margin: 4px -6px 0;
   width: calc(100% + 12px);
 }
@@ -2505,16 +2505,75 @@ body:not(.enhanced) .film-frame .shot {
 }
 @media (min-width: 651px) and (max-height: 600px) {
   .ambient-facts,
-  .ambient-bottom,
-  .desk {
+  .ambient-bottom {
     display: none;
-  }
-  .enhanced .workspace {
-    grid-template-rows: minmax(230px, calc(100svh - 128px)) auto;
   }
 }
 @media (min-width: 651px) {
   html:has(body.enhanced.is-workspace) {
     overflow: hidden;
   }
+}
+
+/* keyboard on the landing, between the editor and the footer */
+.landing .desk {
+  flex: 0 0 auto;
+  margin: 14px auto 0;
+}
+.landing .landing-editor {
+  min-height: 160px;
+}
+@media (min-width: 651px) and (max-height: 820px) {
+  .landing .desk {
+    margin-top: 8px;
+  }
+}
+@media (max-width: 650px) {
+  .landing .desk {
+    display: none;
+  }
+}
+
+/* landing caption like "// —— file ——" and the back-to-intro button */
+.landing .editor-caption {
+  display: flex;
+  padding-left: 34px;
+  margin-bottom: 8px;
+  opacity: 0.55;
+}
+.landing-editor .code-stage {
+  top: 26px;
+}
+.site-header {
+  position: relative;
+}
+.back-intro {
+  display: none;
+  margin-right: 16px;
+  border: 1px solid var(--dim);
+  padding: 0 8px;
+  font-size: 10px;
+  line-height: 18px;
+  color: var(--muted);
+}
+.back-intro:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+.enhanced.is-workspace .back-intro {
+  display: block;
+}
+.github-fetch dd {
+  color: var(--warm);
+}
+@media (max-width: 650px) {
+  .enhanced.is-workspace .back-intro {
+    display: none;
+  }
+}
+.enhanced.is-workspace .site-header {
+  justify-content: flex-start;
+}
+.enhanced.is-workspace .site-header .header-links {
+  margin-left: auto;
 }
