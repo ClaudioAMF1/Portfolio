@@ -85,6 +85,13 @@
           d="M14 12 40 3 66 12ZM14 37H66M20 14V33M30 14V33M40 14V33M50 14V33M60 14V33"
         />
       </symbol>
+      <symbol id="icon-research" viewBox="0 0 80 40">
+        <rect x="24" y="2" width="20" height="36" rx="3" />
+        <path d="M30 33H38" />
+        <circle cx="54" cy="18" r="9" />
+        <path d="M60 25 70 35" />
+        <path class="faint-stroke" d="M2 10H18M2 18H14M2 26H18" />
+      </symbol>
       <symbol id="icon-stack" viewBox="0 0 80 40">
         <path d="m22 8-14 12 14 12M58 8l14 12-14 12M47 4 33 36" />
       </symbol>
@@ -225,7 +232,7 @@
           aria-hidden="true"
         ></canvas>
         <div class="explorer-heading">
-          <span>~/portfolio</span><span class="muted">11 arquivos</span>
+          <span>~/portfolio</span><span class="muted">12 arquivos</span>
         </div>
         <nav
           class="project-wheel"
@@ -278,29 +285,35 @@
             ><span class="wheel-title">soccer-vision</span
             ><span class="wheel-index">06</span></a
           >
+          <a class="wheel-item" href="#pesquisa" data-panel="pesquisa"
+            ><span class="wheel-preview"
+              ><svg aria-hidden="true"><use href="#icon-research" /></svg></span
+            ><span class="wheel-title">tcc-pesquisa</span
+            ><span class="wheel-index">07</span></a
+          >
           <a class="wheel-item" href="#skills" data-panel="skills"
             ><span class="wheel-preview"
               ><svg aria-hidden="true"><use href="#icon-stack" /></svg></span
             ><span class="wheel-title">stack/</span
-            ><span class="wheel-index">07</span></a
+            ><span class="wheel-index">08</span></a
           >
           <a class="wheel-item" href="#experience" data-panel="experience"
             ><span class="wheel-preview"
               ><svg aria-hidden="true"><use href="#icon-log" /></svg></span
             ><span class="wheel-title">trajetoria.log</span
-            ><span class="wheel-index">08</span></a
+            ><span class="wheel-index">09</span></a
           >
           <a class="wheel-item" href="#contact" data-panel="contact"
             ><span class="wheel-preview"
               ><svg aria-hidden="true"><use href="#icon-mail" /></svg></span
             ><span class="wheel-title">contato/</span
-            ><span class="wheel-index">09</span></a
+            ><span class="wheel-index">10</span></a
           >
           <a class="wheel-item" href="#themes" data-panel="themes"
             ><span class="wheel-preview theme-preview" aria-hidden="true"
               ><i></i><i></i><i></i><i></i><i></i><i></i></span
             ><span class="wheel-title">themes/</span
-            ><span class="wheel-index">10</span></a
+            ><span class="wheel-index">11</span></a
           >
         </nav>
         <div class="explorer-footer">
@@ -1129,6 +1142,131 @@
           </article>
           <article
             class="content-panel"
+            id="pesquisa"
+            data-path="~/pesquisa/tcc"
+            aria-labelledby="pesquisa-title"
+          >
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~/pesquisa/tcc</span>
+              <span class="prompt-arrow">›</span> cat proposta.md
+            </p>
+            <p class="eyebrow">07 / PESQUISA · SEGURANÇA · PRIVACIDADE · EM ANDAMENTO</p>
+            <h2 id="pesquisa-title">Quem mais está dentro do aplicativo?</h2>
+            <p>
+              Meu TCC investiga se aplicativos móveis oficiais do governo
+              brasileiro, inclusive os que tratam dados de saúde, biometria e
+              previdência, embarcam SDKs de rastreamento de terceiros que enviam
+              identificadores de cidadãos para infraestrutura no exterior. E
+              compara com aplicativos comerciais pareados por categoria e
+              porte, a linha de base que estudos anteriores não tinham.
+            </p>
+            <p>
+              O cidadão pode trocar de app de banco; não pode trocar de INSS. Por
+              isso o trabalho também mede a própria régua: se ferramentas
+              diferentes de detecção concordam sobre o mesmo APK.
+            </p>
+            <dl class="terminal-facts">
+              <div>
+                <dt>corpus</dt>
+                <dd>396 apps de 71 órgãos públicos, nas três esferas</dd>
+              </div>
+              <div>
+                <dt>dado sensível</dt>
+                <dd>152 apps (38,4%) tratam dados do Art. 11 da LGPD</dd>
+              </div>
+              <div>
+                <dt>primeiro achado</dt>
+                <dd>0 de 396 apps de governo exibem anúncio, contra 33,2% do controle comercial</dd>
+              </div>
+              <div>
+                <dt>instrumentos</dt>
+                <dd>MobSF, Androguard e assinaturas do Exodus, APKs via AndroZoo</dd>
+              </div>
+              <div>
+                <dt>estatística</dt>
+                <dd>hipóteses falsificáveis, razão de taxas, κ de Fleiss</dd>
+              </div>
+            </dl>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open metodo.svg
+            </p>
+            <figure class="project-visual">
+              <div class="visual-caption">
+                <span>tcc / do catálogo à evidência</span
+                ><span class="accent">análise estática →</span>
+              </div>
+              <svg
+                viewBox="0 0 560 240"
+                role="img"
+                aria-labelledby="pesquisa-diagram-title"
+              >
+                <title id="pesquisa-diagram-title">
+                  Método: catálogo da Play Store, corpus de apps governamentais e
+                  grupo de controle comercial, download dos APKs, três detectores
+                  de SDK e teste das hipóteses
+                </title>
+                <g class="diagram-grid">
+                  <path
+                    d="M0 40H560M0 80H560M0 120H560M0 160H560M0 200H560M40 0V240M80 0V240M120 0V240M160 0V240M200 0V240M240 0V240M280 0V240M320 0V240M360 0V240M400 0V240M440 0V240M480 0V240M520 0V240"
+                  />
+                </g>
+                <g class="diagram-lines">
+                  <path
+                    d="M120 118H150V70H180M150 118V166H180M290 70H320V118H350M290 166H320V118M405 145V163H480V182"
+                  />
+                </g>
+                <g class="diagram-boxes">
+                  <rect x="20" y="91" width="100" height="54" />
+                  <rect x="180" y="43" width="110" height="54" />
+                  <rect x="180" y="139" width="110" height="54" />
+                  <rect x="350" y="91" width="110" height="54" />
+                  <rect x="420" y="182" width="120" height="40" />
+                </g>
+                <g class="diagram-text">
+                  <text x="70" y="115">PLAY STORE</text>
+                  <text class="diagram-sub" x="70" y="132">catálogo</text>
+                  <text x="235" y="67">GOVERNO</text>
+                  <text class="diagram-sub" x="235" y="84">396 apps</text>
+                  <text x="235" y="163">CONTROLE</text>
+                  <text class="diagram-sub" x="235" y="180">comerciais pareados</text>
+                  <text x="405" y="115">DETECTORES</text>
+                  <text class="diagram-sub" x="405" y="132">MobSF · Exodus</text>
+                  <text x="480" y="206">H1 – H4</text>
+                  <text class="diagram-sub" x="280" y="26">
+                    APKs VIA ANDROZOO · ANÁLISE ESTÁTICA
+                  </text>
+                </g>
+                <g class="flow-points">
+                  <circle cx="150" cy="118" r="3" />
+                  <circle cx="320" cy="118" r="3" />
+                </g>
+              </svg>
+              <figcaption>
+                Desenho do estudo. Achados atribuíveis a um órgão só serão
+                publicados após divulgação responsável.
+              </figcaption>
+            </figure>
+            <div class="tech-list">
+              <span>Python</span><span>Android</span><span>MobSF</span
+              ><span>Androguard</span><span>Exodus</span><span>Estatística</span
+              ><span>LGPD</span>
+            </div>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open repo
+            </p>
+            <a
+              class="repo-link"
+              href="https://github.com/ClaudioAMF1/TCC"
+              target="_blank"
+              rel="noopener noreferrer"
+              >github.com/ClaudioAMF1/TCC ↗</a
+            >
+          </article>
+          <article
+            class="content-panel"
             id="skills"
             data-path="~/stack"
             aria-labelledby="skills-title"
@@ -1476,7 +1614,7 @@
         <dl>
           <div>
             <dt>projetos</dt>
-            <dd>06</dd>
+            <dd>07</dd>
           </div>
           <div>
             <dt>seção</dt>

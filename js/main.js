@@ -42,6 +42,9 @@
     "camf-boletos": "camf",
     boletos: "camf",
     scout: "scoutlink",
+    tcc: "pesquisa",
+    "tcc-pesquisa": "pesquisa",
+    research: "pesquisa",
     "crypto-pipeline": "crypto",
     "soccer-vision": "soccer",
     stack: "skills",
@@ -479,6 +482,7 @@
     "open legitrack       projetos de lei",
     "open crypto          pipeline de criptomoedas",
     "open soccer          análise tática de futebol",
+    "open tcc             pesquisa: rastreamento em apps do governo",
     "stack                tecnologias",
     "experiencia          trajetória e formação",
     "contato              vamos conversar",
@@ -554,13 +558,14 @@
     if (command === "help" || command === "ajuda" || command === "?")
       appendOutput(raw, helpText);
     else if (["ls", "projetos", "projects"].includes(command)) {
-      appendOutput(raw, "06 projetos / escolha um arquivo:", [
+      appendOutput(raw, "06 projetos + 01 pesquisa / escolha um arquivo:", [
         { label: "01 vm-clinica", href: "#clinica" },
         { label: "02 camf-boletos", href: "#camf" },
         { label: "03 scoutlink", href: "#scoutlink" },
         { label: "04 legitrack", href: "#legitrack" },
         { label: "05 crypto-pipeline", href: "#crypto" },
         { label: "06 soccer-vision", href: "#soccer" },
+        { label: "07 tcc-pesquisa", href: "#pesquisa" },
       ]);
     } else if (command === "tema" || command === "theme") {
       if (!argument) {
@@ -645,6 +650,7 @@
         "open legitrack",
         "open crypto",
         "open soccer",
+        "open tcc",
         "stack",
         "experiencia",
         "contato",
