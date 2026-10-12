@@ -24,11 +24,13 @@ Todas as seções são acessíveis pelos cartões. O terminal é uma opção adi
 | ------------------------------------------ | ------------------------------ |
 | `help`                                     | Lista os comandos              |
 | `whoami`                                   | Apresentação e perfil          |
-| `ls` ou `projetos`                         | Links para os quatro projetos  |
+| `ls` ou `projetos`                         | Links para os seis projetos    |
+| `open clinica`                             | Gestão clínica (VM Medicina)   |
+| `open camf`                                | Contas a receber (boletos)     |
+| `open scoutlink`                           | Plataforma dos escoteiros do DF |
+| `open legitrack`                           | Acompanhamento de PLs          |
 | `open crypto`                              | Pipeline de criptomoedas       |
 | `open soccer`                              | Análise tática de futebol      |
-| `open air`                                 | Pipeline de qualidade do ar    |
-| `open carreta`                             | Carreta Digital                |
 | `stack`                                    | Tecnologias                    |
 | `experiencia`                              | Experiência, formação e cursos |
 | `contato`                                  | Contatos e formulário          |
