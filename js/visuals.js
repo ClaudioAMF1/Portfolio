@@ -159,7 +159,7 @@
       }
     }
     function mouseActive() {
-      return workspaceMode && performance.now() - pointer.at < 1400;
+      return performance.now() - pointer.at < 1400;
     }
     function trackPointer(event) {
       if (pointer.seen) {
@@ -275,11 +275,8 @@
           const sy = cy + y;
           const dx = sx - px;
           const dy = (sy - py) / Math.max(0.2, open);
-          if (Math.abs(dx) < box && Math.abs(dy) < box) {
-            bold.push(ch, sx, sy, 0.95);
-            continue;
-          }
           const distance = Math.hypot(dx, dy);
+          if (distance < box * 1.15) continue;
           if (distance < iris) {
             const ring = distance > iris * 0.78;
             (ring ? bold : bright).push(
@@ -317,16 +314,13 @@
       ctx.strokeStyle = colors.text;
       ctx.lineWidth = 0.8;
       if (open > 0.25) {
-        ctx.globalAlpha = 0.9;
-        ctx.strokeRect(px - box, py - box * open, box * 2, box * 2 * open);
-        ctx.globalAlpha = 0.55;
-        const inner = box * 0.38;
-        ctx.strokeRect(
-          px - inner + eye.x * box * 0.35,
-          py - inner * open + eye.y * box * 0.35,
-          inner * 2,
-          inner * 2 * open,
-        );
+        ctx.globalAlpha = 0.85;
+        ctx.beginPath();
+        ctx.ellipse(px, py, box * 1.05, box * 1.05 * open, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        // Catch-light: a tiny square glint inside the pupil.
+        ctx.globalAlpha = 0.7;
+        ctx.strokeRect(px - box * 0.5, py - box * 0.55 * open, box * 0.3, box * 0.3 * open);
       }
 
       // Telemetry label, tied to the eye by a leader line.
@@ -494,7 +488,7 @@
 
     function drawHands(time, dt) {
       const layer = surfaces.hands;
-      if (!layer.context || !layer.width || !workspaceMode) return;
+      if (!layer.context || !layer.width) return;
       const { context: ctx, width, height } = layer;
       const colors = palette();
       ctx.clearRect(0, 0, width, height);
@@ -754,6 +748,94 @@
       contributionsShownAt = -1;
     }
 
+    // Letter mask for the terrain: "CM" rendered once, sampled as heights.
+    let terrainMask = null;
+    function buildMask(w, h) {
+      if (terrainMask && terrainMask.w === w && terrainMask.h === h) return terrainMask;
+      const off = document.createElement("canvas");
+      off.width = Math.max(1, Math.round(w));
+      off.height = Math.max(1, Math.round(h));
+      const octx = off.getContext("2d");
+      octx.fillStyle = "#fff";
+      octx.textAlign = "center";
+      octx.textBaseline = "middle";
+      octx.font = `bold ${Math.round(h * 0.92)}px monospace`;
+      octx.fillText("CM", off.width * 0.62, off.height * 0.54);
+      const pixels = octx.getImageData(0, 0, off.width, off.height).data;
+      const values = new Float32Array(off.width * off.height);
+      for (let i = 0; i < values.length; i++) values[i] = pixels[i * 4 + 3] / 255;
+      terrainMask = { w, h, cols: off.width, rows: off.height, values };
+      return terrainMask;
+    }
+    function maskAt(mask, x, y) {
+      const col = Math.min(mask.cols - 1, Math.max(0, Math.round(x)));
+      const row = Math.min(mask.rows - 1, Math.max(0, Math.round(y)));
+      return mask.values[row * mask.cols + col];
+    }
+
+    // A tree that grows with the commits: deterministic branching.
+    function drawTree(ctx, colors, rootX, rootY, heightMax, grow, time, total) {
+      const depthMax = 6;
+      let apex = { x: rootX, y: rootY };
+      const branch = (x, y, angle, length, depth, seed) => {
+        const t = clamp(grow * (depthMax + 1) - depth, 0, 1);
+        if (t <= 0) return;
+        const sway = Math.sin(time * 0.0008 + seed) * 0.02 * depth;
+        const ex = x + Math.sin(angle + sway) * length * t;
+        const ey = y - Math.cos(angle + sway) * length * t;
+        ctx.lineWidth = Math.max(0.5, 2.2 - depth * 0.28);
+        ctx.globalAlpha = 0.95 - depth * 0.07;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(ex, ey);
+        ctx.stroke();
+        if (ey < apex.y) apex = { x: ex, y: ey };
+        if (depth >= depthMax || t < 1) return;
+        const spread = 0.28 + noise(seed) * 0.35;
+        const shrink = 0.68 + noise(seed + 3) * 0.12;
+        branch(ex, ey, angle - spread, length * shrink, depth + 1, seed * 2 + 1);
+        branch(ex, ey, angle + spread * 0.8, length * shrink, depth + 1, seed * 2 + 2);
+        if (noise(seed + 7) > 0.72)
+          branch(ex, ey, angle + (noise(seed + 5) - 0.5) * 0.4, length * shrink * 0.8, depth + 1, seed * 3 + 5);
+      };
+      ctx.strokeStyle = colors.text;
+      branch(rootX, rootY, 0, heightMax * 0.21, 0, 1);
+      // Roots.
+      ctx.globalAlpha = 0.5;
+      ctx.lineWidth = 0.6;
+      for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        ctx.moveTo(rootX, rootY);
+        ctx.lineTo(rootX + (i - 2) * 7 * grow, rootY + 6 + noise(i) * 5 * grow);
+        ctx.stroke();
+      }
+      return { apex, depth: depthMax, total };
+    }
+
+    function drawWalkers(ctx, colors, x, y, w, h, time) {
+      ctx.strokeStyle = colors.text;
+      ctx.lineWidth = 0.7;
+      for (let i = 0; i < 4; i++) {
+        const speed = 0.012 + i * 0.002;
+        const px = x + 8 + ((time * speed * 0.6 + i * 37) % (w - 16));
+        const size = i === 3 ? 0.6 : 1;
+        const body = h * 0.5 * size;
+        const base = y + h - 4;
+        const step = Math.sin(time * 0.012 + i) * 3 * size;
+        ctx.globalAlpha = 0.85;
+        ctx.beginPath();
+        ctx.arc(px, base - body - 3 * size, 2.2 * size, 0, Math.PI * 2);
+        ctx.moveTo(px, base - body);
+        ctx.lineTo(px, base - body * 0.45);
+        ctx.lineTo(px - step, base);
+        ctx.moveTo(px, base - body * 0.45);
+        ctx.lineTo(px + step, base);
+        ctx.moveTo(px - 3 * size, base - body * 0.75);
+        ctx.lineTo(px + 3 * size, base - body * 0.8 + step * 0.3);
+        ctx.stroke();
+      }
+    }
+
     function drawMesh(time) {
       const layer = surfaces.mesh;
       if (
@@ -768,162 +850,192 @@
       const colors = palette();
       const data = contributions;
       if (contributionsShownAt < 0) contributionsShownAt = time;
-      const grow = motion()
-        ? Math.min(1, (time - contributionsShownAt) / 1600)
-        : 1;
+      const grow = motion() ? Math.min(1, (time - contributionsShownAt) / 1800) : 1;
       const ease = 1 - (1 - grow) ** 3;
       ctx.clearRect(0, 0, width, height);
-      const plotW = width * 0.6;
-      const left = 18;
+      ctx.lineCap = "round";
+      const plotW = width * 0.62;
+      const left = 16;
       const right = plotW - 6;
       const top = 44;
-      const bottom = height - 22;
-      const rows = data.weeks.length;
-      const step = (bottom - top - 26) / rows;
-      const amplitude = Math.min(46, step * 9);
-      const samples = 84;
-      const months = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+      const bottom = height - 20;
+      const plotH = bottom - top;
+      const mask = buildMask(right - left, plotH);
+      const weeks = data.weeks.map((week) => week.total);
+      const weekMax = Math.max(1, ...weeks);
 
-      ctx.font = "7px monospace";
+      // Header.
+      ctx.textAlign = "left";
       ctx.textBaseline = "alphabetic";
       ctx.fillStyle = colors.text;
-      ctx.globalAlpha = 0.9;
-      ctx.textAlign = "left";
-      ctx.font = "bold 9px monospace";
-      ctx.fillText("CM", left, 14);
+      ctx.globalAlpha = 0.95;
+      ctx.font = "bold 10px monospace";
+      ctx.fillText("CM", left, 13);
       ctx.font = "8px monospace";
-      ctx.fillText(`cresceu até ${data.total} pontos`, left + 22, 14);
+      ctx.fillText(`cresceu até ${data.total} pontos`, left + 22, 13);
       ctx.fillStyle = colors.muted;
       ctx.font = "7px monospace";
       ctx.fillText(
-        `1 ponto = 1 ${data.source === "github" ? "contribuição" : "commit"} · ${months[data.from.getMonth()]} ${data.from.getFullYear()} — ${months[data.to.getMonth()]} ${data.to.getFullYear()}`,
+        `1 ponto = 1 ${data.source === "github" ? "contribuição" : "commit"} · ${data.to.getFullYear()}`,
         left + 22,
-        24,
+        23,
       );
+      // Dimension line across the plot.
+      ctx.strokeStyle = colors.muted;
+      ctx.globalAlpha = 0.7;
+      ctx.lineWidth = 0.6;
+      const dimY = 33;
+      const dimA = left + (right - left) * 0.22;
+      const dimB = left + (right - left) * 0.86;
+      ctx.beginPath();
+      ctx.moveTo(dimA, dimY);
+      ctx.lineTo(dimB, dimY);
+      ctx.moveTo(dimA, dimY - 3);
+      ctx.lineTo(dimA, dimY + 40);
+      ctx.moveTo(dimB, dimY - 3);
+      ctx.lineTo(dimB, dimY + 3);
+      ctx.stroke();
+      ctx.fillStyle = colors.surface || colors.bg;
+      ctx.globalAlpha = 1;
+      ctx.fillRect((dimA + dimB) / 2 - 26, dimY - 5, 52, 9);
+      ctx.fillStyle = colors.text;
+      ctx.textAlign = "center";
+      ctx.fillText(`${data.weeks.length} semanas`, (dimA + dimB) / 2, dimY + 2.5);
 
-      let lastMonth = -1;
-      data.weeks.forEach((week, row) => {
-        const baseY = top + 26 + row * step;
+      // Terrain: ridges lifted by the CM letters and by each week's commits.
+      const rows = 40;
+      const samples = 110;
+      const ridgeTop = top + 12;
+      const step = (plotH - 18) / rows;
+      const sectionRow = Math.round(rows * 0.5);
+      let sectionProfile = [];
+      for (let row = 0; row < rows; row++) {
+        const baseY = ridgeTop + row * step;
         const points = [];
         for (let sample = 0; sample <= samples; sample++) {
           const u = sample / samples;
-          const dayPosition = u * 6.999;
-          let value = 0;
-          week.days.forEach((count, day) => {
-            value += count * Math.exp(-(((dayPosition - day) / 0.55) ** 2));
-          });
-          const wobble = Math.sin(u * 13 + row * 0.7 + time * 0.0006) * 0.6;
-          const y =
-            baseY - (Math.sqrt(value / data.max) * amplitude + wobble) * ease;
-          points.push([left + u * (right - left), y]);
+          const x = left + u * (right - left);
+          const letter = maskAt(mask, u * (mask.cols - 1), baseY - top);
+          const week = weeks[Math.min(weeks.length - 1, Math.floor(u * weeks.length))];
+          const lift =
+            letter * step * 2.4 +
+            Math.sqrt(week / weekMax) * step * 1.6 * (row / rows) +
+            Math.sin(u * 17 + row * 0.6 + time * 0.0007) * 0.5;
+          points.push([x, baseY - lift * ease]);
+          if (row === sectionRow) sectionProfile.push(letter * 0.75 + (week / weekMax) * 0.25);
         }
-        // Fill under the ridge so nearer weeks hide the ones behind them.
         ctx.globalAlpha = 1;
         ctx.fillStyle = colors.surface || colors.bg;
         ctx.beginPath();
-        points.forEach(([x, y], index) =>
-          index ? ctx.lineTo(x, y) : ctx.moveTo(x, y),
-        );
+        points.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
         ctx.lineTo(right, baseY + 2);
         ctx.lineTo(left, baseY + 2);
         ctx.closePath();
         ctx.fill();
-        ctx.strokeStyle = row === data.peakWeek ? colors.accent : colors.text;
-        ctx.lineWidth = row === data.peakWeek ? 1 : 0.55;
-        ctx.globalAlpha = row === data.peakWeek ? 0.95 : 0.3 + (row / rows) * 0.5;
+        ctx.strokeStyle = colors.text;
+        ctx.lineWidth = 0.55;
+        ctx.globalAlpha = 0.28 + (row / rows) * 0.5;
         ctx.beginPath();
-        points.forEach(([x, y], index) =>
-          index ? ctx.lineTo(x, y) : ctx.moveTo(x, y),
-        );
+        points.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
         ctx.stroke();
-        const month = week.start.getMonth();
-        if (month !== lastMonth && week.start.getDate() <= 7) {
-          lastMonth = month;
-          ctx.globalAlpha = 0.65;
-          ctx.fillStyle = colors.muted;
-          ctx.font = "6px monospace";
-          ctx.textAlign = "right";
-          ctx.fillText(months[month], left - 3, baseY);
-        }
-      });
+      }
 
-      // Section A–A across the busiest week.
-      const peakY = top + 26 + data.peakWeek * step;
-      ctx.globalAlpha = 0.7;
+      // Section A–A.
+      const sectionY = ridgeTop + sectionRow * step + 2;
+      ctx.globalAlpha = 0.85;
       ctx.strokeStyle = colors.text;
-      ctx.lineWidth = 0.6;
-      ctx.setLineDash([6, 3, 1, 3]);
+      ctx.lineWidth = 0.7;
+      ctx.setLineDash([7, 3, 1, 3]);
       ctx.beginPath();
-      ctx.moveTo(left, peakY + 3);
-      ctx.lineTo(right, peakY + 3);
+      ctx.moveTo(left, sectionY);
+      ctx.lineTo(right, sectionY);
       ctx.stroke();
       ctx.setLineDash([]);
       ctx.fillStyle = colors.text;
       ctx.font = "7px monospace";
       ctx.textAlign = "center";
-      ctx.fillText("A", left + 2, peakY - 3);
-      ctx.fillText("A", right - 2, peakY - 3);
-      const weekdays = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"];
+      [left + 3, right - 3].forEach((x) => {
+        ctx.fillText("A", x, sectionY - 9);
+        ctx.beginPath();
+        ctx.moveTo(x, sectionY - 6);
+        ctx.lineTo(x, sectionY + 4);
+        ctx.stroke();
+      });
+
+      // Tree grown from the commits.
+      const rootX = left + (right - left) * 0.13;
+      const rootY = bottom - 8;
+      const tree = drawTree(ctx, colors, rootX, rootY, plotH, ease, time, data.total);
+      ctx.globalAlpha = 0.8;
+      ctx.strokeStyle = colors.muted;
+      ctx.lineWidth = 0.6;
+      ctx.fillStyle = colors.text;
+      ctx.textAlign = "left";
+      ctx.font = "7px monospace";
+      const apexLabelX = rootX + 40;
+      ctx.beginPath();
+      ctx.moveTo(tree.apex.x, tree.apex.y);
+      ctx.lineTo(apexLabelX - 3, tree.apex.y);
+      ctx.moveTo(rootX + 2, rootY);
+      ctx.lineTo(apexLabelX - 3, rootY);
+      ctx.stroke();
+      ctx.fillStyle = colors.surface || colors.bg;
+      ctx.globalAlpha = 1;
+      ctx.fillRect(apexLabelX - 1, tree.apex.y - 6, 84, 9);
+      ctx.fillRect(apexLabelX - 1, rootY - 6, 92, 9);
+      ctx.fillStyle = colors.text;
+      ctx.fillText(`ápice ${tree.depth} níveis`, apexLabelX, tree.apex.y + 2);
+      ctx.fillText(`raiz carrega ${data.total}`, apexLabelX, rootY + 2);
       ctx.globalAlpha = 0.55;
+      ctx.fillStyle = colors.muted;
       ctx.font = "6px monospace";
       ctx.textAlign = "center";
-      weekdays.forEach((name, day) =>
-        ctx.fillText(name, left + ((day + 0.5) / 7) * (right - left), height - 8),
-      );
+      for (let tick = 1; tick <= 5; tick++)
+        ctx.fillText(String(tick), left + ((tick - 0.5) / 5) * (right - left), height - 6);
 
-      // Right column: section A–A profile and the numeric twin.
-      const panelX = plotW + 14;
+      // Right column.
+      const panelX = plotW + 12;
       const panelW = width - panelX - 8;
-      ctx.globalAlpha = 0.9;
-      ctx.fillStyle = colors.text;
-      ctx.font = "8px monospace";
+      ctx.globalAlpha = 0.95;
       ctx.textAlign = "left";
-      ctx.fillText("seção A–A", panelX, 14);
+      ctx.font = "8px monospace";
+      ctx.fillStyle = colors.text;
+      ctx.fillText("seção A–A", panelX, 13);
       ctx.textAlign = "right";
       ctx.fillStyle = colors.muted;
-      ctx.fillText(
-        `${panelW > 170 ? "semana de pico · " : ""}${data.weeks[data.peakWeek].total}`,
-        panelX + panelW,
-        14,
-      );
-      const boxY = 22;
-      const boxH = 46;
+      ctx.fillText(panelW > 160 ? "eco em repouso" : "eco", panelX + panelW, 13);
+      const boxY = 20;
+      const boxH = 40;
       ctx.strokeStyle = colors.dim;
-      ctx.globalAlpha = 0.9;
       ctx.strokeRect(panelX + 0.5, boxY + 0.5, panelW, boxH);
-      const peak = data.weeks[data.peakWeek].days;
-      const peakMax = Math.max(1, ...peak);
       ctx.fillStyle = colors.text;
-      ctx.globalAlpha = 0.75;
+      ctx.globalAlpha = 0.8;
       ctx.beginPath();
-      ctx.moveTo(panelX + 4, boxY + boxH - 3);
-      for (let sample = 0; sample <= 60; sample++) {
-        const u = sample / 60;
-        let value = 0;
-        peak.forEach((count, day) => {
-          value += count * Math.exp(-(((u * 6.999 - day) / 0.55) ** 2));
-        });
-        ctx.lineTo(
-          panelX + 4 + u * (panelW - 8),
-          boxY + boxH - 3 - Math.min(1, value / peakMax) * (boxH - 10) * ease,
-        );
-      }
-      ctx.lineTo(panelX + panelW - 4, boxY + boxH - 3);
+      ctx.moveTo(panelX + 3, boxY + boxH - 3);
+      sectionProfile.forEach((value, index) => {
+        const x = panelX + 3 + (index / (sectionProfile.length - 1)) * (panelW - 6);
+        ctx.lineTo(x, boxY + boxH - 3 - value * (boxH - 8) * ease);
+      });
+      ctx.lineTo(panelX + panelW - 3, boxY + boxH - 3);
       ctx.fill();
+      ctx.globalAlpha = 0.7;
+      ctx.fillStyle = colors.muted;
+      ctx.textAlign = "left";
+      ctx.font = "7px monospace";
+      ctx.fillText(`cortes ${data.activeDays} dias`, panelX, boxY + boxH + 12);
 
       const best = data.best.date.split("-").reverse().slice(0, 2).join("/");
-      const rowsText = [
+      const table = [
         ["gêmeo numérico", "em números"],
         ["pontos", String(data.total)],
         ["dias ativos", String(data.activeDays)],
         ["maior sequência", `${data.bestStreak} dias`],
         ["dia mais forte", `${best} · ${data.best.count}`],
-        ["média / dia ativo", (data.total / Math.max(1, data.activeDays)).toFixed(1)],
+        ["semana de pico", String(data.weeks[data.peakWeek].total)],
       ];
-      rowsText.forEach(([key, value], index) => {
-        const y = boxY + boxH + 20 + index * 15;
-        ctx.globalAlpha = index ? 0.85 : 0.95;
-        ctx.font = "7px monospace";
+      table.forEach(([key, value], index) => {
+        const y = boxY + boxH + 30 + index * 13;
+        ctx.globalAlpha = 0.9;
         ctx.textAlign = "left";
         ctx.fillStyle = index ? colors.muted : colors.text;
         ctx.fillText(key, panelX, y);
@@ -934,17 +1046,28 @@
           ctx.globalAlpha = 0.35;
           ctx.strokeStyle = colors.dim;
           ctx.beginPath();
-          ctx.moveTo(panelX, y + 4.5);
-          ctx.lineTo(panelX + panelW, y + 4.5);
+          ctx.moveTo(panelX, y + 4);
+          ctx.lineTo(panelX + panelW, y + 4);
           ctx.stroke();
         }
       });
-      const footY = height - 8;
-      ctx.globalAlpha = 0.6;
-      ctx.fillStyle = colors.muted;
-      ctx.font = "6px monospace";
+      // Scale box with people walking.
+      const walkH = 30;
+      const walkY = height - walkH - 14;
+      ctx.globalAlpha = 0.9;
+      ctx.strokeStyle = colors.dim;
+      ctx.strokeRect(panelX + 0.5, walkY + 0.5, panelW, walkH + 12);
+      ctx.beginPath();
+      ctx.moveTo(panelX, walkY + 12.5);
+      ctx.lineTo(panelX + panelW, walkY + 12.5);
+      ctx.stroke();
+      ctx.fillStyle = colors.text;
       ctx.textAlign = "left";
-      ctx.fillText(data.label, panelX, footY);
+      ctx.fillText("ClaudioAMF1", panelX + 4, walkY + 9);
+      ctx.textAlign = "right";
+      ctx.fillStyle = colors.muted;
+      ctx.fillText("escala 1:1", panelX + panelW - 4, walkY + 9);
+      drawWalkers(ctx, colors, panelX, walkY + 12, panelW, walkH, time);
       ctx.globalAlpha = 1;
     }
 
@@ -980,6 +1103,8 @@
       }
     }
 
+    // Entry: fly into the pupil. The eye fades, the pupil becomes a black
+    // disk with a glowing rim, streaks rush past, then the disk fills the screen.
     function drawEntry(time) {
       if (!entry) return;
       const layer = surfaces.entry;
@@ -989,69 +1114,83 @@
       const elapsed = Math.max(0, time - entry.started);
       const progress = clamp(elapsed / entry.duration, 0, 1);
       const smooth = (value) => value * value * (3 - 2 * value);
-      const open = smooth(clamp(progress / 0.28, 0, 1));
-      const zoom = smooth(clamp((progress - 0.28) / 0.72, 0, 1));
-      const centerX = entry.x + (width / 2 - entry.x) * open;
-      const centerY = entry.y + (height / 2 - entry.y) * open;
-      const reach = Math.hypot(width, height) * 0.65 + 100;
-      const startRadius = Math.max(8, surfaces.eye.width * 0.062);
+      const open = smooth(clamp(progress / 0.18, 0, 1));
+      const grow = smooth(clamp((progress - 0.1) / 0.55, 0, 1));
+      const fill = smooth(clamp((progress - 0.72) / 0.28, 0, 1));
+      const cx = entry.x + (width / 2 - entry.x) * open;
+      const cy = entry.y + (height / 2 - entry.y) * open;
+      const startRadius = Math.max(6, surfaces.eye.height * 0.1);
+      const holdRadius = Math.min(width, height) * 0.36;
+      const reach = Math.hypot(width, height) * 0.62 + 40;
       const radius =
-        startRadius * Math.exp(Math.log(reach / startRadius) * zoom);
-      const scale = radius / startRadius;
+        startRadius +
+        (holdRadius - startRadius) * grow +
+        (reach - holdRadius) * fill;
+      const disk =
+        document.documentElement.dataset.theme === "papel" ? colors.text : "#000";
+
       ctx.clearRect(0, 0, width, height);
-      ctx.globalAlpha = 0.78 * open;
+      ctx.globalAlpha = open;
       ctx.fillStyle = colors.bg;
       ctx.fillRect(0, 0, width, height);
-      ctx.globalAlpha = Math.min(1, 0.4 + open);
-      ctx.drawImage(
-        surfaces.eye.canvas,
-        centerX - entry.pupilX * scale,
-        centerY - entry.pupilY * scale,
-        surfaces.eye.width * scale,
-        surfaces.eye.height * scale,
-      );
-      if (progress > 0.23) {
-        ctx.strokeStyle = colors.text;
-        ctx.lineWidth = 0.7;
-        const spin = elapsed * 0.00034;
-        const outer = reach * 1.45;
-        for (let bucket = 0; bucket < 5; bucket++) {
-          ctx.globalAlpha = (bucket + 1) * 0.11 * open;
-          ctx.beginPath();
-          for (let particle = bucket; particle < 900; particle += 5) {
-            const speed = 0.4 + noise(particle + 24);
-            const phase = (noise(particle * 3) + elapsed * 0.00042 * speed) % 1;
-            const distance = radius + 18 + (1 - phase) * (outer - radius);
-            const angle = particle * 2.399963 + spin * speed;
-            const tail = Math.min(90, 3 + phase * 22 + zoom * 42);
-            const cos = Math.cos(angle),
-              sin = Math.sin(angle);
-            ctx.moveTo(
-              centerX + cos * (distance + tail),
-              centerY + sin * (distance + tail),
-            );
-            ctx.lineTo(centerX + cos * distance, centerY + sin * distance);
-          }
-          ctx.stroke();
-        }
-        for (const [lineWidth, alpha] of [
-          [15, 0.04],
-          [7, 0.08],
-          [2.4, 0.43],
-          [0.8, 0.96],
-        ]) {
-          ctx.lineWidth = lineWidth;
-          ctx.globalAlpha = alpha * open;
-          ctx.beginPath();
-          ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-          ctx.stroke();
-        }
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = colors.bg;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius - 0.8, 0, Math.PI * 2);
-        ctx.fill();
+      if (progress < 0.3) {
+        const scale = radius / startRadius;
+        ctx.globalAlpha = 1 - progress / 0.3;
+        ctx.drawImage(
+          surfaces.eye.canvas,
+          cx - entry.pupilX * scale,
+          cy - entry.pupilY * scale,
+          surfaces.eye.width * scale,
+          surfaces.eye.height * scale,
+        );
       }
+      // Soft glow around the rim.
+      const glow = ctx.createRadialGradient(cx, cy, radius * 0.95, cx, cy, radius * 2.4);
+      glow.addColorStop(0, colors.text);
+      glow.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.globalAlpha = 0.13 * open;
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, width, height);
+
+      // Streaks.
+      const outer = Math.hypot(width, height) * 0.75;
+      ctx.strokeStyle = colors.text;
+      ctx.lineCap = "round";
+      for (let bucket = 0; bucket < 6; bucket++) {
+        ctx.lineWidth = bucket > 3 ? 1.1 : 0.7;
+        ctx.globalAlpha = (0.12 + bucket * 0.11) * open * (1 - fill * 0.6);
+        ctx.beginPath();
+        for (let particle = bucket; particle < 1800; particle += 6) {
+          const speed = 0.35 + noise(particle + 24) * 0.9;
+          const phase = (noise(particle * 3) + elapsed * 0.00055 * speed) % 1;
+          const distance = radius + 4 + phase ** 1.4 * (outer - radius);
+          const angle = particle * 2.399963 + noise(particle + 9) * 0.02;
+          const tail = 4 + phase * (30 + 60 * grow);
+          const cos = Math.cos(angle);
+          const sin = Math.sin(angle);
+          ctx.moveTo(cx + cos * distance, cy + sin * distance);
+          ctx.lineTo(cx + cos * (distance + tail), cy + sin * (distance + tail));
+        }
+        ctx.stroke();
+      }
+      // Rim and disk.
+      for (const [lineWidth, alpha] of [
+        [18, 0.05],
+        [8, 0.1],
+        [3, 0.4],
+        [1, 0.95],
+      ]) {
+        ctx.lineWidth = lineWidth;
+        ctx.globalAlpha = alpha * open;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = Math.max(open, 0.6);
+      ctx.fillStyle = disk;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius - 1, 0, Math.PI * 2);
+      ctx.fill();
       ctx.globalAlpha = 1;
       layer.canvas.dataset.progress = progress.toFixed(3);
     }
