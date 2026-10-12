@@ -1,516 +1,1207 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<!doctype html>
+<html lang="pt-BR" data-theme="noite">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Claudio Meireles | Software Developer</title>
-    <meta name="description" content="Portfolio de Claudio Meireles - Desenvolvedor de Software especializado em Backend, Engenharia de Dados e Arquiteturas Escaláveis.">
-
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Claudio Meireles | Software Developer">
-    <meta property="og:description" content="Desenvolvedor de Software especializado em Backend, Engenharia de Dados e Arquiteturas Escaláveis.">
-    <meta property="og:locale" content="pt_BR">
-    <meta name="author" content="Claudio Meireles">
-    <meta name="theme-color" content="#0c0c0e">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-    <!-- Grain overlay -->
-    <div class="grain" aria-hidden="true"></div>
-
-    <!-- Toast -->
-    <div class="toast" id="toast" role="alert" aria-live="polite">
-        <span class="toast-message"></span>
-    </div>
-
-    <!-- Skip to content -->
-    <a href="#hero" class="skip-link">Pular para o conteúdo</a>
-
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar" role="navigation" aria-label="Navegação principal">
-        <div class="nav-inner">
-            <a href="#hero" class="nav-logo" aria-label="Início">cm.</a>
-            <div class="nav-links" id="nav-links">
-                <a href="#about" class="nav-link">Sobre</a>
-                <a href="#projects" class="nav-link">Projetos</a>
-                <a href="#skills" class="nav-link">Skills</a>
-                <a href="#experience" class="nav-link">Experiência</a>
-                <a href="#contact" class="nav-link">Contato</a>
-            </div>
-            <div class="nav-right">
-                <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener" class="nav-icon" aria-label="GitHub">
-                    <i class="fab fa-github"></i>
-                </a>
-                <a href="https://www.linkedin.com/in/cgfm1" target="_blank" rel="noopener" class="nav-icon" aria-label="LinkedIn">
-                    <i class="fab fa-linkedin-in"></i>
-                </a>
-                <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menu" aria-expanded="false">
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
+    <meta
+      name="description"
+      content="Claudio Meireles — desenvolvimento backend, engenharia de dados e inteligência artificial. Explore meus projetos, trajetória e tecnologias em um portfólio interativo."
+    />
+    <meta name="author" content="Claudio Meireles" />
+    <meta name="theme-color" content="#0b0c0b" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Claudio Meireles | Software Developer" />
+    <meta
+      property="og:description"
+      content="Backend, dados e inteligência artificial. Um pouco de quem sou, um pouco do que construo."
+    />
+    <meta property="og:locale" content="pt_BR" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/main.js" defer></script>
+  </head>
+  <body>
+    <h1 class="sr-only">Claudio Meireles | Software Developer</h1>
+    <a class="skip-link" href="#about">Pular para o conteúdo</a>
+    <svg
+      class="symbol-library"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <symbol id="icon-data" viewBox="0 0 80 40">
+        <path d="M2 30 14 25 22 28 31 13 42 18 50 10 60 16 78 3" />
+        <path
+          class="faint-stroke"
+          d="M2 39H78M2 19H78M2 1V39M21 1V39M40 1V39M59 1V39M78 1V39"
+        />
+      </symbol>
+      <symbol id="icon-football" viewBox="0 0 80 40">
+        <rect x="2" y="2" width="76" height="36" rx="1" />
+        <path d="M40 2V38M2 12H14V28H2M78 12H66V28H78" />
+        <circle cx="40" cy="20" r="7" />
+        <circle class="filled" cx="28" cy="14" r="1.5" />
+        <circle class="filled" cx="54" cy="28" r="1.5" />
+        <circle class="filled" cx="49" cy="10" r="1.5" />
+        <circle class="filled" cx="19" cy="26" r="1.5" />
+      </symbol>
+      <symbol id="icon-air" viewBox="0 0 80 40">
+        <path
+          d="M2 12H52C65 12 65 2 58 2M2 21H70C80 21 80 10 72 10M2 30H45C58 30 58 39 51 39"
+        />
+        <path class="faint-stroke" d="M11 7V35M24 7V35M37 7V35" />
+      </symbol>
+      <symbol id="icon-certificate" viewBox="0 0 80 40">
+        <rect x="15" y="2" width="50" height="35" rx="1" />
+        <path d="M24 10H56M24 16H50M24 22H42" />
+        <circle cx="53" cy="28" r="5" />
+        <path d="M50 33 49 39 53 37 57 39 56 33" />
+      </symbol>
+      <symbol id="icon-stack" viewBox="0 0 80 40">
+        <path d="m22 8-14 12 14 12M58 8l14 12-14 12M47 4 33 36" />
+      </symbol>
+      <symbol id="icon-log" viewBox="0 0 80 40">
+        <path d="M16 2V38M16 8H68M16 20H54M16 32H62" />
+        <circle cx="16" cy="8" r="3" />
+        <circle cx="16" cy="20" r="3" />
+        <circle cx="16" cy="32" r="3" />
+      </symbol>
+      <symbol id="icon-mail" viewBox="0 0 80 40">
+        <rect x="10" y="4" width="60" height="32" rx="1" />
+        <path d="m10 4 30 22L70 4M10 36l21-18M70 36 49 18" />
+      </symbol>
+    </svg>
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="Claudio Meireles — início"
+        ><span class="brand-mark" aria-hidden="true">cm</span
+        ><span>claudio<span class="brand-muted">.dev</span></span></a
+      >
+      <nav class="header-links" aria-label="Links principais">
+        <a
+          href="https://github.com/ClaudioAMF1"
+          target="_blank"
+          rel="noopener noreferrer"
+          >github <span aria-hidden="true">↗</span></a
+        ><a
+          href="https://www.linkedin.com/in/cgfm1"
+          target="_blank"
+          rel="noopener noreferrer"
+          >linkedin <span aria-hidden="true">↗</span></a
+        ><button
+          class="text-button theme-trigger"
+          type="button"
+          aria-haspopup="dialog"
+        >
+          :tema
+        </button>
+      </nav>
+    </header>
+    <section
+      class="landing"
+      id="landing"
+      aria-label="Entrada do portfólio"
+      hidden
+    >
+      <div class="landing-editor" aria-hidden="true">
+        <div class="editor-caption">
+          <span class="editor-rule"></span
+          ><span id="source-label">portfolio / claudio.py</span
+          ><span class="editor-rule"></span>
         </div>
-    </nav>
-
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true">
-        <div class="mobile-menu-inner">
-            <a href="#about" class="mobile-link">Sobre</a>
-            <a href="#projects" class="mobile-link">Projetos</a>
-            <a href="#skills" class="mobile-link">Skills</a>
-            <a href="#experience" class="mobile-link">Experiência</a>
-            <a href="#contact" class="mobile-link">Contato</a>
-            <div class="mobile-socials">
-                <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener">GitHub</a>
-                <a href="https://www.linkedin.com/in/cgfm1" target="_blank" rel="noopener">LinkedIn</a>
-            </div>
+        <div class="code-stage" id="code-stage"></div>
+        <div class="editor-mode">
+          <span class="mode-badge">NORMAL</span><span>python</span
+          ><span>utf-8</span><span id="code-position">1:1</span>
         </div>
-    </div>
-
-    <!-- Hero -->
-    <section class="hero" id="hero">
-        <div class="hero-inner">
-            <div class="hero-top">
-                <p class="hero-label">Software Developer</p>
-                <p class="hero-location">Brasília, BR</p>
+      </div>
+      <div class="landing-keyboard" aria-hidden="true">
+        <div class="key-row">
+          <span>esc</span><span>1</span><span>2</span><span>3</span
+          ><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span
+          ><span>9</span><span>0</span><span>−</span><span>=</span>
+        </div>
+        <div class="key-row">
+          <span>tab</span><span>q</span><span>w</span><span>e</span
+          ><span>r</span><span>t</span><span>y</span><span>u</span><span>i</span
+          ><span>o</span><span>p</span>
+        </div>
+        <div class="key-row">
+          <span>⇧</span><span>a</span><span>s</span><span>d</span><span>f</span
+          ><span>g</span><span>h</span><span>j</span><span>k</span><span>l</span
+          ><span>↵</span>
+        </div>
+        <div class="key-row">
+          <span>ctrl</span><span>z</span><span>x</span><span>c</span
+          ><span>v</span><span>b</span><span>n</span><span>m</span
+          ><span>⌘</span>
+        </div>
+        <div class="keyboard-traces">
+          <svg viewBox="0 0 310 74">
+            <g fill="none" stroke="currentColor" stroke-width=".65">
+              <path
+                d="M12 5H116V69H12ZM194 5H298V69H194ZM12 5 50 50 80 69 116 5M194 5 227 69 263 50 298 5M12 5 46 8 52 41 82 43 89 8 116 5M194 5 222 8 229 43 259 41 265 8 298 5M116 34H194M155 5V69"
+              />
+            </g>
+            <g fill="currentColor">
+              <circle cx="46" cy="8" r="1.4" />
+              <circle cx="52" cy="41" r="1.4" />
+              <circle cx="82" cy="43" r="1.4" />
+              <circle cx="89" cy="8" r="1.4" />
+              <circle cx="222" cy="8" r="1.4" />
+              <circle cx="229" cy="43" r="1.4" />
+              <circle cx="259" cy="41" r="1.4" />
+              <circle cx="265" cy="8" r="1.4" />
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div class="landing-footer">
+        <p>// código, dados e ideias.</p>
+        <div>
+          <button
+            class="text-button theme-trigger"
+            type="button"
+            aria-haspopup="dialog"
+          >
+            :tema</button
+          ><a class="enter-link" href="#about"
+            >entrar <span aria-hidden="true">↵</span></a
+          >
+        </div>
+      </div>
+    </section>
+    <main
+      class="workspace"
+      id="workspace"
+      aria-label="Portfólio de Claudio Meireles"
+    >
+      <aside class="explorer" aria-label="Explorar portfólio">
+        <canvas
+          class="branch-canvas"
+          id="branch-canvas"
+          aria-hidden="true"
+        ></canvas>
+        <div class="explorer-heading">
+          <span>~/portfolio</span><span class="muted">09 arquivos</span>
+        </div>
+        <nav
+          class="project-wheel"
+          id="project-wheel"
+          aria-label="Seções e projetos"
+        >
+          <a
+            class="wheel-item is-active"
+            href="#about"
+            data-panel="about"
+            aria-current="page"
+            ><span class="wheel-preview wheel-monogram" aria-hidden="true"
+              >CM<span>claudio.dev</span></span
+            ><span class="wheel-title">whoami</span
+            ><span class="wheel-index">00</span></a
+          >
+          <a class="wheel-item" href="#crypto" data-panel="crypto"
+            ><span class="wheel-preview"
+              ><svg aria-hidden="true"><use href="#icon-data" /></svg></span
+            ><span class="wheel-title">crypto-pipeline</span
+            ><span class="wheel-index">01</span></a
+          >
+          <a class="wheel-item" href="#soccer" data-panel="soccer"
+            ><span class="wheel-preview"
+              ><svg aria-hidden="true"><use href="#icon-football" /></svg></span
+            ><span class="wheel-title">soccer-vision</span
+            ><span class="wheel-index">02</span></a
+          >
+          <a class="wheel-item" href="#air" data-panel="air"
+            ><span class="wheel-preview"
+              ><svg aria-hidden="true"><use href="#icon-air" /></svg></span
+            ><span class="wheel-title">air-quality</span
+            ><span class="wheel-index">03</span></a
+          >
+          <a class="wheel-item" href="#carreta" data-panel="carreta"
+            ><span class="wheel-preview"
+              ><svg aria-hidden="true">
+                <use href="#icon-certificate" /></svg></span
+            ><span class="wheel-title">carreta-digital</span
+            ><span class="wheel-index">04</span></a
+          >
+          <a class="wheel-item" href="#skills" data-panel="skills"
+            ><span class="wheel-preview"
+              ><svg aria-hidden="true"><use href="#icon-stack" /></svg></span
+            ><span class="wheel-title">stack/</span
+            ><span class="wheel-index">05</span></a
+          >
+          <a class="wheel-item" href="#experience" data-panel="experience"
+            ><span class="wheel-preview"
+              ><svg aria-hidden="true"><use href="#icon-log" /></svg></span
+            ><span class="wheel-title">trajetoria.log</span
+            ><span class="wheel-index">06</span></a
+          >
+          <a class="wheel-item" href="#contact" data-panel="contact"
+            ><span class="wheel-preview"
+              ><svg aria-hidden="true"><use href="#icon-mail" /></svg></span
+            ><span class="wheel-title">contato/</span
+            ><span class="wheel-index">07</span></a
+          >
+          <a class="wheel-item" href="#themes" data-panel="themes"
+            ><span class="wheel-preview theme-preview" aria-hidden="true"
+              ><i></i><i></i><i></i><i></i><i></i><i></i></span
+            ><span class="wheel-title">themes/</span
+            ><span class="wheel-index">08</span></a
+          >
+        </nav>
+        <div class="explorer-footer">
+          <span>scroll · arraste a roda</span>
+          <div>
+            <button
+              type="button"
+              class="text-button"
+              id="previous-panel"
+              aria-label="Seção anterior"
+            >
+              ↑</button
+            ><button
+              type="button"
+              class="text-button"
+              id="next-panel"
+              aria-label="Próxima seção"
+            >
+              ↓
+            </button>
+          </div>
+        </div>
+      </aside>
+      <section class="terminal" aria-label="Conteúdo do portfólio">
+        <div class="terminal-title">
+          <span class="terminal-lights" aria-hidden="true"
+            ><i></i><i></i><i></i></span
+          ><span id="terminal-path">claudio — ~/portfolio</span
+          ><button
+            class="text-button"
+            id="help-button"
+            type="button"
+            aria-label="Mostrar comandos do terminal"
+          >
+            ?
+          </button>
+        </div>
+        <div
+          class="terminal-scroll"
+          id="terminal-scroll"
+          tabindex="0"
+          aria-label="Conteúdo da seção selecionada"
+        >
+          <article
+            class="content-panel"
+            id="about"
+            data-path="~"
+            aria-labelledby="about-title"
+          >
+            <div class="identity-display">
+              <div class="identity-topline">
+                <span>CM / SOFTWARE DEVELOPER</span><span>Brasília, BR</span>
+              </div>
+              <div class="identity-grid">
+                <div>
+                  <p class="eyebrow">hello, world.</p>
+                  <h2 id="about-title">
+                    Claudio<br />Meireles<span class="accent">_</span>
+                  </h2>
+                  <p class="identity-role">
+                    backend · dados · inteligência artificial
+                  </p>
+                </div>
+                <img
+                  src="assets/profile.jpg"
+                  alt="Claudio Meireles"
+                  width="108"
+                  height="132"
+                />
+              </div>
+              <svg
+                class="signal-plot"
+                viewBox="0 0 560 68"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <g class="plot-grid">
+                  <path
+                    d="M0 17H560M0 34H560M0 51H560M56 0V68M112 0V68M168 0V68M224 0V68M280 0V68M336 0V68M392 0V68M448 0V68M504 0V68"
+                  />
+                </g>
+                <path
+                  class="plot-line secondary"
+                  d="m0 48 32-4 19 2 22-10 28 9 25-19 28 14 18-5 22 12 28-22 27 4 19 7 26-16 29 10 30-2 26-15 24 8 25-4 31-10 33 8 25-7"
+                />
+                <path
+                  class="plot-line"
+                  d="m0 55 30-3 22 4 27-18 17 8 28-7 28 3 20-23 24 14 30-9 24 12 18-19 30 5 28-10 24 16 28-23 27 10 28-8 25 4 30-6 23-3"
+                />
+              </svg>
+              <div class="identity-bottomline">
+                <span>01 / construir</span><span>02 / aprender</span
+                ><span>03 / compartilhar</span>
+              </div>
             </div>
-            <h1 class="hero-name">
-                <span class="hero-name-line">Claudio</span>
-                <span class="hero-name-line hero-name-indent">Meireles<span class="hero-accent">.</span></span>
-            </h1>
-            <div class="hero-bottom">
-                <p class="hero-bio">
-                    Focado em <em>Backend</em>, <em>Engenharia de Dados</em>
-                    e <em>Arquiteturas Escaláveis</em>. Construo sistemas que processam
-                    dados em tempo real e escalam para milhares de usuários.
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~</span>
+              <span class="prompt-arrow">›</span> whoami
+            </p>
+            <p>
+              Sou Claudio, estudante de Ciência da Computação no IDP. Trabalho
+              com desenvolvimento backend, engenharia de dados e arquiteturas
+              escaláveis.
+            </p>
+            <p>
+              Gosto de transformar ideias em sistemas: da coleta de dados à API,
+              do processamento em tempo real à interface de quem usa.
+            </p>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~</span>
+              <span class="prompt-arrow">›</span> cat profile.yml
+            </p>
+            <dl class="terminal-facts">
+              <div>
+                <dt>foco</dt>
+                <dd>backend, dados &amp; IA</dd>
+              </div>
+              <div>
+                <dt>formação</dt>
+                <dd>Ciência da Computação · IDP</dd>
+              </div>
+              <div>
+                <dt>idiomas</dt>
+                <dd>Português / English</dd>
+              </div>
+              <div>
+                <dt>experiência</dt>
+                <dd>RBCIP · Carreta Digital</dd>
+              </div>
+            </dl>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~</span> <span class="prompt-arrow">›</span> ls
+              links/
+            </p>
+            <div class="inline-links">
+              <a
+                href="https://github.com/ClaudioAMF1"
+                target="_blank"
+                rel="noopener noreferrer"
+                >github ↗</a
+              ><a
+                href="https://www.linkedin.com/in/cgfm1"
+                target="_blank"
+                rel="noopener noreferrer"
+                >linkedin ↗</a
+              ><a href="assets/Claudio_Meireles_CV.pdf" download>currículo ↓</a
+              ><a href="#contact">contato →</a>
+            </div>
+          </article>
+          <article
+            class="content-panel"
+            id="crypto"
+            data-path="~/projetos/crypto-pipeline"
+            aria-labelledby="crypto-title"
+          >
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~/projetos/crypto-pipeline</span>
+              <span class="prompt-arrow">›</span> cat README.md
+            </p>
+            <p class="eyebrow">01 / BIG DATA · MICROSSERVIÇOS</p>
+            <h2 id="crypto-title">Pipeline de Criptomoedas</h2>
+            <p>
+              Coleta, processamento e análise de dados de criptomoedas em tempo
+              real. Uma arquitetura de microsserviços com Docker, mensageria
+              Kafka, armazenamento MongoDB e cache Redis.
+            </p>
+            <dl class="terminal-facts">
+              <div>
+                <dt>mensageria</dt>
+                <dd>Apache Kafka</dd>
+              </div>
+              <div>
+                <dt>orquestração</dt>
+                <dd>Apache Airflow + Docker</dd>
+              </div>
+              <div>
+                <dt>visualização</dt>
+                <dd>Streamlit</dd>
+              </div>
+            </dl>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open arquitetura.svg
+            </p>
+            <figure class="project-visual">
+              <div class="visual-caption">
+                <span>crypto-pipeline / arquitetura</span
+                ><span class="accent">stream →</span>
+              </div>
+              <svg
+                viewBox="0 0 560 240"
+                role="img"
+                aria-labelledby="crypto-diagram-title"
+              >
+                <title id="crypto-diagram-title">
+                  Fluxo do pipeline: coleta, Kafka, processamento, MongoDB,
+                  Redis e dashboard Streamlit
+                </title>
+                <g class="diagram-grid">
+                  <path
+                    d="M0 40H560M0 80H560M0 120H560M0 160H560M0 200H560M40 0V240M80 0V240M120 0V240M160 0V240M200 0V240M240 0V240M280 0V240M320 0V240M360 0V240M400 0V240M440 0V240M480 0V240M520 0V240"
+                  />
+                </g>
+                <g class="diagram-lines">
+                  <path
+                    d="M135 88H210M320 88H400M455 114V164H320M265 114V164H190"
+                  />
+                </g>
+                <g class="diagram-boxes">
+                  <rect x="25" y="60" width="110" height="54" />
+                  <rect x="210" y="60" width="110" height="54" />
+                  <rect x="400" y="60" width="130" height="54" />
+                  <rect x="80" y="164" width="110" height="48" />
+                  <rect x="230" y="164" width="90" height="48" />
+                </g>
+                <g class="diagram-text">
+                  <text x="80" y="83">COLETA</text>
+                  <text class="diagram-sub" x="80" y="100">
+                    dados de mercado
+                  </text>
+                  <text x="265" y="83">KAFKA</text>
+                  <text class="diagram-sub" x="265" y="100">eventos</text>
+                  <text x="465" y="83">PROCESSAMENTO</text>
+                  <text class="diagram-sub" x="465" y="100">
+                    microsserviços
+                  </text>
+                  <text x="135" y="192">MONGODB</text>
+                  <text x="275" y="192">REDIS</text>
+                  <text class="diagram-sub" x="280" y="30">
+                    AIRFLOW / DOCKER / STREAMLIT
+                  </text>
+                </g>
+                <g class="flow-points">
+                  <circle cx="161" cy="88" r="3" />
+                  <circle cx="353" cy="88" r="3" />
+                </g>
+              </svg>
+              <figcaption>
+                Visão simplificada da arquitetura do projeto.
+              </figcaption>
+            </figure>
+            <div class="tech-list">
+              <span>Docker</span><span>Kafka</span><span>MongoDB</span
+              ><span>Redis</span><span>Airflow</span><span>Streamlit</span>
+            </div>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open repo
+            </p>
+            <a
+              class="repo-link"
+              href="https://github.com/ClaudioAMF1/crypto-analytics-pipeline"
+              target="_blank"
+              rel="noopener noreferrer"
+              >github.com/ClaudioAMF1/crypto-analytics-pipeline ↗</a
+            >
+          </article>
+          <article
+            class="content-panel"
+            id="soccer"
+            data-path="~/projetos/soccer-vision"
+            aria-labelledby="soccer-title"
+          >
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~/projetos/soccer-vision</span>
+              <span class="prompt-arrow">›</span> cat README.md
+            </p>
+            <p class="eyebrow">02 / COMPUTER VISION · MACHINE LEARNING</p>
+            <h2 id="soccer-title">Análise Tática de Futebol</h2>
+            <p>
+              Visão computacional aplicada à análise tática: detecção e
+              rastreamento de jogadores com YOLOv8 e Norfair, mapas de calor,
+              análise de formações e métricas de desempenho.
+            </p>
+            <dl class="terminal-facts">
+              <div>
+                <dt>detecção</dt>
+                <dd>YOLOv8</dd>
+              </div>
+              <div>
+                <dt>rastreamento</dt>
+                <dd>Norfair</dd>
+              </div>
+              <div>
+                <dt>processamento</dt>
+                <dd>Python + OpenCV + NumPy</dd>
+              </div>
+            </dl>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open campo.svg
+            </p>
+            <figure class="project-visual pitch-visual">
+              <div class="visual-caption">
+                <span>soccer-vision / tracking</span
+                ><span class="accent">● visão computacional</span>
+              </div>
+              <svg
+                viewBox="0 0 560 260"
+                role="img"
+                aria-labelledby="soccer-diagram-title"
+              >
+                <title id="soccer-diagram-title">
+                  Ilustração de detecção de jogadores e trajetórias em um campo
+                  de futebol
+                </title>
+                <g class="pitch-lines">
+                  <rect x="30" y="25" width="500" height="205" />
+                  <path
+                    d="M280 25V230M30 70H103V185H30M530 70H457V185H530M30 105H60V150H30M530 105H500V150H530"
+                  />
+                  <circle cx="280" cy="127" r="40" />
+                  <circle cx="280" cy="127" r="2" />
+                </g>
+                <g class="tracking-paths">
+                  <path
+                    d="m133 171 34-35 29-10 34-26M201 56l33 30 37 7 25 24M341 199l-14-33-32-23M433 108l-43-15-25 31"
+                  />
+                </g>
+                <g class="players">
+                  <circle cx="115" cy="123" r="4" />
+                  <circle cx="170" cy="71" r="4" />
+                  <circle cx="188" cy="182" r="4" />
+                  <circle cx="230" cy="100" r="4" />
+                  <circle cx="296" cy="117" r="4" />
+                  <circle cx="295" cy="143" r="4" />
+                  <circle cx="365" cy="124" r="4" />
+                  <circle cx="425" cy="185" r="4" />
+                </g>
+                <g class="tracking-boxes">
+                  <rect x="222" y="90" width="16" height="20" />
+                  <rect x="288" y="107" width="16" height="20" />
+                  <rect x="357" y="114" width="16" height="20" />
+                </g>
+                <g class="diagram-text">
+                  <text class="diagram-sub" x="230" y="82">ID 07</text>
+                  <text class="diagram-sub" x="296" y="100">ID 10</text>
+                  <text class="diagram-sub" x="365" y="107">ID 04</text>
+                </g>
+              </svg>
+              <figcaption>
+                Ilustração do rastreamento; posições e trajetórias
+                demonstrativas.
+              </figcaption>
+            </figure>
+            <div class="tech-list">
+              <span>Python</span><span>YOLOv8</span><span>OpenCV</span
+              ><span>NumPy</span><span>Norfair</span>
+            </div>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open repo
+            </p>
+            <a
+              class="repo-link"
+              href="https://github.com/ClaudioAMF1/soccer-video-analytics"
+              target="_blank"
+              rel="noopener noreferrer"
+              >github.com/ClaudioAMF1/soccer-video-analytics ↗</a
+            >
+          </article>
+          <article
+            class="content-panel"
+            id="air"
+            data-path="~/projetos/air-quality"
+            aria-labelledby="air-title"
+          >
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~/projetos/air-quality</span>
+              <span class="prompt-arrow">›</span> cat README.md
+            </p>
+            <p class="eyebrow">03 / IOT · BIG DATA</p>
+            <h2 id="air-title">Pipeline de Qualidade do Ar</h2>
+            <p>
+              Pipeline para análise de qualidade do ar em tempo real, com coleta
+              de dados, processamento assíncrono e alertas automáticos. Kafka na
+              ingestão, Celery e Redis no processamento, RabbitMQ na comunicação
+              de eventos.
+            </p>
+            <dl class="terminal-facts">
+              <div>
+                <dt>ingestão</dt>
+                <dd>Apache Kafka</dd>
+              </div>
+              <div>
+                <dt>tarefas</dt>
+                <dd>Celery + Redis</dd>
+              </div>
+              <div>
+                <dt>API / armazenamento</dt>
+                <dd>Flask / MinIO</dd>
+              </div>
+            </dl>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open pipeline.svg
+            </p>
+            <figure class="project-visual">
+              <div class="visual-caption">
+                <span>air-quality / fluxo de eventos</span
+                ><span class="accent">async →</span>
+              </div>
+              <svg
+                viewBox="0 0 560 240"
+                role="img"
+                aria-labelledby="air-diagram-title"
+              >
+                <title id="air-diagram-title">
+                  Pipeline de qualidade do ar: dados, Kafka, Celery, Redis,
+                  RabbitMQ, Flask e MinIO
+                </title>
+                <g class="diagram-lines">
+                  <path
+                    d="M130 75H222M330 75H425M275 102V157M275 183H160M330 183H425"
+                  />
+                </g>
+                <g class="diagram-boxes">
+                  <rect x="20" y="48" width="110" height="54" />
+                  <rect x="222" y="48" width="108" height="54" />
+                  <rect x="425" y="48" width="110" height="54" />
+                  <rect x="220" y="157" width="110" height="52" />
+                  <rect x="50" y="157" width="110" height="52" />
+                  <rect x="425" y="157" width="110" height="52" />
+                </g>
+                <g class="diagram-text">
+                  <text x="75" y="80">DADOS</text>
+                  <text x="275" y="80">KAFKA</text>
+                  <text x="480" y="72">CELERY</text>
+                  <text class="diagram-sub" x="480" y="90">Redis</text>
+                  <text x="275" y="188">RABBITMQ</text>
+                  <text x="105" y="188">ALERTAS</text>
+                  <text x="480" y="180">FLASK</text>
+                  <text class="diagram-sub" x="480" y="198">MinIO</text>
+                </g>
+                <g class="flow-points">
+                  <circle cx="168" cy="75" r="3" />
+                  <circle cx="364" cy="75" r="3" />
+                  <circle cx="275" cy="127" r="3" />
+                </g>
+              </svg>
+              <figcaption>
+                Visão simplificada dos componentes do pipeline.
+              </figcaption>
+            </figure>
+            <div class="tech-list">
+              <span>Kafka</span><span>Flask</span><span>Redis</span
+              ><span>RabbitMQ</span><span>Celery</span><span>MinIO</span>
+            </div>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open repo
+            </p>
+            <a
+              class="repo-link"
+              href="https://github.com/ClaudioAMF1/air-quality-pipeline"
+              target="_blank"
+              rel="noopener noreferrer"
+              >github.com/ClaudioAMF1/air-quality-pipeline ↗</a
+            >
+          </article>
+          <article
+            class="content-panel"
+            id="carreta"
+            data-path="~/projetos/carreta-digital"
+            aria-labelledby="carreta-title"
+          >
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~/projetos/carreta-digital</span>
+              <span class="prompt-arrow">›</span> cat README.md
+            </p>
+            <p class="eyebrow">04 / FULL STACK · WEB</p>
+            <h2 id="carreta-title">Carreta Digital — RBCIP</h2>
+            <p>
+              Interface web para acesso e download de certificados, desenvolvida
+              durante meu estágio na RBCIP. Banco de dados PostgreSQL e APIs
+              RESTful em Python com Flask para conectar os dados à experiência
+              dos alunos.
+            </p>
+            <dl class="terminal-facts">
+              <div>
+                <dt>organização</dt>
+                <dd>RBCIP</dd>
+              </div>
+              <div>
+                <dt>backend</dt>
+                <dd>Python + Flask + REST APIs</dd>
+              </div>
+              <div>
+                <dt>banco de dados</dt>
+                <dd>PostgreSQL</dd>
+              </div>
+            </dl>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open fluxo.svg
+            </p>
+            <figure class="project-visual certificate-visual">
+              <div class="visual-caption">
+                <span>carreta-digital / jornada do aluno</span
+                ><span class="accent">certificados</span>
+              </div>
+              <svg
+                viewBox="0 0 560 240"
+                role="img"
+                aria-labelledby="certificate-diagram-title"
+              >
+                <title id="certificate-diagram-title">
+                  Fluxo de acesso ao certificado: consultar dados, localizar
+                  certificado e baixar PDF
+                </title>
+                <g class="diagram-boxes">
+                  <rect x="185" y="20" width="190" height="110" />
+                  <rect x="20" y="174" width="144" height="42" />
+                  <rect x="207" y="174" width="144" height="42" />
+                  <rect x="395" y="174" width="144" height="42" />
+                </g>
+                <g class="diagram-lines">
+                  <path
+                    d="M164 195H207M351 195H395M210 44H350M235 63H325M245 80H315"
+                  />
+                  <circle cx="280" cy="104" r="10" />
+                </g>
+                <g class="diagram-text">
+                  <text class="diagram-sub" x="92" y="199">01 / CONSULTAR</text>
+                  <text class="diagram-sub" x="279" y="199">
+                    02 / LOCALIZAR
+                  </text>
+                  <text class="diagram-sub" x="467" y="199">
+                    03 / BAIXAR PDF
+                  </text>
+                  <text class="diagram-sub" x="280" y="154">
+                    POSTGRESQL + FLASK
+                  </text>
+                </g>
+              </svg>
+              <figcaption>
+                Fluxo ilustrativo de acesso aos certificados.
+              </figcaption>
+            </figure>
+            <div class="tech-list">
+              <span>PostgreSQL</span><span>Python</span><span>Flask</span
+              ><span>REST APIs</span>
+            </div>
+            <div class="inline-links">
+              <a href="#experience">ver experiência →</a
+              ><a href="#contact">conversar sobre o projeto →</a>
+            </div>
+          </article>
+          <article
+            class="content-panel"
+            id="skills"
+            data-path="~/stack"
+            aria-labelledby="skills-title"
+          >
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~/stack</span>
+              <span class="prompt-arrow">›</span> ls --group
+            </p>
+            <p class="eyebrow">FERRAMENTAS DO DIA A DIA</p>
+            <h2 id="skills-title">Stack &amp; tecnologias</h2>
+            <p>O que uso para construir, conectar e entender sistemas.</p>
+            <div class="stack-groups">
+              <section>
+                <h3><span>01</span> linguagens/</h3>
+                <div class="tech-list">
+                  <span>Python</span><span>JavaScript</span
+                  ><span>TypeScript</span><span>Java</span><span>C / C++</span
+                  ><span>Swift</span>
+                </div>
+              </section>
+              <section>
+                <h3><span>02</span> backend-e-web/</h3>
+                <div class="tech-list">
+                  <span>Flask</span><span>FastAPI</span><span>Node.js</span
+                  ><span>Express</span><span>React</span><span>Streamlit</span>
+                </div>
+              </section>
+              <section>
+                <h3><span>03</span> dados-e-mensageria/</h3>
+                <div class="tech-list">
+                  <span>Apache Kafka</span><span>PostgreSQL</span
+                  ><span>MongoDB</span><span>Redis</span><span>Airflow</span
+                  ><span>RabbitMQ</span><span>MinIO</span
+                  ><span>CassandraDB</span>
+                </div>
+              </section>
+              <section>
+                <h3><span>04</span> cloud-e-devops/</h3>
+                <div class="tech-list">
+                  <span>Docker</span><span>AWS</span><span>Git</span
+                  ><span>CI/CD</span><span>Kubernetes</span
+                  ><span>Microsserviços</span>
+                </div>
+              </section>
+              <section>
+                <h3><span>05</span> machine-learning/</h3>
+                <div class="tech-list">
+                  <span>YOLOv8</span><span>OpenCV</span><span>Scikit-learn</span
+                  ><span>TensorFlow</span><span>PyTorch</span
+                  ><span>Norfair</span>
+                </div>
+              </section>
+              <section>
+                <h3><span>06</span> bibliotecas/</h3>
+                <div class="tech-list">
+                  <span>Pandas</span><span>NumPy</span><span>Plotly</span
+                  ><span>SciPy</span><span>Celery</span>
+                </div>
+              </section>
+            </div>
+          </article>
+          <article
+            class="content-panel"
+            id="experience"
+            data-path="~/trajetoria"
+            aria-labelledby="experience-title"
+          >
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~/trajetoria</span>
+              <span class="prompt-arrow">›</span> git log --oneline
+            </p>
+            <p class="eyebrow">EXPERIÊNCIA &amp; FORMAÇÃO</p>
+            <h2 id="experience-title">Trajetória</h2>
+            <ol class="timeline">
+              <li>
+                <p class="timeline-date">
+                  mar — ago 2025 <span>experiência</span>
                 </p>
-                <div class="hero-actions">
-                    <a href="#projects" class="btn btn-primary">
-                        Ver Projetos
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1V11" stroke="currentColor" stroke-width="1.5"/></svg>
-                    </a>
-                    <a href="assets/Claudio_Meireles_CV.pdf" download class="btn btn-ghost">Download CV</a>
-                </div>
+                <h3>Estagiário de TI <span class="muted">/ RBCIP</span></h3>
+                <p>
+                  Desenvolvimento do banco PostgreSQL e da interface web de
+                  certificados da Carreta Digital, com APIs RESTful em Python e
+                  Flask.
+                </p>
+              </li>
+              <li>
+                <p class="timeline-date">
+                  fev — jul 2024 <span>experiência</span>
+                </p>
+                <h3>Monitor de Cálculo <span class="muted">/ IDP</span></h3>
+                <p>
+                  Apoio aos alunos na disciplina de Cálculo e desenvolvimento de
+                  habilidades de comunicação e liderança.
+                </p>
+              </li>
+              <li>
+                <p class="timeline-date">
+                  jul 2023 — jul 2027 <span>formação</span>
+                </p>
+                <h3>Ciência da Computação e Engenharia de Software</h3>
+                <p>
+                  IDP — Instituto Brasileiro de Desenvolvimento e Pesquisa. Foco
+                  em desenvolvimento de software, dados e inteligência
+                  artificial.
+                </p>
+              </li>
+            </ol>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> ls cursos-e-certificacoes/
+            </p>
+            <ul class="certifications">
+              <li>AWS Cloud Security Foundations</li>
+              <li>Scrum Master — IDP</li>
+              <li>JavaScript &amp; TypeScript</li>
+              <li>Python Avançado</li>
+              <li>iOS &amp; Swift Development</li>
+              <li>Machine Learning Fundamentals</li>
+              <li>Big Data &amp; NoSQL</li>
+              <li>C, C#, C++, Java, Python</li>
+            </ul>
+            <a
+              class="download-link"
+              href="assets/Claudio_Meireles_CV.pdf"
+              download
+              >baixar currículo completo ↓</a
+            >
+          </article>
+          <article
+            class="content-panel"
+            id="contact"
+            data-path="~/contato"
+            aria-labelledby="contact-title"
+          >
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~/contato</span>
+              <span class="prompt-arrow">›</span> ls links/
+            </p>
+            <p class="eyebrow">VAMOS CONVERSAR</p>
+            <h2 id="contact-title">Tem uma ideia?</h2>
+            <p>
+              Um projeto, uma oportunidade ou uma boa conversa sobre tecnologia.
+              Pode me chamar.
+            </p>
+            <div class="contact-links">
+              <a href="mailto:cmeireles756@gmail.com"
+                ><span class="muted">email</span
+                ><span>cmeireles756@gmail.com ↗</span></a
+              ><a
+                href="https://www.linkedin.com/in/cgfm1"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><span class="muted">linkedin</span
+                ><span>linkedin.com/in/cgfm1 ↗</span></a
+              ><a
+                href="https://github.com/ClaudioAMF1"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><span class="muted">github</span
+                ><span>github.com/ClaudioAMF1 ↗</span></a
+              ><a href="tel:+5561982105723"
+                ><span class="muted">telefone</span
+                ><span>(61) 98210-5723 ↗</span></a
+              >
             </div>
-        </div>
-        <div class="hero-scroll" aria-hidden="true">
-            <span>scroll</span>
-        </div>
-    </section>
-
-    <!-- About -->
-    <section class="section about" id="about">
-        <div class="container">
-            <div class="about-layout">
-                <div class="about-left">
-                    <div class="about-photo-block">
-                        <img src="assets/profile.jpg" alt="Claudio Meireles" class="about-photo" loading="lazy"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="about-photo-fallback" style="display:none;">CM</div>
-                    </div>
-                    <div class="about-info-strip">
-                        <div class="info-item">
-                            <span class="info-label">Localização</span>
-                            <span class="info-value">Brasília, DF</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Formação</span>
-                            <span class="info-value">Ciência da Computação — IDP</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Idiomas</span>
-                            <span class="info-value">Português, English</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="about-right">
-                    <h2 class="section-heading">Sobre mim</h2>
-                    <div class="about-text">
-                        <p>
-                            Sou estudante de Ciência da Computação no IDP, atualmente no 6&ordm; semestre.
-                            Minha atuação se concentra em desenvolvimento backend, engenharia de dados
-                            e arquiteturas escaláveis.
-                        </p>
-                        <p>
-                            Tenho experiência prática em projetos que impactaram milhares de usuários,
-                            trabalhando com microsserviços, mensageria e computação em nuvem (AWS).
-                        </p>
-                    </div>
-                    <div class="about-highlights">
-                        <div class="highlight">
-                            <span class="highlight-title">Estagiário de TI</span>
-                            <span class="highlight-sub">RBCIP — ~8.000 alunos impactados</span>
-                        </div>
-                        <div class="highlight">
-                            <span class="highlight-title">AWS Certified</span>
-                            <span class="highlight-sub">Cloud Security Foundations</span>
-                        </div>
-                        <div class="highlight">
-                            <span class="highlight-title">Scrum Master</span>
-                            <span class="highlight-sub">Metodologias Ágeis</span>
-                        </div>
-                    </div>
-                    <div class="about-links">
-                        <a href="https://www.linkedin.com/in/cgfm1" target="_blank" rel="noopener" class="link-arrow">
-                            LinkedIn <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1V11" stroke="currentColor" stroke-width="1.5"/></svg>
-                        </a>
-                        <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener" class="link-arrow">
-                            GitHub <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1V11" stroke="currentColor" stroke-width="1.5"/></svg>
-                        </a>
-                    </div>
-                </div>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> compose email
+            </p>
+            <form id="contact-form" class="contact-form">
+              <div class="form-row">
+                <label
+                  >Nome<input
+                    name="name"
+                    id="name"
+                    autocomplete="name"
+                    required
+                    maxlength="100" /></label
+                ><label
+                  >Email<input
+                    type="email"
+                    name="email"
+                    id="email"
+                    autocomplete="email"
+                    required
+                    maxlength="160"
+                /></label>
+              </div>
+              <label
+                >Assunto<input
+                  name="subject"
+                  id="subject"
+                  maxlength="160"
+                  placeholder="Contato pelo portfólio" /></label
+              ><label
+                >Mensagem<textarea
+                  name="message"
+                  id="message"
+                  rows="4"
+                  required
+                  maxlength="500"
+                  aria-describedby="message-hint"
+                ></textarea>
+              </label>
+              <div class="form-footer">
+                <span class="muted" id="message-hint"
+                  ><span id="char-count">0</span>/500 · abre seu app de
+                  email</span
+                ><button class="solid-button" type="submit">
+                  preparar email ↗
+                </button>
+              </div>
+            </form>
+          </article>
+          <article
+            class="content-panel"
+            id="themes"
+            data-path="~/themes"
+            aria-labelledby="themes-title"
+          >
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~/themes</span>
+              <span class="prompt-arrow">›</span> ls palettes/
+            </p>
+            <p class="eyebrow">UM AMBIENTE DO SEU JEITO</p>
+            <h2 id="themes-title">Temas</h2>
+            <p>
+              Escolha a luz do seu terminal. A preferência fica salva neste
+              navegador.
+            </p>
+            <div class="theme-options" data-theme-options>
+              <button
+                type="button"
+                data-theme-choice="noite"
+                aria-pressed="true"
+              >
+                <span class="palette palette-noite" aria-hidden="true"
+                  ><i></i><i></i><i></i><i></i></span
+                ><strong>01 / noite</strong
+                ><span>carvão, marfim e sálvia</span></button
+              ><button
+                type="button"
+                data-theme-choice="fosforo"
+                aria-pressed="false"
+              >
+                <span class="palette palette-fosforo" aria-hidden="true"
+                  ><i></i><i></i><i></i><i></i></span
+                ><strong>02 / fósforo</strong
+                ><span>um terminal em verde</span></button
+              ><button
+                type="button"
+                data-theme-choice="papel"
+                aria-pressed="false"
+              >
+                <span class="palette palette-papel" aria-hidden="true"
+                  ><i></i><i></i><i></i><i></i></span
+                ><strong>03 / papel</strong><span>luz suave, tinta escura</span>
+              </button>
             </div>
+          </article>
+          <div
+            class="command-output"
+            id="command-output"
+            role="log"
+            aria-live="polite"
+            aria-label="Respostas do terminal"
+          ></div>
         </div>
-    </section>
-
-    <!-- Projects -->
-    <section class="section projects" id="projects">
-        <div class="container">
-            <div class="section-header-row">
-                <h2 class="section-heading">Projetos</h2>
-                <span class="section-count">04 projetos</span>
-            </div>
-
-            <div class="projects-list">
-                <article class="project-item" data-project="01">
-                    <div class="project-number">01</div>
-                    <div class="project-body">
-                        <div class="project-meta">
-                            <span class="project-category">Big Data</span>
-                            <span class="project-separator">/</span>
-                            <span class="project-category">Microsserviços</span>
-                        </div>
-                        <h3 class="project-name">Pipeline Big Data — Análise de Criptomoedas</h3>
-                        <p class="project-desc">
-                            Arquitetura de microsserviços com Docker para coleta, processamento e análise
-                            de dados de criptomoedas em tempo real. Apache Kafka processando ~500 msg/s,
-                            MongoDB, cache Redis e orquestração via Airflow.
-                        </p>
-                        <div class="project-stack">
-                            <span>Docker</span>
-                            <span>Kafka</span>
-                            <span>MongoDB</span>
-                            <span>Redis</span>
-                            <span>Airflow</span>
-                            <span>Streamlit</span>
-                        </div>
-                        <a href="https://github.com/ClaudioAMF1/crypto-analytics-pipeline" target="_blank" rel="noopener" class="link-arrow">
-                            Ver no GitHub <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1V11" stroke="currentColor" stroke-width="1.5"/></svg>
-                        </a>
-                    </div>
-                </article>
-
-                <article class="project-item" data-project="02">
-                    <div class="project-number">02</div>
-                    <div class="project-body">
-                        <div class="project-meta">
-                            <span class="project-category">Computer Vision</span>
-                            <span class="project-separator">/</span>
-                            <span class="project-category">ML</span>
-                        </div>
-                        <h3 class="project-name">Análise Tática de Futebol com CV</h3>
-                        <p class="project-desc">
-                            Sistema de visão computacional para análise tática em tempo real a 30 FPS.
-                            Detecção e rastreamento de jogadores com YOLOv8 + Norfair. Mapas de calor
-                            automáticos, análise de formações e métricas de desempenho.
-                        </p>
-                        <div class="project-stack">
-                            <span>Python</span>
-                            <span>YOLOv8</span>
-                            <span>OpenCV</span>
-                            <span>NumPy</span>
-                            <span>Norfair</span>
-                        </div>
-                        <a href="https://github.com/ClaudioAMF1/soccer-video-analytics" target="_blank" rel="noopener" class="link-arrow">
-                            Ver no GitHub <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1V11" stroke="currentColor" stroke-width="1.5"/></svg>
-                        </a>
-                    </div>
-                </article>
-
-                <article class="project-item" data-project="03">
-                    <div class="project-number">03</div>
-                    <div class="project-body">
-                        <div class="project-meta">
-                            <span class="project-category">IoT</span>
-                            <span class="project-separator">/</span>
-                            <span class="project-category">Big Data</span>
-                        </div>
-                        <h3 class="project-name">Pipeline de Qualidade do Ar</h3>
-                        <p class="project-desc">
-                            Pipeline de Big Data para análise de qualidade do ar em tempo real.
-                            6.500+ registros processados, alertas automáticos via RabbitMQ,
-                            processamento assíncrono com Celery + Redis. 156+ eventos críticos detectados.
-                        </p>
-                        <div class="project-stack">
-                            <span>Kafka</span>
-                            <span>Flask</span>
-                            <span>Redis</span>
-                            <span>RabbitMQ</span>
-                            <span>Celery</span>
-                            <span>MinIO</span>
-                        </div>
-                        <a href="https://github.com/ClaudioAMF1/air-quality-pipeline" target="_blank" rel="noopener" class="link-arrow">
-                            Ver no GitHub <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1V11" stroke="currentColor" stroke-width="1.5"/></svg>
-                        </a>
-                    </div>
-                </article>
-
-                <article class="project-item" data-project="04">
-                    <div class="project-number">04</div>
-                    <div class="project-body">
-                        <div class="project-meta">
-                            <span class="project-category">Full Stack</span>
-                            <span class="project-separator">/</span>
-                            <span class="project-category">Web</span>
-                        </div>
-                        <h3 class="project-name">Carreta Digital — RBCIP</h3>
-                        <p class="project-desc">
-                            Interface web completa para acesso e download de certificados, com banco
-                            PostgreSQL e APIs RESTful. Impactou ~8.000 alunos.
-                        </p>
-                        <div class="project-stack">
-                            <span>PostgreSQL</span>
-                            <span>Python</span>
-                            <span>Flask</span>
-                            <span>REST APIs</span>
-                        </div>
-                        <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener" class="link-arrow">
-                            Ver no GitHub <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1V11" stroke="currentColor" stroke-width="1.5"/></svg>
-                        </a>
-                    </div>
-                </article>
-            </div>
+        <form class="command-line" id="command-form" hidden>
+          <label for="command-input"
+            ><span class="command-user"
+              >claudio<span class="muted">@dev</span></span
+            >
+            <span class="prompt-arrow">›</span
+            ><span class="sr-only">Comando do terminal</span></label
+          ><input
+            id="command-input"
+            name="command"
+            type="text"
+            placeholder="digite help"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            maxlength="120"
+          /><button
+            type="submit"
+            class="text-button"
+            aria-label="Executar comando"
+          >
+            ↵
+          </button>
+        </form>
+      </section>
+      <aside class="ambient" aria-label="Informações do ambiente">
+        <div class="orbital-display">
+          <canvas id="orbit-canvas" aria-hidden="true"></canvas
+          ><span class="orbital-label">[ sistema em órbita ]</span>
         </div>
-    </section>
-
-    <!-- Skills -->
-    <section class="section skills" id="skills">
-        <div class="container">
-            <h2 class="section-heading">Skills &amp; Tecnologias</h2>
-            <div class="skills-layout">
-                <div class="skill-group">
-                    <h3 class="skill-group-title">Linguagens</h3>
-                    <div class="skill-list">
-                        <div class="skill-row">
-                            <span class="skill-name">Python</span>
-                            <span class="skill-bar"><span class="skill-fill" style="--w: 95%"></span></span>
-                        </div>
-                        <div class="skill-row">
-                            <span class="skill-name">JavaScript / TypeScript</span>
-                            <span class="skill-bar"><span class="skill-fill" style="--w: 75%"></span></span>
-                        </div>
-                        <div class="skill-row">
-                            <span class="skill-name">Java</span>
-                            <span class="skill-bar"><span class="skill-fill" style="--w: 70%"></span></span>
-                        </div>
-                        <div class="skill-row">
-                            <span class="skill-name">C / C++</span>
-                            <span class="skill-bar"><span class="skill-fill" style="--w: 65%"></span></span>
-                        </div>
-                        <div class="skill-row">
-                            <span class="skill-name">Swift</span>
-                            <span class="skill-bar"><span class="skill-fill" style="--w: 50%"></span></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="skill-cols">
-                    <div class="skill-group">
-                        <h3 class="skill-group-title">Backend</h3>
-                        <div class="skill-tags">
-                            <span>Flask</span><span>FastAPI</span><span>React</span>
-                            <span>Node.js</span><span>Express</span><span>Streamlit</span>
-                        </div>
-                    </div>
-                    <div class="skill-group">
-                        <h3 class="skill-group-title">Data &amp; Big Data</h3>
-                        <div class="skill-tags">
-                            <span>Apache Kafka</span><span>MongoDB</span><span>Redis</span>
-                            <span>Airflow</span><span>PostgreSQL</span><span>MinIO</span>
-                            <span>RabbitMQ</span><span>CassandraDB</span>
-                        </div>
-                    </div>
-                    <div class="skill-group">
-                        <h3 class="skill-group-title">DevOps &amp; Cloud</h3>
-                        <div class="skill-tags">
-                            <span>Docker</span><span>AWS</span><span>Git</span>
-                            <span>CI/CD</span><span>Kubernetes</span><span>Microsserviços</span>
-                        </div>
-                    </div>
-                    <div class="skill-group">
-                        <h3 class="skill-group-title">ML &amp; IA</h3>
-                        <div class="skill-tags">
-                            <span>Computer Vision</span><span>YOLOv8</span><span>OpenCV</span>
-                            <span>Scikit-learn</span><span>TensorFlow</span><span>PyTorch</span>
-                        </div>
-                    </div>
-                    <div class="skill-group">
-                        <h3 class="skill-group-title">Libs &amp; Tools</h3>
-                        <div class="skill-tags">
-                            <span>Plotly</span><span>Pandas</span><span>NumPy</span>
-                            <span>SciPy</span><span>Norfair</span><span>Celery</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <dl class="ambient-facts">
+          <div>
+            <dt>user</dt>
+            <dd>ClaudioAMF1</dd>
+          </div>
+          <div>
+            <dt>local</dt>
+            <dd>Brasília, BR</dd>
+          </div>
+          <div>
+            <dt>focus</dt>
+            <dd>backend<br />data<br />AI</dd>
+          </div>
+        </dl>
+        <div class="ambient-note">
+          // pequenas ideias.<br />// sistemas maiores.
         </div>
-    </section>
-
-    <!-- Experience -->
-    <section class="section experience" id="experience">
-        <div class="container">
-            <h2 class="section-heading">Experiência &amp; Formação</h2>
-            <div class="exp-list">
-                <div class="exp-item">
-                    <div class="exp-date">Mar — Ago 2025</div>
-                    <div class="exp-content">
-                        <span class="exp-badge">Experiência</span>
-                        <h3>Estagiário de TI</h3>
-                        <h4>RBCIP</h4>
-                        <ul>
-                            <li>Banco de dados PostgreSQL para certificados da Carreta Digital</li>
-                            <li>Interface web completa para acesso e download de certificados</li>
-                            <li>APIs RESTful em Python com Flask</li>
-                            <li>Impacto direto em ~8.000 alunos</li>
-                        </ul>
-                        <div class="exp-tags">
-                            <span>PostgreSQL</span><span>Python</span><span>Flask</span><span>REST APIs</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="exp-item">
-                    <div class="exp-date">Fev — Jul 2024</div>
-                    <div class="exp-content">
-                        <span class="exp-badge">Experiência</span>
-                        <h3>Monitor de Cálculo</h3>
-                        <h4>IDP</h4>
-                        <ul>
-                            <li>Apoio aos alunos na disciplina de Cálculo</li>
-                            <li>Desenvolvimento de habilidades de comunicação e liderança</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="exp-item">
-                    <div class="exp-date">Jul 2023 — Jul 2027</div>
-                    <div class="exp-content">
-                        <span class="exp-badge badge-edu">Formação</span>
-                        <h3>Bacharelado em Ciência da Computação e Engenharia de Software</h3>
-                        <h4>IDP — Instituto Brasileiro de Desenvolvimento e Pesquisa</h4>
-                        <ul>
-                            <li>Atualmente no 6&ordm; semestre</li>
-                            <li>Foco em desenvolvimento de software, dados e IA</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="exp-item">
-                    <div class="exp-date">Certificações</div>
-                    <div class="exp-content">
-                        <span class="exp-badge badge-cert">Certificações</span>
-                        <h3>Cursos &amp; Certificações</h3>
-                        <div class="cert-cols">
-                            <ul>
-                                <li>AWS Cloud Security Foundations</li>
-                                <li>Scrum Master — IDP</li>
-                                <li>JavaScript &amp; TypeScript</li>
-                                <li>Python Avançado</li>
-                            </ul>
-                            <ul>
-                                <li>iOS &amp; Swift Development</li>
-                                <li>Machine Learning Fundamentals</li>
-                                <li>Big Data &amp; NoSQL</li>
-                                <li>C, C#, C++, Java, Python</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="ambient-bottom">
+          <span>UTC−3 / Brasília</span><time id="clock">--:--:--</time
+          ><span class="ambient-coordinate" id="orbit-coordinate"
+            >x 0.000 / y 0.000</span
+          >
         </div>
-    </section>
-
-    <!-- Contact -->
-    <section class="section contact" id="contact">
-        <div class="container">
-            <h2 class="section-heading">Contato</h2>
-            <p class="contact-intro">Tem um projeto ou oportunidade? Estou disponível para conversar.</p>
-
-            <div class="contact-grid">
-                <div class="contact-form-card">
-                    <form class="contact-form" id="contact-form" novalidate>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="name">Nome *</label>
-                                <input type="text" id="name" name="name" required autocomplete="name">
-                                <span class="form-error" id="name-error"></span>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email *</label>
-                                <input type="email" id="email" name="email" required autocomplete="email">
-                                <span class="form-error" id="email-error"></span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="subject">Assunto</label>
-                            <input type="text" id="subject" name="subject">
-                        </div>
-                        <div class="form-group">
-                            <label for="message">Mensagem *</label>
-                            <textarea id="message" name="message" rows="5" required></textarea>
-                            <span class="form-error" id="message-error"></span>
-                            <span class="char-count"><span id="char-count">0</span>/500</span>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-submit">Enviar Mensagem</button>
-                    </form>
-                </div>
-                <div class="contact-links">
-                    <a href="mailto:cmeireles756@gmail.com" class="contact-link-item">
-                        <span class="contact-link-label">Email</span>
-                        <span class="contact-link-value">cmeireles756@gmail.com</span>
-                    </a>
-                    <a href="https://www.linkedin.com/in/cgfm1" target="_blank" rel="noopener" class="contact-link-item">
-                        <span class="contact-link-label">LinkedIn</span>
-                        <span class="contact-link-value">linkedin.com/in/cgfm1</span>
-                    </a>
-                    <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener" class="contact-link-item">
-                        <span class="contact-link-label">GitHub</span>
-                        <span class="contact-link-value">github.com/ClaudioAMF1</span>
-                    </a>
-                    <a href="tel:+5561982105723" class="contact-link-item">
-                        <span class="contact-link-label">Telefone</span>
-                        <span class="contact-link-value">(61) 98210-5723</span>
-                    </a>
-                </div>
-            </div>
+      </aside>
+      <footer class="status-bar">
+        <div class="status-identity">
+          <span>ClaudioAMF1</span
+          ><span class="muted status-shortcuts"
+            >↑↓ seção · / terminal · T tema · Esc início</span
+          >
         </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-inner">
-                <span class="footer-brand">cm.</span>
-                <span class="footer-copy">Claudio Meireles</span>
-                <div class="footer-socials">
-                    <a href="https://github.com/ClaudioAMF1" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                    <a href="https://www.linkedin.com/in/cgfm1" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="mailto:cmeireles756@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Back to Top -->
-    <button class="back-to-top" id="back-to-top" aria-label="Voltar ao topo">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 14V2M8 2L2 8M8 2L14 8" stroke="currentColor" stroke-width="1.5"/></svg>
-    </button>
-
-    <script src="js/main.js"></script>
-</body>
+        <dl>
+          <div>
+            <dt>projetos</dt>
+            <dd>04</dd>
+          </div>
+          <div>
+            <dt>seção</dt>
+            <dd id="status-section">whoami</dd>
+          </div>
+          <div>
+            <dt>tema</dt>
+            <dd id="status-theme">noite</dd>
+          </div>
+        </dl>
+        <button
+          class="motion-button"
+          id="motion-button"
+          type="button"
+          aria-pressed="true"
+        >
+          <span class="status-dot" aria-hidden="true"></span
+          ><span id="motion-label">animação on</span>
+        </button>
+      </footer>
+    </main>
+    <dialog
+      class="theme-dialog"
+      id="theme-dialog"
+      aria-labelledby="theme-dialog-title"
+    >
+      <div class="dialog-heading">
+        <h2 id="theme-dialog-title">:tema</h2>
+        <button
+          type="button"
+          id="close-theme-dialog"
+          class="text-button"
+          aria-label="Fechar temas"
+        >
+          ×
+        </button>
+      </div>
+      <p class="muted">Escolha uma paleta para o portfólio.</p>
+      <div class="dialog-themes">
+        <button type="button" data-theme-choice="noite" aria-pressed="true">
+          <span class="theme-dot dot-noite"></span>noite</button
+        ><button type="button" data-theme-choice="fosforo" aria-pressed="false">
+          <span class="theme-dot dot-fosforo"></span>fósforo</button
+        ><button type="button" data-theme-choice="papel" aria-pressed="false">
+          <span class="theme-dot dot-papel"></span>papel
+        </button>
+      </div>
+      <p class="dialog-hint muted">Esc para fechar</p>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div
+      class="sr-only"
+      id="navigation-announcement"
+      role="status"
+      aria-live="polite"
+    ></div>
+    <noscript
+      ><div class="noscript-note">
+        O modo interativo precisa de JavaScript. Todas as seções e os links
+        continuam disponíveis abaixo.
+      </div></noscript
+    >
+  </body>
 </html>
