@@ -13,7 +13,6 @@
   const commandInput = document.getElementById("command-input");
   const commandOutput = document.getElementById("command-output");
   const themeDialog = document.getElementById("theme-dialog");
-  const motionButton = document.getElementById("motion-button");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const mobile = window.matchMedia("(max-width: 650px)");
   const storage = {
@@ -50,6 +49,11 @@
     tema: "themes",
   };
   let currentIndex = 0;
+  let wheelPosition = 0;
+  let wheelTarget = 0;
+  let wheelVelocity = 0;
+  let wheelSnapTimer;
+  let sceneTime = 0;
   let inWorkspace = false;
   let animationFrame = 0;
   let lastFrame = 0;
@@ -57,7 +61,6 @@
     storage.read("cm-motion") !== "off" && !reducedMotion.matches;
   let palette = {};
   let toastTimer;
-  let pointer = { x: 0, y: 0 };
 
   function showToast(message) {
     const toast = document.getElementById("toast");
@@ -96,30 +99,68 @@
   }
 
   function positionWheel() {
-    const half = Math.floor(items.length / 2);
     items.forEach((item, index) => {
-      let distance = index - currentIndex;
-      if (distance > half) distance -= items.length;
-      if (distance < -half) distance += items.length;
+      let distance = index - wheelPosition;
+      distance -= Math.round(distance / items.length) * items.length;
       const active = index === currentIndex;
       item.classList.toggle("is-active", active);
       if (active) item.setAttribute("aria-current", "page");
       else item.removeAttribute("aria-current");
-      const x = Math.abs(distance) ** 1.6 * 5;
-      const y = distance * 108 - 49;
-      item.style.transform = `translate(${x}px, ${y}px) rotate(${distance * -10}deg) scale(${active ? 1 : 0.86})`;
+      const angle = distance * 0.3;
+      const x = (1 - Math.cos(angle)) * 365;
+      const y = Math.sin(angle) * 365 - 49;
+      const scale = Math.max(0.65, 1 - Math.abs(distance) * 0.095);
+      item.style.transform = `translate3d(${x}px, ${y}px, ${-Math.abs(distance) * 22}px) rotateZ(${-angle * 48}deg) rotateY(${Math.min(Math.abs(distance), 3) * 6}deg) scale(${scale})`;
       item.style.opacity = String(
         active ? 1 : Math.max(0.18, 0.76 - Math.abs(distance) * 0.13),
       );
-      item.style.zIndex = String(10 - Math.abs(distance));
+      item.style.zIndex = String(10 - Math.round(Math.abs(distance)));
     });
-    if (mobile.matches && inWorkspace) {
+    if (mobile.matches && inWorkspace && !drag) {
       const item = items[currentIndex];
       wheel.scrollTo({
         left: item.offsetLeft - (wheel.clientWidth - item.offsetWidth) / 2,
         behavior: motionEnabled ? "smooth" : "instant",
       });
     }
+  }
+
+  function animateWheel(dt) {
+    if (mobile.matches || !motionEnabled) {
+      wheelPosition = wheelTarget;
+      wheelVelocity = 0;
+      return;
+    }
+    const difference = wheelTarget - wheelPosition;
+    if (Math.abs(difference) < 0.0005 && Math.abs(wheelVelocity) < 0.002) {
+      wheelPosition = wheelTarget;
+      wheelVelocity = 0;
+      return;
+    }
+    wheelVelocity += difference * 95 * dt;
+    wheelVelocity *= Math.exp(-15 * dt);
+    wheelPosition += wheelVelocity * dt;
+    positionWheel();
+  }
+
+  function selectWheelTarget(target) {
+    wheelTarget = target;
+    const selected =
+      ((Math.round(target) % items.length) + items.length) % items.length;
+    if (selected !== currentIndex)
+      showPanel(items[selected].dataset.panel, {
+        wheelFree: true,
+        scroll: false,
+      });
+    if (!motionEnabled) {
+      wheelPosition = target;
+      positionWheel();
+      paintFrame(sceneTime);
+    }
+  }
+
+  function settleWheel() {
+    selectWheelTarget(Math.round(wheelTarget));
   }
 
   function showPanel(id, options = {}) {
@@ -135,6 +176,15 @@
     landing.hidden = true;
     workspace.hidden = false;
     currentIndex = items.findIndex((item) => item.dataset.panel === panelId);
+    if (!options.wheelFree) {
+      wheelTarget =
+        currentIndex +
+        Math.round((wheelTarget - currentIndex) / items.length) * items.length;
+      if (!motionEnabled || options.history === false) {
+        wheelPosition = wheelTarget;
+        wheelVelocity = 0;
+      }
+    }
     panels.forEach((panel) => {
       panel.hidden = panel.id !== panelId;
     });
@@ -148,7 +198,7 @@
     if (options.history !== false) setHash(panelId);
     positionWheel();
     resizeCanvases();
-    paintFrame(performance.now());
+    paintFrame(sceneTime);
     document.getElementById("navigation-announcement").textContent =
       panel.querySelector("h2").textContent;
     if (options.focus || focusWasHidden)
@@ -164,7 +214,9 @@
     landing.hidden = false;
     if (options.history !== false) setHash("");
     window.scrollTo({ top: 0, behavior: "instant" });
+    visuals.resize();
     renderCode();
+    paintFrame(sceneTime);
     if (options.focus)
       document.querySelector(".enter-link").focus({ preventScroll: true });
   }
@@ -214,22 +266,22 @@
     .getElementById("next-panel")
     .addEventListener("click", () => stepPanel(1));
 
-  let wheelAmount = 0;
-  let lastWheelStep = 0;
   wheel.addEventListener(
     "wheel",
     (event) => {
       if (mobile.matches || Math.abs(event.deltaY) < Math.abs(event.deltaX))
         return;
       event.preventDefault();
-      const now = performance.now();
-      if (now - lastWheelStep < 230) return;
-      wheelAmount += event.deltaY;
-      if (Math.abs(wheelAmount) >= 35) {
-        stepPanel(wheelAmount > 0 ? 1 : -1);
-        wheelAmount = 0;
-        lastWheelStep = now;
-      }
+      const unit =
+        event.deltaMode === 1
+          ? 16
+          : event.deltaMode === 2
+            ? wheel.clientHeight
+            : 1;
+      const amount = Math.max(-2, Math.min(2, (event.deltaY * unit) / 125));
+      selectWheelTarget(wheelTarget + amount);
+      clearTimeout(wheelSnapTimer);
+      wheelSnapTimer = setTimeout(settleWheel, 170);
     },
     { passive: false },
   );
@@ -237,30 +289,34 @@
   let drag = null;
   let suppressClick = false;
   wheel.addEventListener("pointerdown", (event) => {
-    if (mobile.matches || event.button !== 0 || event.pointerType === "touch")
-      return;
-    drag = { y: event.clientY, start: event.clientY, moved: false };
+    if (mobile.matches || event.button !== 0) return;
+    clearTimeout(wheelSnapTimer);
+    drag = {
+      start: event.clientY,
+      from: wheelPosition,
+      moved: false,
+      id: event.pointerId,
+    };
+    wheel.setPointerCapture?.(event.pointerId);
+    wheel.classList.add("is-dragging");
   });
   window.addEventListener(
     "pointermove",
     (event) => {
-      pointer = {
-        x: (event.clientX / window.innerWidth - 0.5) * 2,
-        y: (event.clientY / window.innerHeight - 0.5) * 2,
-      };
+      visuals.trackPointer(event);
+      if (!motionEnabled) paintFrame(sceneTime);
       if (!drag) return;
-      const difference = event.clientY - drag.y;
+      const difference = event.clientY - drag.start;
       if (Math.abs(event.clientY - drag.start) > 9) drag.moved = true;
-      if (Math.abs(difference) > 70) {
-        stepPanel(difference > 0 ? -1 : 1);
-        drag.y = event.clientY;
-      }
+      if (drag.moved) selectWheelTarget(drag.from - difference / 110);
     },
     { passive: true },
   );
   window.addEventListener("pointerup", () => {
     suppressClick = Boolean(drag && drag.moved);
+    if (drag?.moved) settleWheel();
     drag = null;
+    wheel.classList.remove("is-dragging");
     if (suppressClick)
       setTimeout(() => {
         suppressClick = false;
@@ -268,6 +324,8 @@
   });
   window.addEventListener("pointercancel", () => {
     drag = null;
+    wheel.classList.remove("is-dragging");
+    settleWheel();
   });
   wheel.addEventListener("dragstart", (event) => event.preventDefault());
   wheel.addEventListener(
@@ -283,7 +341,7 @@
   );
   wheel.addEventListener("focusin", (event) => {
     const item = event.target.closest(".wheel-item");
-    if (item && item.dataset.panel !== panels[currentIndex].id)
+    if (!drag && item && item.dataset.panel !== panels[currentIndex].id)
       showPanel(item.dataset.panel);
   });
 
@@ -312,7 +370,7 @@
     document
       .querySelector('meta[name="theme-color"]')
       .setAttribute("content", palette.bg);
-    if (inWorkspace) paintFrame(performance.now());
+    paintFrame(sceneTime);
     return true;
   }
 
@@ -723,6 +781,9 @@
   let lastCodeTick = 0;
   let highlightedKey;
   const codeStage = document.getElementById("code-stage");
+  const codeTrack = document.getElementById("code-track");
+  const codeScroll = { value: 0, target: 0, manualUntil: 0 };
+  let snippetHoldUntil = 0;
   const keyboardKeys = [...document.querySelectorAll(".key-row span")];
 
   function highlightLine(text) {
@@ -754,7 +815,11 @@
     const fragment = document.createDocumentFragment();
     snippet.code.forEach((line, index) => {
       const row = document.createElement("div");
-      row.className = "code-row" + (index === activeLine ? " current" : "");
+      const future = motionEnabled && index > activeLine;
+      row.className =
+        "code-row" +
+        (index === activeLine ? " current" : "") +
+        (future ? " future" : "");
       const number = document.createElement("span");
       number.className = "code-number";
       number.textContent = String(index + 1);
@@ -762,9 +827,11 @@
       source.className = "code-source";
       source.append(
         highlightLine(
-          index === activeLine && motionEnabled
-            ? line.slice(0, activeCharacter)
-            : line,
+          future
+            ? ""
+            : index === activeLine && motionEnabled
+              ? line.slice(0, activeCharacter)
+              : line,
         ),
       );
       if (index === activeLine) {
@@ -775,171 +842,109 @@
       row.append(number, source);
       fragment.append(row);
     });
-    codeStage.replaceChildren(fragment);
+    codeTrack.replaceChildren(fragment);
     document.getElementById("code-position").textContent =
       `${activeLine + 1}:${activeCharacter + 1}`;
   }
 
   function updateCode(time) {
-    if (time - lastCodeTick < 105) return;
+    if (time < snippetHoldUntil || time - lastCodeTick < 32) return;
+    const advances = Math.min(
+      3,
+      Math.max(1, Math.floor((time - lastCodeTick) / 32)),
+    );
     lastCodeTick = time;
-    const line = snippets[snippetIndex].code[activeLine];
-    activeCharacter += 2;
-    if (activeCharacter > line.length + 8) {
-      activeCharacter = 0;
-      activeLine++;
-      const visibleLines = Math.min(
-        snippets[snippetIndex].code.length,
-        Math.max(14, Math.floor(codeStage.clientHeight / 20)),
-      );
-      if (activeLine >= visibleLines - 3) {
-        snippetIndex = (snippetIndex + 1) % snippets.length;
-        activeLine = 3;
+    let pressed = " ";
+    for (let step = 0; step < advances; step++) {
+      const line = snippets[snippetIndex].code[activeLine];
+      pressed = line.charAt(activeCharacter) || "↵";
+      activeCharacter++;
+      if (activeCharacter > line.length) {
+        activeCharacter = 0;
+        activeLine++;
+        if (activeLine >= snippets[snippetIndex].code.length) {
+          snippetIndex = (snippetIndex + 1) % snippets.length;
+          activeLine = 3;
+          codeScroll.value = 0;
+          codeScroll.target = 0;
+          snippetHoldUntil = time + 450;
+          break;
+        }
       }
     }
     renderCode();
+    visuals.setKey(pressed);
     if (highlightedKey) highlightedKey.classList.remove("key-lit");
-    const letter = line
-      .charAt(Math.min(activeCharacter, line.length - 1))
-      .toLowerCase();
+    const letter = pressed.toLowerCase();
     highlightedKey = keyboardKeys.find((key) => key.textContent === letter);
     if (highlightedKey) highlightedKey.classList.add("key-lit");
   }
 
-  function prepareCanvas(id) {
-    const canvas = document.getElementById(id);
-    const context = canvas.getContext("2d");
-    return { canvas, context, width: 0, height: 0 };
-  }
-  const branch = prepareCanvas("branch-canvas");
-  const orbit = prepareCanvas("orbit-canvas");
-  function resizeCanvas(surface) {
-    if (!surface.context) return;
-    const bounds = surface.canvas.getBoundingClientRect();
-    if (!bounds.width || !bounds.height) return;
-    const scale = Math.min(window.devicePixelRatio || 1, 2);
-    surface.width = bounds.width;
-    surface.height = bounds.height;
-    surface.canvas.width = Math.round(bounds.width * scale);
-    surface.canvas.height = Math.round(bounds.height * scale);
-    surface.context.setTransform(scale, 0, 0, scale, 0, 0);
-  }
-  function resizeCanvases() {
-    if (!inWorkspace) return;
-    resizeCanvas(branch);
-    resizeCanvas(orbit);
-  }
-  function seeded(index) {
-    const value = Math.sin(index * 127.1 + 311.7) * 43758.5453;
-    return value - Math.floor(value);
-  }
-  function drawBranch(time) {
-    if (!branch.context || mobile.matches || !branch.width) return;
-    const ctx = branch.context;
-    const { width, height } = branch;
-    ctx.clearRect(0, 0, width, height);
-    ctx.strokeStyle = palette.text;
-    ctx.lineWidth = 0.6;
-    ctx.globalAlpha = 0.55;
-    const points = [];
-    for (let i = 0; i <= 44; i++) {
-      const y = 22 + ((height - 65) * i) / 44;
-      const x =
-        24 + Math.sin(i * 0.31 + time * 0.00016) * 10 + seeded(i + 1) * 8;
-      points.push({ x, y });
-    }
-    ctx.beginPath();
-    points.forEach((point, index) =>
-      index ? ctx.lineTo(point.x, point.y) : ctx.moveTo(point.x, point.y),
-    );
-    ctx.stroke();
-    points.forEach((point, index) => {
-      if (index % 2) return;
-      const spread = 30 + seeded(index + 18) * 35;
-      const direction = index % 4 ? 1 : -1;
-      for (let ray = 0; ray < 8; ray++) {
-        const endpointX =
-          point.x + direction * (11 + seeded(index * 8 + ray + 73) * spread);
-        const endpointY = point.y + (seeded(index * 11 + ray + 19) - 0.5) * 78;
-        const midpointX = point.x + direction * 12;
-        const midpointY = point.y + (endpointY - point.y) * 0.36;
-        ctx.globalAlpha = 0.13 + seeded(ray + index) * 0.28;
-        ctx.beginPath();
-        ctx.moveTo(point.x, point.y);
-        ctx.lineTo(midpointX, midpointY);
-        ctx.lineTo(endpointX, endpointY);
-        ctx.stroke();
-        ctx.fillStyle = palette.text;
-        ctx.globalAlpha = 0.55;
-        ctx.fillRect(endpointX, endpointY, 1.3, 1.3);
-      }
-      ctx.fillRect(point.x - 1, point.y - 1, 2, 2);
-    });
-    ctx.globalAlpha = 1;
-  }
-  function drawOrbit(time) {
-    if (!orbit.context || !orbit.width || window.innerWidth <= 940) return;
-    const ctx = orbit.context;
-    const { width, height } = orbit;
-    ctx.clearRect(0, 0, width, height);
-    const radius = Math.min(width, height) * 0.39;
-    const angle = time * 0.00013 + pointer.x * 0.22;
-    const tilt = -0.25 + pointer.y * 0.13;
-    const dots = [];
-    for (let row = 1; row < 18; row++) {
-      const latitude = (Math.PI * row) / 18;
-      for (let column = 0; column < 30; column++) {
-        const longitude = (Math.PI * 2 * column) / 30 + angle;
-        const x = Math.sin(latitude) * Math.cos(longitude);
-        const y = Math.cos(latitude);
-        const z = Math.sin(latitude) * Math.sin(longitude);
-        dots.push({
-          x,
-          y: y * Math.cos(tilt) - z * Math.sin(tilt),
-          z: y * Math.sin(tilt) + z * Math.cos(tilt),
-          index: row + column,
-        });
-      }
-    }
-    dots.sort((a, b) => a.z - b.z);
-    ctx.font = "6px monospace";
-    dots.forEach((dot) => {
-      ctx.globalAlpha = 0.08 + (dot.z + 1) * 0.33;
-      ctx.fillStyle = dot.z > 0.6 ? palette.text : palette.muted;
-      const x = width / 2 + dot.x * radius;
-      const y = height / 2 + dot.y * radius;
-      if (dot.index % 5 === 0) ctx.fillText(dot.z > 0 ? ":" : ".", x, y);
-      else ctx.fillRect(x, y, 0.9, 0.9);
-    });
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = palette.dim;
-    ctx.lineWidth = 0.5;
-    ctx.beginPath();
-    ctx.ellipse(
-      width / 2,
-      height / 2,
-      radius * 1.2,
-      radius * 0.3,
-      -0.4,
+  function updateCodeScroll(dt) {
+    const typedLines = motionEnabled
+      ? activeLine + 1
+      : snippets[snippetIndex].code.length;
+    const available = Math.max(
       0,
-      Math.PI * 2,
+      typedLines * 15 - codeStage.clientHeight + 45,
     );
-    ctx.stroke();
-    document.getElementById("orbit-coordinate").textContent =
-      `x ${pointer.x.toFixed(3)} / y ${pointer.y.toFixed(3)}`;
+    if (sceneTime > codeScroll.manualUntil) codeScroll.target = available;
+    codeScroll.target = Math.max(0, Math.min(available, codeScroll.target));
+    codeScroll.value +=
+      (codeScroll.target - codeScroll.value) *
+      (motionEnabled ? 1 - Math.exp(-dt * 10) : 1);
+    codeTrack.style.transform = `translate3d(0, ${-codeScroll.value.toFixed(2)}px, 0)`;
   }
-  function paintFrame(time) {
-    if (inWorkspace) {
-      drawBranch(time);
-      drawOrbit(time);
-    }
+
+  codeStage.addEventListener(
+    "wheel",
+    (event) => {
+      event.preventDefault();
+      const unit =
+        event.deltaMode === 1
+          ? 15
+          : event.deltaMode === 2
+            ? codeStage.clientHeight
+            : 1;
+      const max = Math.max(
+        0,
+        (motionEnabled ? activeLine + 1 : snippets[snippetIndex].code.length) *
+          15 -
+          codeStage.clientHeight +
+          45,
+      );
+      codeScroll.target = Math.max(
+        0,
+        Math.min(max, codeScroll.target + event.deltaY * unit),
+      );
+      codeScroll.manualUntil = sceneTime + 2400;
+      if (!motionEnabled) updateCodeScroll(1);
+    },
+    { passive: false },
+  );
+
+  const visuals = window.PortfolioVisuals.create({
+    palette: () => palette,
+    motion: () => motionEnabled,
+  });
+  function resizeCanvases() {
+    visuals.resize();
+  }
+  function paintFrame(time = sceneTime, dt = 1 / 60) {
+    visuals.draw(time, dt, inWorkspace, wheelPosition);
   }
   function animate(time) {
     animationFrame = 0;
     if (!motionEnabled || document.hidden) return;
-    if (time - lastFrame >= 33) {
-      if (inWorkspace) paintFrame(time);
-      else updateCode(time);
+    if (time - lastFrame >= 16) {
+      const dt = lastFrame ? Math.min(0.05, (time - lastFrame) / 1000) : 1 / 60;
+      sceneTime += dt * 1000;
+      if (inWorkspace) animateWheel(dt);
+      else {
+        updateCode(sceneTime);
+        updateCodeScroll(dt);
+      }
+      paintFrame(sceneTime, dt);
       lastFrame = time;
     }
     animationFrame = requestAnimationFrame(animate);
@@ -947,25 +952,43 @@
   function resumeAnimation() {
     cancelAnimationFrame(animationFrame);
     animationFrame = 0;
+    lastFrame = 0;
     if (motionEnabled && !document.hidden)
       animationFrame = requestAnimationFrame(animate);
   }
   function updateMotion(persist = false) {
     body.classList.toggle("motion-paused", !motionEnabled);
-    motionButton.setAttribute("aria-pressed", String(motionEnabled));
-    document.getElementById("motion-label").textContent =
-      "animação " + (motionEnabled ? "on" : "off");
+    body.dataset.motion = motionEnabled ? "on" : "off";
+    document.querySelectorAll("[data-motion-toggle]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(motionEnabled));
+      button.setAttribute(
+        "aria-label",
+        motionEnabled ? "Pausar movimento" : "Ativar movimento",
+      );
+    });
+    document.querySelectorAll("[data-motion-label]").forEach((label) => {
+      label.textContent = "movimento " + (motionEnabled ? "on" : "off");
+    });
     if (persist) storage.write("cm-motion", motionEnabled ? "on" : "off");
     renderCode();
     if (!motionEnabled && highlightedKey)
       highlightedKey.classList.remove("key-lit");
-    paintFrame(performance.now());
+    if (!motionEnabled) {
+      wheelPosition = wheelTarget;
+      wheelVelocity = 0;
+      positionWheel();
+    }
+    resizeCanvases();
+    updateCodeScroll(1);
+    paintFrame(sceneTime);
     resumeAnimation();
   }
-  motionButton.addEventListener("click", () => {
-    motionEnabled = !motionEnabled;
-    updateMotion(true);
-  });
+  document.querySelectorAll("[data-motion-toggle]").forEach((button) =>
+    button.addEventListener("click", () => {
+      motionEnabled = !motionEnabled;
+      updateMotion(true);
+    }),
+  );
   reducedMotion.addEventListener("change", (event) => {
     motionEnabled = !event.matches && storage.read("cm-motion") !== "off";
     updateMotion();
@@ -979,7 +1002,7 @@
       resizeFrame = requestAnimationFrame(() => {
         positionWheel();
         resizeCanvases();
-        paintFrame(performance.now());
+        paintFrame(sceneTime);
       });
     },
     { passive: true },

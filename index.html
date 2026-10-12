@@ -19,9 +19,21 @@
     <meta property="og:locale" content="pt_BR" />
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="css/style.css" />
+    <script src="js/visuals.js" defer></script>
     <script src="js/main.js" defer></script>
   </head>
   <body>
+    <canvas
+      id="cursor-canvas"
+      class="cursor-canvas"
+      aria-hidden="true"
+    ></canvas>
+    <div class="eye-overlay" aria-hidden="true">
+      <canvas id="eye-canvas"></canvas>
+      <span class="eye-coordinate" id="eye-coordinate"
+        >['pupil:u'] 0.500000</span
+      >
+    </div>
     <h1 class="sr-only">Claudio Meireles | Software Developer</h1>
     <a class="skip-link" href="#about">Pular para o conteúdo</a>
     <svg
@@ -108,7 +120,9 @@
           ><span id="source-label">portfolio / claudio.py</span
           ><span class="editor-rule"></span>
         </div>
-        <div class="code-stage" id="code-stage"></div>
+        <div class="code-stage" id="code-stage">
+          <div class="code-track" id="code-track"></div>
+        </div>
         <div class="editor-mode">
           <span class="mode-badge">NORMAL</span><span>python</span
           ><span>utf-8</span><span id="code-position">1:1</span>
@@ -136,6 +150,7 @@
           ><span>⌘</span>
         </div>
         <div class="keyboard-traces">
+          <canvas id="hands-canvas" aria-hidden="true"></canvas>
           <svg viewBox="0 0 310 74">
             <g fill="none" stroke="currentColor" stroke-width=".65">
               <path
@@ -164,6 +179,15 @@
             aria-haspopup="dialog"
           >
             :tema</button
+          ><button
+            class="motion-button landing-motion"
+            type="button"
+            data-motion-toggle
+            aria-pressed="true"
+            aria-label="Pausar movimento"
+          >
+            <span class="status-dot" aria-hidden="true"></span
+            ><span data-motion-label>movimento on</span></button
           ><a class="enter-link" href="#about"
             >entrar <span aria-hidden="true">↵</span></a
           >
@@ -337,6 +361,11 @@
                   d="m0 55 30-3 22 4 27-18 17 8 28-7 28 3 20-23 24 14 30-9 24 12 18-19 30 5 28-10 24 16 28-23 27 10 28-8 25 4 30-6 23-3"
                 />
               </svg>
+              <canvas
+                id="identity-canvas"
+                class="identity-canvas"
+                aria-hidden="true"
+              ></canvas>
               <div class="identity-bottomline">
                 <span>01 / construir</span><span>02 / aprender</span
                 ><span>03 / compartilhar</span>
@@ -1102,10 +1131,7 @@
         </form>
       </section>
       <aside class="ambient" aria-label="Informações do ambiente">
-        <div class="orbital-display">
-          <canvas id="orbit-canvas" aria-hidden="true"></canvas
-          ><span class="orbital-label">[ sistema em órbita ]</span>
-        </div>
+        <div class="eye-reserve" aria-hidden="true"></div>
         <dl class="ambient-facts">
           <div>
             <dt>user</dt>
@@ -1125,9 +1151,7 @@
         </div>
         <div class="ambient-bottom">
           <span>UTC−3 / Brasília</span><time id="clock">--:--:--</time
-          ><span class="ambient-coordinate" id="orbit-coordinate"
-            >x 0.000 / y 0.000</span
-          >
+          ><span class="ambient-coordinate">// always curious.</span>
         </div>
       </aside>
       <footer class="status-bar">
@@ -1150,15 +1174,20 @@
             <dt>tema</dt>
             <dd id="status-theme">noite</dd>
           </div>
+          <div>
+            <dt>olho</dt>
+            <dd id="eye-state">tracking</dd>
+          </div>
         </dl>
         <button
           class="motion-button"
           id="motion-button"
+          data-motion-toggle
           type="button"
           aria-pressed="true"
         >
           <span class="status-dot" aria-hidden="true"></span
-          ><span id="motion-label">animação on</span>
+          ><span id="motion-label" data-motion-label>movimento on</span>
         </button>
       </footer>
     </main>
