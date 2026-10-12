@@ -2,7 +2,7 @@
 
 Portfólio em HTML, CSS e JavaScript, com uma interface de terminal inspirada na experiência visual de [hancore.dev](https://hancore.dev/). O código, as ilustrações e a identidade desta versão foram implementados para Claudio Meireles.
 
-A entrada revela o código por digitação progressiva, com rolagem automática e mãos articuladas reagindo às teclas. Um olho formado por glifos acompanha o ponteiro e pisca. Depois de entrar, a navegação combina uma roda circular de projetos com inércia, conteúdo no terminal, uma árvore de ramificações e uma malha animada no painel de apresentação. No celular, a roda vira uma faixa horizontal e as seções usam a rolagem normal da página.
+A entrada revela o código por digitação progressiva, com rolagem automática e duas mãos de 21 pontos articulados. Os dedos alcançam as posições das teclas, enquanto as palmas acompanham o movimento; letras maiúsculas também acionam Shift com a outra mão. Um olho formado por glifos acompanha o ponteiro e pisca. Clicar em entrar inicia uma aproximação pela pupila, com um túnel de partículas, antes de abrir o portfólio. Depois de entrar, a navegação combina uma roda circular de projetos com inércia, conteúdo no terminal, uma árvore de ramificações e uma malha animada no painel de apresentação. No celular, a roda vira uma faixa horizontal e as seções usam a rolagem normal da página.
 
 ## Executar
 
@@ -50,7 +50,7 @@ Os nomes dos arquivos, como `open crypto-pipeline`, também funcionam. O termina
 | Esc no portfólio                    | Volta à entrada         |
 | Esc no terminal                     | Remove o foco do campo  |
 
-Setas dentro do conteúdo mantêm a rolagem normal. A roda também aceita scroll e arraste com mouse. Os links antigos `#hero` e `#projects` continuam apontando para as seções correspondentes.
+Setas dentro do conteúdo mantêm a rolagem normal. A roda também aceita scroll e arraste com mouse. A captura do ponteiro começa somente após um deslocamento de arraste, mantendo os cliques nos cartões funcionais. Esc durante a animação de entrada cancela a transição. Os links antigos `#hero` e `#projects` continuam apontando para as seções correspondentes.
 
 ## Temas e acessibilidade
 
@@ -82,7 +82,7 @@ As imagens dos projetos são ilustrações da arquitetura e do funcionamento, id
 
 ## Validação desta versão
 
-Foram verificados a sintaxe JavaScript, a estrutura HTML, os links e assets locais e 51 cenários de integração em DOM simulado. Além da navegação, comandos e formulário, os testes cobrem avanço da digitação, rolagem do código, acompanhamento do ponteiro pelo olho, piscadas, inércia e arraste da roda, pausa e ativação explícita de movimento. A simulação não substitui a inspeção visual de layout e movimento em um navegador.
+Foram verificados a sintaxe JavaScript, a estrutura HTML, os links e assets locais e 62 cenários de integração em DOM simulado. Além da navegação, comandos e formulário, os testes cobrem avanço da digitação, rolagem do código, acompanhamento do ponteiro pelo olho, piscadas, inércia e arraste da roda, pausa e ativação explícita de movimento. A regressão dos cliques é verificada com sequências de ponteiro e captura; a entrada cobre início, progresso, conclusão, cancelamento e movimento reduzido. A simulação não substitui a inspeção visual e a interação com mouse em um navegador.
 
 ## Licença
 

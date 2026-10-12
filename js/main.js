@@ -54,6 +54,9 @@
   let wheelVelocity = 0;
   let wheelSnapTimer;
   let sceneTime = 0;
+  const ENTRY_DURATION = 2400;
+  let entering = null;
+  let enterTimer;
   let inWorkspace = false;
   let animationFrame = 0;
   let lastFrame = 0;
@@ -99,6 +102,7 @@
   }
 
   function positionWheel() {
+    if (!mobile.matches) wheel.scrollTop = 0;
     items.forEach((item, index) => {
       let distance = index - wheelPosition;
       distance -= Math.round(distance / items.length) * items.length;
@@ -163,7 +167,47 @@
     selectWheelTarget(Math.round(wheelTarget));
   }
 
+  function cancelEntry() {
+    if (!entering) return;
+    entering = null;
+    clearTimeout(enterTimer);
+    visuals.endEntry();
+    body.classList.remove("is-entering");
+    body.dataset.entryState = "idle";
+    landing.removeAttribute("aria-busy");
+  }
+
+  function finishEntry() {
+    if (!entering) return;
+    const id = entering.id;
+    cancelEntry();
+    showPanel(id);
+    items[currentIndex].focus({ preventScroll: true });
+  }
+
+  function enterPortfolio(id = "about") {
+    if (entering) return;
+    if (
+      inWorkspace ||
+      !motionEnabled ||
+      !visuals.beginEntry(performance.now(), ENTRY_DURATION)
+    ) {
+      showPanel(id, { focus: true });
+      return;
+    }
+    entering = { id, started: performance.now() };
+    body.classList.add("is-entering");
+    body.dataset.entryState = "zooming";
+    landing.setAttribute("aria-busy", "true");
+    document.getElementById("navigation-announcement").textContent =
+      "Abrindo portfólio";
+    paintFrame(sceneTime);
+    enterTimer = setTimeout(finishEntry, ENTRY_DURATION + 300);
+    resumeAnimation();
+  }
+
   function showPanel(id, options = {}) {
+    cancelEntry();
     const panelId = resolvePanel(id) || "about";
     const previousFocus = document.activeElement;
     const focusWasHidden =
@@ -208,6 +252,7 @@
   }
 
   function showLanding(options = {}) {
+    cancelEntry();
     inWorkspace = false;
     body.classList.remove("is-workspace");
     workspace.hidden = true;
@@ -254,7 +299,8 @@
       const id = resolvePanel(hash);
       if (!id) return;
       event.preventDefault();
-      showPanel(id, { focus: !anchor.classList.contains("wheel-item") });
+      if (anchor.classList.contains("enter-link")) enterPortfolio(id);
+      else showPanel(id, { focus: !anchor.classList.contains("wheel-item") });
     }
   });
   window.addEventListener("popstate", route);
@@ -296,9 +342,9 @@
       from: wheelPosition,
       moved: false,
       id: event.pointerId,
+      captured: false,
     };
-    wheel.setPointerCapture?.(event.pointerId);
-    wheel.classList.add("is-dragging");
+    suppressClick = false;
   });
   window.addEventListener(
     "pointermove",
@@ -306,8 +352,20 @@
       visuals.trackPointer(event);
       if (!motionEnabled) paintFrame(sceneTime);
       if (!drag) return;
+      if (typeof drag.id === "number" && event.pointerId !== drag.id) return;
       const difference = event.clientY - drag.start;
-      if (Math.abs(event.clientY - drag.start) > 9) drag.moved = true;
+      if (!drag.moved && Math.abs(difference) > 9) {
+        drag.moved = true;
+        wheel.classList.add("is-dragging");
+        if (typeof drag.id === "number" && wheel.setPointerCapture) {
+          try {
+            wheel.setPointerCapture(drag.id);
+            drag.captured = true;
+          } catch {
+            /* Window listeners keep the drag usable. */
+          }
+        }
+      }
       if (drag.moved) selectWheelTarget(drag.from - difference / 110);
     },
     { passive: true },
@@ -315,6 +373,8 @@
   window.addEventListener("pointerup", () => {
     suppressClick = Boolean(drag && drag.moved);
     if (drag?.moved) settleWheel();
+    if (drag?.captured && wheel.hasPointerCapture?.(drag.id))
+      wheel.releasePointerCapture(drag.id);
     drag = null;
     wheel.classList.remove("is-dragging");
     if (suppressClick)
@@ -607,6 +667,12 @@
       themeDialog.open
     )
       return;
+    if (entering && event.key === "Escape") {
+      event.preventDefault();
+      cancelEntry();
+      showLanding({ focus: true });
+      return;
+    }
     if (
       event.target.closest('input, textarea, select, [contenteditable="true"]')
     )
@@ -617,7 +683,7 @@
       !event.target.closest("a, button")
     ) {
       event.preventDefault();
-      showPanel("about", { focus: true });
+      enterPortfolio("about");
     } else if (
       event.key.toLowerCase() === "t" &&
       !event.target.closest("a, button")
@@ -940,11 +1006,12 @@
       const dt = lastFrame ? Math.min(0.05, (time - lastFrame) / 1000) : 1 / 60;
       sceneTime += dt * 1000;
       if (inWorkspace) animateWheel(dt);
-      else {
+      else if (!entering) {
         updateCode(sceneTime);
         updateCodeScroll(dt);
       }
       paintFrame(sceneTime, dt);
+      if (entering && time - entering.started >= ENTRY_DURATION) finishEntry();
       lastFrame = time;
     }
     animationFrame = requestAnimationFrame(animate);
@@ -957,6 +1024,7 @@
       animationFrame = requestAnimationFrame(animate);
   }
   function updateMotion(persist = false) {
+    if (!motionEnabled && entering) finishEntry();
     body.classList.toggle("motion-paused", !motionEnabled);
     body.dataset.motion = motionEnabled ? "on" : "off";
     document.querySelectorAll("[data-motion-toggle]").forEach((button) => {
