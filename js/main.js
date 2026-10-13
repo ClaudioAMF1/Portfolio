@@ -266,7 +266,7 @@
     });
     const panel = panels.find((entry) => entry.id === panelId);
     document.getElementById("terminal-path").textContent =
-      "claudio — " + panel.dataset.path;
+      "fish — " + (panel.dataset.title || panel.dataset.path.replace("~/projetos", "~/p"));
     document.getElementById("status-section").textContent =
       items[currentIndex].querySelector(".wheel-title").textContent;
     visuals.setEyeText(panel.textContent);
@@ -276,6 +276,9 @@
     updateStats(panel);
     commandOutput.replaceChildren();
     scroller.scrollTop = 0;
+    scroller.classList.remove("is-switching");
+    void scroller.offsetWidth;
+    scroller.classList.add("is-switching");
     if (options.history !== false) setHash(panelId);
     positionWheel();
     resizeCanvases();
@@ -1202,6 +1205,12 @@
     film.shots.forEach((shot, i) => shot.classList.toggle("is-current", i === film.index));
     film.tabs.forEach((tab, i) => tab.setAttribute("aria-pressed", String(i === film.index)));
     film.element.querySelector("[data-film-index]").textContent = String(film.index + 1);
+    const current = film.shots[film.index];
+    const name = film.element.querySelector("[data-film-name]");
+    if (name)
+      name.textContent = current.tagName === "IMG"
+        ? current.getAttribute("src").split("/").pop()
+        : "arquitetura.svg";
     film.element.querySelector(".film-caption").textContent =
       film.shots[film.index].dataset.caption || "";
   }
@@ -1250,7 +1259,8 @@
     const expand = document.createElement("button");
     expand.type = "button";
     expand.className = "film-expand";
-    expand.textContent = "⤢ ampliar";
+    expand.textContent = "⛶";
+    expand.setAttribute("aria-label", "Ampliar imagem");
     expand.addEventListener("click", () => openLightbox(film));
     film.element.querySelector(".film-tabs").append(expand);
     film.element
@@ -1451,50 +1461,7 @@
       ? number.toLocaleString("pt-BR").replace(/\./g, "'")
       : "—";
   }
-  // Each public project opens with `fetch <repo>`: live numbers from GitHub.
-  panels.forEach((panel) => {
-    const repo = panel.dataset.repo;
-    if (!repo || repo === "private") return;
-    const prompt = document.createElement("p");
-    prompt.className = "prompt";
-    prompt.innerHTML = `<span>claudio<span class="muted">@dev</span></span>
-      <span class="path">${panel.dataset.path}</span>
-      <span class="prompt-arrow">›</span> fetch ${repo}`;
-    const facts = document.createElement("dl");
-    facts.className = "terminal-facts repo-fetch";
-    facts.dataset.repoFetch = repo;
-    facts.innerHTML = ["stars", "forks", "linguagem", "criado", "último push"]
-      .map((key) => `<div><dt>${key}</dt><dd data-key="${key}">—</dd></div>`)
-      .join("");
-    panel.prepend(prompt, facts);
-  });
-  function monthYear(value) {
-    if (!value) return "—";
-    return new Date(value).toLocaleDateString("pt-BR", { month: "short", year: "numeric" }).replace(".", "");
-  }
-  function fillRepoFetch() {
-    if (!github.repos) return;
-    const allStars = github.repos.reduce((sum, entry) => sum + entry.stargazers_count, 0);
-    document.querySelectorAll("[data-repo-fetch]").forEach((facts) => {
-      const repo = github.repos.find(
-        (entry) => entry.name.toLowerCase() === facts.dataset.repoFetch.toLowerCase(),
-      );
-      if (!repo) return;
-      const share = allStars ? Math.round((repo.stargazers_count / allStars) * 100) : 0;
-      const values = {
-        stars: `${repo.stargazers_count}  <span class="share-bar"><i style="width:${share}%"></i></span> ${share}% de todas as stars`,
-        forks: String(repo.forks_count),
-        linguagem: (repo.language || "—").toLowerCase(),
-        criado: monthYear(repo.created_at),
-        "último push": monthYear(repo.pushed_at),
-      };
-      facts.querySelectorAll("[data-key]").forEach((cell) => {
-        cell.innerHTML = values[cell.dataset.key];
-      });
-    });
-  }
   function fillFetch() {
-    fillRepoFetch();
     const values = {
       followers: format(github.user?.followers),
       repos: format(github.user?.public_repos),
@@ -1524,6 +1491,11 @@
   }
   function updateStats(panel) {
     fillFetch();
+    const custom = window.PortfolioPanels?.stats(panel);
+    if (custom) {
+      setStats(custom);
+      return;
+    }
     const repoName = panel.dataset.repo;
     if (repoName === "private") {
       setStats([
