@@ -45,6 +45,14 @@ data = {
     "to": today.isoformat(),
     "days": dict(sorted(days.items())),
 }
+# Keep the all-time commit count the whoami tree grows toward.
+try:
+    with open("assets/data/contributions.json", encoding="utf-8") as previous:
+        all_time = json.load(previous).get("allTime")
+    if all_time:
+        data["allTime"] = all_time
+except FileNotFoundError:
+    pass
 with open("assets/data/contributions.json", "w", encoding="utf-8") as output:
     json.dump(data, output, ensure_ascii=False, indent=0)
     output.write("\n")
