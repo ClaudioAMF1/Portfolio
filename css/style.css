@@ -3213,3 +3213,238 @@ body:not(.enhanced) .film-frame .shot {
   font-size: 15px;
   letter-spacing: -1px;
 }
+
+/* ---------- claudinho ---------- */
+.claudinho {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 40;
+  width: 32px;
+  height: 30px;
+  cursor: pointer;
+  will-change: transform;
+  outline: none;
+}
+.claudinho:focus-visible .cl-sprite {
+  outline: 1px dashed var(--text);
+  outline-offset: 3px;
+}
+.cl-sprite {
+  width: 32px;
+  height: 30px;
+  overflow: visible;
+  transition: transform 0.15s;
+}
+.cl-body,
+.cl-arm,
+.cl-leg,
+.cl-spark rect {
+  fill: var(--warm);
+}
+.cl-eyes rect,
+.cl-mouth {
+  fill: var(--bg);
+}
+.cl-mouth {
+  opacity: 0;
+}
+.is-talking .cl-mouth {
+  opacity: 1;
+  animation: cl-talk 0.28s steps(2) infinite;
+}
+@keyframes cl-talk {
+  50% {
+    transform: scaleY(2);
+    transform-origin: 8px 8px;
+  }
+}
+.cl-spark {
+  transform-origin: 8px 2px;
+  animation: cl-spark 2.4s ease-in-out infinite;
+}
+@keyframes cl-spark {
+  50% {
+    transform: rotate(18deg);
+  }
+}
+.is-walking .cl-leg-a {
+  animation: cl-step 0.32s steps(2) infinite;
+}
+.is-walking .cl-leg-b {
+  animation: cl-step 0.32s steps(2) infinite reverse;
+}
+@keyframes cl-step {
+  50% {
+    transform: translateY(-1px);
+  }
+}
+.is-walking .cl-sprite {
+  animation: cl-bob 0.32s ease-in-out infinite;
+}
+@keyframes cl-bob {
+  50% {
+    translate: 0 -1px;
+  }
+}
+.is-talking .cl-arm-r,
+.is-party .cl-arm {
+  animation: cl-wave 0.3s ease-in-out infinite alternate;
+}
+@keyframes cl-wave {
+  to {
+    transform: translateY(-3px);
+  }
+}
+.is-party .cl-sprite {
+  animation: cl-party 0.45s ease-in-out infinite;
+}
+@keyframes cl-party {
+  25% {
+    rotate: -12deg;
+    translate: 0 -4px;
+  }
+  75% {
+    rotate: 12deg;
+    translate: 0 -4px;
+  }
+}
+.is-sleeping .cl-eyes rect {
+  height: 0.6px;
+  y: 6.4px;
+}
+.is-sleeping .cl-sprite {
+  animation: cl-breathe 2.6s ease-in-out infinite;
+}
+@keyframes cl-breathe {
+  50% {
+    scale: 1.04 0.94;
+    translate: 0 1px;
+  }
+}
+.cl-zzz {
+  position: absolute;
+  left: 22px;
+  top: -14px;
+  color: var(--muted);
+  font-size: 10px;
+  opacity: 0;
+  pointer-events: none;
+}
+.cl-zzz i,
+.cl-zzz b {
+  font-style: normal;
+  font-weight: 400;
+  position: relative;
+}
+.cl-zzz i {
+  top: -5px;
+  font-size: 12px;
+}
+.cl-zzz b {
+  top: -11px;
+  font-size: 14px;
+}
+.is-sleeping .cl-zzz {
+  opacity: 1;
+  animation: cl-zzz 2.6s ease-in-out infinite;
+}
+@keyframes cl-zzz {
+  50% {
+    translate: 3px -4px;
+    opacity: 0.5;
+  }
+}
+.cl-bubble {
+  position: absolute;
+  bottom: 38px;
+  left: -6px;
+  width: max-content;
+  max-width: 220px;
+  padding: 5px 8px;
+  border: 1px solid var(--muted);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 11px;
+  line-height: 1.35;
+  opacity: 0;
+  transform: translateY(4px) scale(0.96);
+  transform-origin: bottom left;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+  pointer-events: none;
+}
+.cl-bubble::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  bottom: -5px;
+  width: 8px;
+  height: 8px;
+  background: var(--bg);
+  border-right: 1px solid var(--muted);
+  border-bottom: 1px solid var(--muted);
+  transform: rotate(45deg);
+}
+.bubble-left .cl-bubble {
+  left: auto;
+  right: -6px;
+  transform-origin: bottom right;
+}
+.bubble-left .cl-bubble::after {
+  left: auto;
+  right: 14px;
+}
+.is-talking .cl-bubble {
+  opacity: 1;
+  transform: none;
+}
+.cl-toast {
+  position: fixed;
+  right: 18px;
+  top: 18px;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border: 1px solid var(--warm);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 12px;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    opacity 0.3s,
+    transform 0.3s;
+  pointer-events: none;
+}
+.cl-toast.is-visible {
+  opacity: 1;
+  transform: none;
+}
+.cl-toast-k {
+  color: var(--warm);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.cl-rain {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  pointer-events: none;
+}
+.is-entering .claudinho {
+  opacity: 0;
+}
+.motion-paused .claudinho * {
+  animation: none !important;
+}
+@media print {
+  .claudinho,
+  .cl-toast {
+    display: none !important;
+  }
+}

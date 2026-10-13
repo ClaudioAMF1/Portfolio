@@ -237,6 +237,9 @@
     } else if (elapsed >= ENTRY_DURATION) finishEntry();
   }
 
+  function emitView(view) {
+    document.dispatchEvent(new CustomEvent("portfolio:view", { detail: view }));
+  }
   function showPanel(id, options = {}) {
     cancelEntry();
     const panelId = resolvePanel(id) || "about";
@@ -271,6 +274,7 @@
       items[currentIndex].querySelector(".wheel-title").textContent;
     visuals.setEyeText(panel.textContent);
     resetGhost(panel);
+    emitView(panelId);
     const film = films.find((entry) => panel.contains(entry.element));
     if (film) showShot(film, 0);
     updateStats(panel);
@@ -343,6 +347,7 @@
     setGhostState("idle");
     renderCode();
     startBoot();
+    emitView("landing");
     paintFrame(sceneTime);
     if (options.focus)
       document.querySelector(".enter-link").focus({ preventScroll: true });
@@ -578,6 +583,9 @@
     "tema [noite|fosforo|papel]",
     "clear                limpar respostas",
     "exit                 voltar à entrada",
+    "",
+    "claudinho            fale com o mascote (pet, feed, dance)",
+    "neofetch · fortune · coffee · hire · achievements",
   ].join("\n");
 
   function appendOutput(command, response, links = []) {
@@ -691,13 +699,18 @@
       commandOutput.replaceChildren();
     else if (command === "exit" || command === "sair")
       showLanding({ focus: true });
-    else
-      appendOutput(
-        raw,
-        "Comando não encontrado: " + raw + "\nDigite help para ver as opções.",
-      );
+    else {
+      const extra = window.PortfolioExtras?.command(command, argument, raw);
+      if (extra) appendOutput(raw, extra.text, extra.links || []);
+      else
+        appendOutput(
+          raw,
+          "Comando não encontrado: " + raw + "\nDigite help para ver as opções.",
+        );
+    }
   }
 
+  window.PortfolioTerminal = { run: runCommand, show: showPanel };
   commandForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const value = commandInput.value.trim();
@@ -748,6 +761,10 @@
         "tema",
         "clear",
         "exit",
+        "claudinho",
+        "neofetch",
+        "fortune",
+        "achievements",
       ];
       const matches = commands.filter((command) =>
         command.startsWith(normalize(commandInput.value)),
