@@ -967,6 +967,8 @@
   const codeTrack = document.getElementById("code-track");
   const codeScroll = { value: 0, target: 0, manualUntil: 0 };
   let snippetHoldUntil = 0;
+  let savedMessage = "";
+  let userTypingUntil = 0;
   const keyboardKeys = [...document.querySelectorAll(".key-row span")];
 
   function highlightLine(text) {
@@ -999,8 +1001,18 @@
     document.getElementById("source-path").textContent = snippet.file;
     document.getElementById("source-label").textContent =
       "// " + snippet.file.replace("~/", "");
-    document.getElementById("landing-file").textContent =
-      snippet.file.replace("~/", "") + ":" + (activeLine + 1);
+    // Footer: tagline while the shell boots, vim's ":w" after a file,
+    // otherwise file:line. The badge follows vim's modes.
+    const holding = sceneTime < snippetHoldUntil;
+    document.getElementById("landing-file").textContent = boot.active
+      ? "// código, dados e ideias."
+      : holding && savedMessage
+        ? savedMessage
+        : snippet.file.replace("~/", "") + ":" + (activeLine + 1);
+    document.querySelector(".mode-badge").textContent =
+      !boot.active && (sceneTime < userTypingUntil || (motionEnabled && !holding))
+        ? "INSERT"
+        : "NORMAL";
     const fragment = document.createDocumentFragment();
     snippet.code.forEach((line, index) => {
       const row = document.createElement("div");
@@ -1054,6 +1066,8 @@
       activeCharacter++;
     }
     snippetHoldUntil = sceneTime + 2600;
+    userTypingUntil = snippetHoldUntil;
+    savedMessage = "";
     visuals.setKey(key === "Backspace" ? "←" : key);
     renderCode();
     if (!motionEnabled) paintFrame(sceneTime);
@@ -1075,12 +1089,14 @@
         activeCharacter = 0;
         activeLine++;
         if (activeLine >= snippets[snippetIndex].code.length) {
+          const saved = snippets[snippetIndex];
+          savedMessage = `:w  "${saved.file.split("/").pop()}" ${saved.code.length}L escrito`;
           snippetIndex = (snippetIndex + 1) % snippets.length;
           visuals.setEyeText(snippets[snippetIndex].code.join(" "));
           activeLine = 3;
           codeScroll.value = 0;
           codeScroll.target = 0;
-          snippetHoldUntil = time + 450;
+          snippetHoldUntil = time + 1600;
           break;
         }
       }
@@ -1296,11 +1312,21 @@
       step.prompt.classList.add("session-hidden");
       step.output.forEach((element) => element.classList.add("session-hidden"));
     });
-    ghost.session = { panel, steps, index: 0, phase: "show", next: sceneTime + 350, char: 0 };
+    // whoami waits for the CM tree to finish growing before typing on.
+    const delay = panel.id === "about" ? 5600 : 350;
+    ghost.session = { panel, steps, index: 0, phase: "show", next: sceneTime + delay, char: 0 };
   }
   function followOutput() {
-    scroller.scrollTop = scroller.scrollHeight;
+    // Like the reference: keep the line being typed in view; output may
+    // run past the bottom edge until the next command needs the space.
+    const session = ghost.session;
+    const prompt = session?.steps[session.index]?.prompt;
+    if (!prompt || prompt.classList.contains("session-hidden")) return;
+    const view = scroller.getBoundingClientRect();
+    const box = prompt.getBoundingClientRect();
+    if (box.bottom > view.bottom - 6) scroller.scrollTop += box.bottom - view.bottom + 30;
   }
+
   function updateGhost(time) {
     const session = ghost.session;
     if (!session) return;

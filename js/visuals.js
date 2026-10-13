@@ -741,17 +741,29 @@
         peakWeek,
         max: Math.max(1, ...weeks.flatMap((week) => week.days)),
         label: data.label || "commits",
+        allTime: data.allTime,
         source: data.source,
         from,
         to,
       };
       contributionsShownAt = -1;
+      whoamiShownAt = -1;
     }
 
-    // Letter mask for the terrain: "CM" rendered once, sampled as heights.
-    let terrainMask = null;
-    function buildMask(w, h) {
-      if (terrainMask && terrainMask.w === w && terrainMask.h === h) return terrainMask;
+    // ---------- whoami: "CM grown toward N points" ----------
+    // 1) A ridgeline terrain rises in the shape of the letters.
+    // 2) The section A–A follows the pointer and lights the ridges it cuts.
+    // 3) A tree grows from the root by space colonization toward one point
+    //    per commit scattered inside the letters; the terrain fades as it fills.
+    let growth = null;
+    const seeded = (seed) => () => {
+      seed = (seed * 16807) % 2147483647;
+      return (seed - 1) / 2147483646;
+    };
+
+    function buildGrowth(w, h, pointsWanted) {
+      const key = `${Math.round(w)}x${Math.round(h)}x${pointsWanted}`;
+      if (growth && growth.key === key) return growth;
       const off = document.createElement("canvas");
       off.width = Math.max(1, Math.round(w));
       off.height = Math.max(1, Math.round(h));
@@ -759,82 +771,166 @@
       octx.fillStyle = "#fff";
       octx.textAlign = "center";
       octx.textBaseline = "middle";
-      octx.font = `bold ${Math.round(h * 0.92)}px monospace`;
-      octx.fillText("CM", off.width * 0.62, off.height * 0.54);
+      const size = Math.round(Math.min(h * 0.86, w * 0.6));
+      octx.font = `bold ${size}px monospace`;
+      octx.fillText("CM", off.width * 0.55, off.height * 0.42);
+      // Heavier strokes, closer to a logo than to a typeface.
+      octx.strokeStyle = "#fff";
+      octx.lineWidth = size * 0.075;
+      octx.lineJoin = "round";
+      octx.strokeText("CM", off.width * 0.55, off.height * 0.42);
       const pixels = octx.getImageData(0, 0, off.width, off.height).data;
-      const values = new Float32Array(off.width * off.height);
-      for (let i = 0; i < values.length; i++) values[i] = pixels[i * 4 + 3] / 255;
-      terrainMask = { w, h, cols: off.width, rows: off.height, values };
-      return terrainMask;
-    }
-    function maskAt(mask, x, y) {
-      const col = Math.min(mask.cols - 1, Math.max(0, Math.round(x)));
-      const row = Math.min(mask.rows - 1, Math.max(0, Math.round(y)));
-      return mask.values[row * mask.cols + col];
-    }
-
-    // A tree that grows with the commits: deterministic branching.
-    function drawTree(ctx, colors, rootX, rootY, heightMax, grow, time, total) {
-      const depthMax = 6;
-      let apex = { x: rootX, y: rootY };
-      const branch = (x, y, angle, length, depth, seed) => {
-        const t = clamp(grow * (depthMax + 1) - depth, 0, 1);
-        if (t <= 0) return;
-        const sway = Math.sin(time * 0.0008 + seed) * 0.02 * depth;
-        const ex = x + Math.sin(angle + sway) * length * t;
-        const ey = y - Math.cos(angle + sway) * length * t;
-        ctx.lineWidth = Math.max(0.5, 2.2 - depth * 0.28);
-        ctx.globalAlpha = 0.95 - depth * 0.07;
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(ex, ey);
-        ctx.stroke();
-        if (ey < apex.y) apex = { x: ex, y: ey };
-        if (depth >= depthMax || t < 1) return;
-        const spread = 0.28 + noise(seed) * 0.35;
-        const shrink = 0.68 + noise(seed + 3) * 0.12;
-        branch(ex, ey, angle - spread, length * shrink, depth + 1, seed * 2 + 1);
-        branch(ex, ey, angle + spread * 0.8, length * shrink, depth + 1, seed * 2 + 2);
-        if (noise(seed + 7) > 0.72)
-          branch(ex, ey, angle + (noise(seed + 5) - 0.5) * 0.4, length * shrink * 0.8, depth + 1, seed * 3 + 5);
-      };
-      ctx.strokeStyle = colors.text;
-      branch(rootX, rootY, 0, heightMax * 0.21, 0, 1);
-      // Roots.
-      ctx.globalAlpha = 0.5;
-      ctx.lineWidth = 0.6;
-      for (let i = 0; i < 5; i++) {
-        ctx.beginPath();
-        ctx.moveTo(rootX, rootY);
-        ctx.lineTo(rootX + (i - 2) * 7 * grow, rootY + 6 + noise(i) * 5 * grow);
-        ctx.stroke();
+      const cols = off.width;
+      const rows = off.height;
+      const mask = new Float32Array(cols * rows);
+      const inside = [];
+      let minX = cols, maxX = 0, maxY = 0;
+      for (let i = 0; i < mask.length; i++) {
+        mask[i] = pixels[i * 4 + 3] / 255;
+        if (mask[i] > 0.6) {
+          inside.push(i);
+          const x = i % cols;
+          minX = Math.min(minX, x);
+          maxX = Math.max(maxX, x);
+          maxY = Math.max(maxY, Math.floor(i / cols));
+        }
       }
-      return { apex, depth: depthMax, total };
+      // Attraction points: one per commit, inside the letters.
+      const random = seeded(4242);
+      const points = [];
+      for (let n = 0; n < pointsWanted && inside.length; n++) {
+        const i = inside[Math.floor(random() * inside.length)];
+        points.push({ x: i % cols + random() - 0.5, y: Math.floor(i / cols) + random() - 0.5, node: -1, dist: Infinity, reachedAt: -1 });
+      }
+      // Space colonization.
+      const step = Math.max(2.4, w / 160);
+      const influence = step * 8;
+      const kill = step * 1.6;
+      const nodes = [{ x: minX + (maxX - minX) * 0.06, y: rows - 2, parent: -1, depth: 0, iter: 0 }];
+      // Spatial hash so two branches never sprout on top of each other.
+      const cell = step * 0.7;
+      const grid = new Map();
+      const cellKey = (x, y) => `${Math.floor(x / cell)},${Math.floor(y / cell)}`;
+      const occupied = (x, y) => {
+        const cx = Math.floor(x / cell);
+        const cy = Math.floor(y / cell);
+        for (let i = -1; i <= 1; i++)
+          for (let j = -1; j <= 1; j++)
+            for (const n of grid.get(`${cx + i},${cy + j}`) || [])
+              if (Math.hypot(n.x - x, n.y - y) < step * 0.55) return true;
+        return false;
+      };
+      const addNode = (node) => {
+        if (occupied(node.x, node.y)) return false;
+        nodes.push(node);
+        const k = cellKey(node.x, node.y);
+        if (!grid.has(k)) grid.set(k, []);
+        grid.get(k).push(node);
+        return true;
+      };
+      grid.set(cellKey(nodes[0].x, nodes[0].y), [nodes[0]]);
+      let trunk = 0;
+      let reachedSoFar = 0;
+      let stale = 0;
+      const assign = (from) => {
+        for (const point of points) {
+          if (point.reachedAt >= 0) continue;
+          for (let j = from; j < nodes.length; j++) {
+            const d = Math.hypot(nodes[j].x - point.x, nodes[j].y - point.y);
+            if (d < point.dist) {
+              point.dist = d;
+              point.node = j;
+            }
+          }
+        }
+      };
+      assign(0);
+      let iter = 0;
+      let idle = 0;
+      while (iter < 1200 && idle < 30 && stale < 40) {
+        iter++;
+        const pull = new Map();
+        let open = 0;
+        for (const point of points) {
+          if (point.reachedAt >= 0) continue;
+          open++;
+          if (point.dist > influence) continue;
+          const node = nodes[point.node];
+          const v = pull.get(point.node) || { x: 0, y: 0 };
+          v.x += (point.x - node.x) / point.dist;
+          v.y += (point.y - node.y) / point.dist;
+          pull.set(point.node, v);
+        }
+        if (!open) break;
+        const before = nodes.length;
+        if (!pull.size) {
+          // Nothing in reach yet: the trunk climbs straight up from the root.
+          const node = nodes[trunk];
+          const sway = Math.sin(iter * 0.35) * 0.08;
+          if (addNode({ x: node.x + sway * step, y: node.y - step, parent: trunk, depth: node.depth + 1, iter }))
+            trunk = nodes.length - 1;
+        } else {
+          for (const [index, v] of pull) {
+            const length = Math.hypot(v.x, v.y);
+            if (length < 0.15) continue;
+            const node = nodes[index];
+            const jitter = (random() - 0.5) * 0.3;
+            const dx = v.x / length + jitter;
+            const dy = v.y / length - jitter * 0.5;
+            const norm = Math.hypot(dx, dy) || 1;
+            addNode({ x: node.x + (dx / norm) * step, y: node.y + (dy / norm) * step, parent: index, depth: node.depth + 1, iter });
+          }
+        }
+        assign(before);
+        let reachedNow = 0;
+        for (const point of points) {
+          if (point.reachedAt < 0 && point.dist < kill) point.reachedAt = iter;
+          if (point.reachedAt >= 0) reachedNow++;
+        }
+        stale = reachedNow > reachedSoFar || !pull.size ? 0 : stale + 1;
+        reachedSoFar = reachedNow;
+        idle = nodes.length === before ? idle + 1 : 0;
+      }
+      const reachedIters = points.map((p) => p.reachedAt).filter((v) => v >= 0).sort((x, y) => x - y);
+      growth = { key, cols, rows, mask, nodes, points, reachedIters, iterations: iter, step };
+      return growth;
+    }
+    function maskValue(g, x, y) {
+      const col = Math.min(g.cols - 1, Math.max(0, Math.round(x)));
+      const row = Math.min(g.rows - 1, Math.max(0, Math.round(y)));
+      return g.mask[row * g.cols + col];
     }
 
     function drawWalkers(ctx, colors, x, y, w, h, time) {
       ctx.strokeStyle = colors.text;
-      ctx.lineWidth = 0.7;
-      for (let i = 0; i < 4; i++) {
-        const speed = 0.012 + i * 0.002;
-        const px = x + 8 + ((time * speed * 0.6 + i * 37) % (w - 16));
-        const size = i === 3 ? 0.6 : 1;
-        const body = h * 0.5 * size;
-        const base = y + h - 4;
-        const step = Math.sin(time * 0.012 + i) * 3 * size;
-        ctx.globalAlpha = 0.85;
+      ctx.lineWidth = 0.8;
+      const people = [1, 0.62];
+      people.forEach((size, i) => {
+        const span = w * 0.45;
+        const px = x + 10 + ((time * 0.012 + i * 14) % span) + i * 12;
+        const body = h * 0.62 * size;
+        const base = y + h - 3;
+        const swing = Math.sin(time * 0.011 + i * 1.7) * 3.2 * size;
+        ctx.globalAlpha = 0.9;
         ctx.beginPath();
-        ctx.arc(px, base - body - 3 * size, 2.2 * size, 0, Math.PI * 2);
+        ctx.arc(px, base - body - 2.6 * size, 2.4 * size, 0, Math.PI * 2);
         ctx.moveTo(px, base - body);
-        ctx.lineTo(px, base - body * 0.45);
-        ctx.lineTo(px - step, base);
-        ctx.moveTo(px, base - body * 0.45);
-        ctx.lineTo(px + step, base);
-        ctx.moveTo(px - 3 * size, base - body * 0.75);
-        ctx.lineTo(px + 3 * size, base - body * 0.8 + step * 0.3);
+        ctx.lineTo(px, base - body * 0.42);
+        ctx.lineTo(px - swing, base);
+        ctx.moveTo(px, base - body * 0.42);
+        ctx.lineTo(px + swing, base);
+        ctx.moveTo(px - 3.5 * size, base - body * 0.72 + swing * 0.2);
+        ctx.lineTo(px, base - body * 0.85);
+        ctx.lineTo(px + 3.5 * size, base - body * 0.72 - swing * 0.2);
         ctx.stroke();
-      }
+      });
     }
+
+    let whoamiShownAt = -1;
+    function setContributionsShown() {
+      whoamiShownAt = -1;
+    }
+    const fmt = (n) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, "'");
 
     function drawMesh(time) {
       const layer = surfaces.mesh;
@@ -844,156 +940,231 @@
         !workspaceMode ||
         !contributions ||
         document.getElementById("about").hidden
-      )
+      ) {
+        whoamiShownAt = -1;
         return;
+      }
       const { context: ctx, width, height } = layer;
+      const bounds = layer.canvas.getBoundingClientRect();
+      layer.left = bounds.left;
+      layer.top = bounds.top;
       const colors = palette();
       const data = contributions;
-      if (contributionsShownAt < 0) contributionsShownAt = time;
-      const grow = motion() ? Math.min(1, (time - contributionsShownAt) / 1800) : 1;
-      const ease = 1 - (1 - grow) ** 3;
+      if (whoamiShownAt < 0) whoamiShownAt = time;
+      const elapsed = motion() ? time - whoamiShownAt : 1e9;
+      const pointsTotal = data.allTime?.points || data.total;
+      const plotW = width * 0.6;
+      const left = 14;
+      const right = plotW - 6;
+      const top = 46;
+      const bottom = height - 20;
+      const g = buildGrowth(right - left, bottom - top, pointsTotal);
+
+      // Timeline: terrain rises (0–1.6 s), tree grows (1.6–6 s).
+      const rise = Math.min(1, elapsed / 1600);
+      const riseEase = 1 - (1 - rise) ** 3;
+      const growT = clamp((elapsed - 1600) / 4400, 0, 1);
+      const iterNow = growT * g.iterations;
+      let reached = 0;
+      while (reached < g.reachedIters.length && g.reachedIters[reached] <= iterNow) reached++;
+      const fill = reached / Math.max(1, g.points.length);
+
+      // Section A–A: follows the pointer over the plot, else rests mid-letters.
+      const px = pointer.x - layer.left;
+      const py = pointer.y - layer.top;
+      const atPointer =
+        pointer.seen && performance.now() - pointer.at < 4000 &&
+        px > left && px < right && py > top && py < bottom;
+      const restY = top + (bottom - top) * 0.42;
+      eye.sectionY = eye.sectionY ?? restY;
+      eye.sectionY += ((atPointer ? py : restY) - eye.sectionY) * (motion() ? 0.18 : 1);
+      const sectionY = eye.sectionY;
+
       ctx.clearRect(0, 0, width, height);
       ctx.lineCap = "round";
-      const plotW = width * 0.62;
-      const left = 16;
-      const right = plotW - 6;
-      const top = 44;
-      const bottom = height - 20;
-      const plotH = bottom - top;
-      const mask = buildMask(right - left, plotH);
-      const weeks = data.weeks.map((week) => week.total);
-      const weekMax = Math.max(1, ...weeks);
+      ctx.lineJoin = "round";
 
-      // Header.
+      // Header and dimension line.
       ctx.textAlign = "left";
       ctx.textBaseline = "alphabetic";
-      ctx.fillStyle = colors.text;
       ctx.globalAlpha = 0.95;
+      ctx.fillStyle = colors.text;
       ctx.font = "bold 10px monospace";
       ctx.fillText("CM", left, 13);
       ctx.font = "8px monospace";
-      ctx.fillText(`cresceu até ${data.total} pontos`, left + 22, 13);
+      ctx.fillText(`cresceu até ${fmt(pointsTotal)} pontos`, left + 22, 13);
       ctx.fillStyle = colors.muted;
       ctx.font = "7px monospace";
       ctx.fillText(
-        `1 ponto = 1 ${data.source === "github" ? "contribuição" : "commit"} · ${data.to.getFullYear()}`,
+        `1 ponto = 1 commit · ${data.allTime?.since || data.from.getFullYear()}–${data.to.getFullYear()}`,
         left + 22,
         23,
       );
-      // Dimension line across the plot.
-      ctx.strokeStyle = colors.muted;
-      ctx.globalAlpha = 0.7;
-      ctx.lineWidth = 0.6;
-      const dimY = 33;
-      const dimA = left + (right - left) * 0.22;
-      const dimB = left + (right - left) * 0.86;
-      ctx.beginPath();
-      ctx.moveTo(dimA, dimY);
-      ctx.lineTo(dimB, dimY);
-      ctx.moveTo(dimA, dimY - 3);
-      ctx.lineTo(dimA, dimY + 40);
-      ctx.moveTo(dimB, dimY - 3);
-      ctx.lineTo(dimB, dimY + 3);
-      ctx.stroke();
-      ctx.fillStyle = colors.surface || colors.bg;
-      ctx.globalAlpha = 1;
-      ctx.fillRect((dimA + dimB) / 2 - 26, dimY - 5, 52, 9);
-      ctx.fillStyle = colors.text;
-      ctx.textAlign = "center";
-      ctx.fillText(`${data.weeks.length} semanas`, (dimA + dimB) / 2, dimY + 2.5);
+      if (rise > 0.6) {
+        const dimA = left + (right - left) * 0.12;
+        const dimB = left + (right - left) * 0.94;
+        const dimY = 34;
+        const mm = ((dimB - dimA) * 0.2646).toFixed(1);
+        ctx.strokeStyle = colors.muted;
+        ctx.globalAlpha = 0.7;
+        ctx.lineWidth = 0.6;
+        ctx.beginPath();
+        ctx.moveTo(dimA, dimY);
+        ctx.lineTo(dimB, dimY);
+        ctx.moveTo(dimA, dimY - 3);
+        ctx.lineTo(dimA, dimY + 24);
+        ctx.moveTo(dimB, dimY - 3);
+        ctx.lineTo(dimB, dimY + 24);
+        ctx.moveTo(dimA + 5, dimY - 2);
+        ctx.lineTo(dimA, dimY);
+        ctx.lineTo(dimA + 5, dimY + 2);
+        ctx.moveTo(dimB - 5, dimY - 2);
+        ctx.lineTo(dimB, dimY);
+        ctx.lineTo(dimB - 5, dimY + 2);
+        ctx.stroke();
+        ctx.fillStyle = colors.surface || colors.bg;
+        ctx.globalAlpha = 1;
+        ctx.fillRect((dimA + dimB) / 2 - 22, dimY - 5, 44, 9);
+        ctx.fillStyle = colors.text;
+        ctx.textAlign = "center";
+        ctx.fillText(`${mm} mm`, (dimA + dimB) / 2, dimY + 2.5);
+      }
 
-      // Terrain: ridges lifted by the CM letters and by each week's commits.
-      const rows = 40;
-      const samples = 110;
-      const ridgeTop = top + 12;
-      const step = (plotH - 18) / rows;
-      const sectionRow = Math.round(rows * 0.5);
-      let sectionProfile = [];
-      for (let row = 0; row < rows; row++) {
-        const baseY = ridgeTop + row * step;
-        const points = [];
+      // Terrain.
+      const ridgeRows = 46;
+      const ridgeStep = (bottom - top - 6) / ridgeRows;
+      const samples = 120;
+      let profile = [];
+      let nearest = Infinity;
+      for (let row = 0; row < ridgeRows; row++) {
+        const baseY = top + 8 + row * ridgeStep;
+        const appear = clamp(rise * 1.6 - (1 - row / ridgeRows) * 0.6, 0, 1);
+        if (appear <= 0) continue;
+        const near = Math.abs(baseY - sectionY);
+        const lit = Math.max(0, 1 - near / (ridgeStep * 3.5));
+        const pts = [];
         for (let sample = 0; sample <= samples; sample++) {
           const u = sample / samples;
-          const x = left + u * (right - left);
-          const letter = maskAt(mask, u * (mask.cols - 1), baseY - top);
-          const week = weeks[Math.min(weeks.length - 1, Math.floor(u * weeks.length))];
-          const lift =
-            letter * step * 2.4 +
-            Math.sqrt(week / weekMax) * step * 1.6 * (row / rows) +
-            Math.sin(u * 17 + row * 0.6 + time * 0.0007) * 0.5;
-          points.push([x, baseY - lift * ease]);
-          if (row === sectionRow) sectionProfile.push(letter * 0.75 + (week / weekMax) * 0.25);
+          const lift = maskValue(g, u * (g.cols - 1), baseY - top) * ridgeStep * 2.6;
+          pts.push([left + u * (right - left), baseY - lift * appear * riseEase]);
+          if (near < nearest - 0.01 && sample === 0) {
+            nearest = near;
+            profile = [];
+          }
+          if (near <= nearest) profile[sample] = lift / (ridgeStep * 2.6);
         }
         ctx.globalAlpha = 1;
         ctx.fillStyle = colors.surface || colors.bg;
         ctx.beginPath();
-        points.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
-        ctx.lineTo(right, baseY + 2);
-        ctx.lineTo(left, baseY + 2);
+        pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+        ctx.lineTo(right, baseY + 1);
+        ctx.lineTo(left, baseY + 1);
         ctx.closePath();
         ctx.fill();
         ctx.strokeStyle = colors.text;
-        ctx.lineWidth = 0.55;
-        ctx.globalAlpha = 0.28 + (row / rows) * 0.5;
+        ctx.lineWidth = 0.5 + lit * 0.9;
+        ctx.globalAlpha = (0.26 + lit * 0.65 + (row / ridgeRows) * 0.16) * (1 - fill * 0.6) * appear;
         ctx.beginPath();
-        points.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+        pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
         ctx.stroke();
       }
 
-      // Section A–A.
-      const sectionY = ridgeTop + sectionRow * step + 2;
+      // Tree.
+      const visible = [];
+      for (let i = 0; i < g.nodes.length && g.nodes[i].iter <= iterNow; i++) visible.push(g.nodes[i]);
+      const carry = new Float32Array(visible.length).fill(1);
+      const children = new Uint16Array(visible.length);
+      for (let i = visible.length - 1; i > 0; i--) {
+        const parent = visible[i].parent;
+        carry[parent] += carry[i];
+        children[parent]++;
+      }
+      let tips = 0;
+      let junctions = 0;
+      let length = 0;
+      let apex = 0;
+      let cuts = 0;
+      ctx.strokeStyle = colors.text;
+      for (let i = 1; i < visible.length; i++) {
+        const node = visible[i];
+        const parent = visible[node.parent];
+        const x1 = left + parent.x;
+        const y1 = top + parent.y;
+        const x2 = left + node.x;
+        const y2 = top + node.y;
+        length += g.step;
+        if ((y1 - sectionY) * (y2 - sectionY) <= 0) cuts++;
+        ctx.lineWidth = Math.min(3.4, 0.45 + Math.sqrt(carry[i]) * 0.11);
+        ctx.globalAlpha = Math.min(0.95, 0.45 + Math.sqrt(carry[i]) * 0.05);
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        if (node.y < visible[apex].y) apex = i;
+      }
+      for (let i = 0; i < visible.length; i++) {
+        if (children[i] === 0) tips++;
+        else if (children[i] > 1) junctions++;
+      }
+      const members = visible.length > 1 ? visible.length : 0;
+      // Labels for apex and root.
+      ctx.font = "7px monospace";
+      ctx.textAlign = "left";
+      const label = (x, y, text, dx) => {
+        ctx.globalAlpha = 0.75;
+        ctx.strokeStyle = colors.muted;
+        ctx.lineWidth = 0.6;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + dx - 3, y);
+        ctx.stroke();
+        const wText = ctx.measureText(text).width;
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = colors.surface || colors.bg;
+        ctx.fillRect(x + dx - 1, y - 6, wText + 4, 9);
+        ctx.fillStyle = colors.text;
+        ctx.fillText(text, x + dx + 1, y + 2);
+      };
+      if (members) {
+        const top0 = visible[apex];
+        label(left + top0.x, top + top0.y, `ápice ${top0.depth} passos`, 18);
+        label(left + visible[0].x, top + visible[0].y, `raiz carrega ${fmt(members)}`, 26);
+      }
+
+      // Section line with A markers.
       ctx.globalAlpha = 0.85;
       ctx.strokeStyle = colors.text;
       ctx.lineWidth = 0.7;
-      ctx.setLineDash([7, 3, 1, 3]);
+      ctx.setLineDash([8, 3, 1.5, 3]);
       ctx.beginPath();
       ctx.moveTo(left, sectionY);
       ctx.lineTo(right, sectionY);
       ctx.stroke();
       ctx.setLineDash([]);
       ctx.fillStyle = colors.text;
-      ctx.font = "7px monospace";
       ctx.textAlign = "center";
+      ctx.font = "7px monospace";
       [left + 3, right - 3].forEach((x) => {
-        ctx.fillText("A", x, sectionY - 9);
+        ctx.fillText("A", x, sectionY - 11);
         ctx.beginPath();
-        ctx.moveTo(x, sectionY - 6);
-        ctx.lineTo(x, sectionY + 4);
+        ctx.moveTo(x, sectionY - 7);
+        ctx.lineTo(x, sectionY + 2);
+        ctx.moveTo(x - 3, sectionY + 2);
+        ctx.lineTo(x + 3, sectionY + 2);
         ctx.stroke();
       });
 
-      // Tree grown from the commits.
-      const rootX = left + (right - left) * 0.13;
-      const rootY = bottom - 8;
-      const tree = drawTree(ctx, colors, rootX, rootY, plotH, ease, time, data.total);
-      ctx.globalAlpha = 0.8;
-      ctx.strokeStyle = colors.muted;
-      ctx.lineWidth = 0.6;
-      ctx.fillStyle = colors.text;
-      ctx.textAlign = "left";
-      ctx.font = "7px monospace";
-      const apexLabelX = rootX + 40;
-      ctx.beginPath();
-      ctx.moveTo(tree.apex.x, tree.apex.y);
-      ctx.lineTo(apexLabelX - 3, tree.apex.y);
-      ctx.moveTo(rootX + 2, rootY);
-      ctx.lineTo(apexLabelX - 3, rootY);
-      ctx.stroke();
-      ctx.fillStyle = colors.surface || colors.bg;
-      ctx.globalAlpha = 1;
-      ctx.fillRect(apexLabelX - 1, tree.apex.y - 6, 84, 9);
-      ctx.fillRect(apexLabelX - 1, rootY - 6, 92, 9);
-      ctx.fillStyle = colors.text;
-      ctx.fillText(`ápice ${tree.depth} níveis`, apexLabelX, tree.apex.y + 2);
-      ctx.fillText(`raiz carrega ${data.total}`, apexLabelX, rootY + 2);
-      ctx.globalAlpha = 0.55;
+      // Axis.
+      ctx.globalAlpha = 0.5;
       ctx.fillStyle = colors.muted;
       ctx.font = "6px monospace";
-      ctx.textAlign = "center";
-      for (let tick = 1; tick <= 5; tick++)
-        ctx.fillText(String(tick), left + ((tick - 0.5) / 5) * (right - left), height - 6);
+      for (let tick = 1; tick <= 8; tick++) {
+        const x = left + ((tick - 0.5) / 8) * (width - left - 10);
+        ctx.fillText(String(tick), x, height - 5);
+        ctx.fillRect(x, height - 16, 0.6, 3);
+      }
 
-      // Right column.
+      // Right column: section, numeric twin, scale.
       const panelX = plotW + 12;
       const panelW = width - panelX - 8;
       ctx.globalAlpha = 0.95;
@@ -1003,47 +1174,48 @@
       ctx.fillText("seção A–A", panelX, 13);
       ctx.textAlign = "right";
       ctx.fillStyle = colors.muted;
-      ctx.fillText(panelW > 160 ? "eco em repouso" : "eco", panelX + panelW, 13);
+      ctx.fillText(atPointer ? "eco no ponteiro" : "eco em repouso", panelX + panelW, 13);
       const boxY = 20;
-      const boxH = 40;
+      const boxH = 42;
       ctx.strokeStyle = colors.dim;
       ctx.strokeRect(panelX + 0.5, boxY + 0.5, panelW, boxH);
       ctx.fillStyle = colors.text;
       ctx.globalAlpha = 0.8;
       ctx.beginPath();
       ctx.moveTo(panelX + 3, boxY + boxH - 3);
-      sectionProfile.forEach((value, index) => {
-        const x = panelX + 3 + (index / (sectionProfile.length - 1)) * (panelW - 6);
-        ctx.lineTo(x, boxY + boxH - 3 - value * (boxH - 8) * ease);
+      profile.forEach((value, index) => {
+        const x = panelX + 3 + (index / samples) * (panelW - 6);
+        ctx.lineTo(x, boxY + boxH - 3 - (value || 0) * (boxH - 10) * riseEase);
       });
       ctx.lineTo(panelX + panelW - 3, boxY + boxH - 3);
       ctx.fill();
-      ctx.globalAlpha = 0.7;
+      ctx.globalAlpha = 0.6;
+      for (let i = 0; i < 24; i++) ctx.fillRect(panelX + 4 + (i / 24) * (panelW - 8), boxY + boxH - 2, 0.6, 3);
       ctx.fillStyle = colors.muted;
       ctx.textAlign = "left";
       ctx.font = "7px monospace";
-      ctx.fillText(`cortes ${data.activeDays} dias`, panelX, boxY + boxH + 12);
-
-      const best = data.best.date.split("-").reverse().slice(0, 2).join("/");
+      ctx.fillText(`cortes ${cuts} membros`, panelX, boxY + boxH + 13);
+      const grown = (growT * 4.4).toFixed(1);
       const table = [
-        ["gêmeo numérico", "em números"],
-        ["pontos", String(data.total)],
-        ["dias ativos", String(data.activeDays)],
-        ["maior sequência", `${data.bestStreak} dias`],
-        ["dia mais forte", `${best} · ${data.best.count}`],
-        ["semana de pico", String(data.weeks[data.peakWeek].total)],
+        ["gêmeo numérico", "em contagens"],
+        ["membros", fmt(members)],
+        ["pontas", fmt(members ? tips : 0)],
+        ["junções", fmt(junctions)],
+        ["comprimento", `${fmt(length * 0.2646)} mm`],
+        ["crescido", `${grown} s`],
+        ["alcançados", `${fmt(reached)} / ${fmt(g.points.length)}`],
       ];
       table.forEach(([key, value], index) => {
-        const y = boxY + boxH + 30 + index * 13;
+        const y = boxY + boxH + 30 + index * 12.5;
         ctx.globalAlpha = 0.9;
         ctx.textAlign = "left";
         ctx.fillStyle = index ? colors.muted : colors.text;
         ctx.fillText(key, panelX, y);
         ctx.textAlign = "right";
-        ctx.fillStyle = colors.text;
+        ctx.fillStyle = index ? colors.text : colors.muted;
         ctx.fillText(value, panelX + panelW, y);
         if (index) {
-          ctx.globalAlpha = 0.35;
+          ctx.globalAlpha = 0.3;
           ctx.strokeStyle = colors.dim;
           ctx.beginPath();
           ctx.moveTo(panelX, y + 4);
@@ -1051,9 +1223,8 @@
           ctx.stroke();
         }
       });
-      // Scale box with people walking.
       const walkH = 30;
-      const walkY = height - walkH - 14;
+      const walkY = height - walkH - 26;
       ctx.globalAlpha = 0.9;
       ctx.strokeStyle = colors.dim;
       ctx.strokeRect(panelX + 0.5, walkY + 0.5, panelW, walkH + 12);
@@ -1068,6 +1239,12 @@
       ctx.fillStyle = colors.muted;
       ctx.fillText("escala 1:1", panelX + panelW - 4, walkY + 9);
       drawWalkers(ctx, colors, panelX, walkY + 12, panelW, walkH, time);
+      if (growT >= 1) {
+        ctx.textAlign = "right";
+        ctx.fillStyle = colors.muted;
+        ctx.fillText("tech lead · estudante", panelX + panelW - 4, walkY + 25);
+        ctx.fillText("Brasília, DF", panelX + panelW - 4, walkY + 35);
+      }
       ctx.globalAlpha = 1;
     }
 
