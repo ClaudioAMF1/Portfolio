@@ -192,25 +192,49 @@
     items[currentIndex].focus({ preventScroll: true });
   }
 
+  const SCRAMBLE_DURATION = 650;
+  const GLYPHS = "!<>-_\\/[]{}—=+*^?#01ABCDEFXYZ$%&";
+  function scrambleCode(progress) {
+    codeTrack.querySelectorAll(".code-source").forEach((source) => {
+      let out = "";
+      for (const character of source.textContent)
+        out +=
+          character !== " " && Math.random() < progress
+            ? GLYPHS[(Math.random() * GLYPHS.length) | 0]
+            : character;
+      source.textContent = out;
+    });
+  }
+  // Enter: the code glitches into noise, then the camera dives into the pupil.
   function enterPortfolio(id = "about") {
     if (entering) return;
-    if (
-      inWorkspace ||
-      !motionEnabled ||
-      !visuals.beginEntry(performance.now(), ENTRY_DURATION)
-    ) {
+    if (inWorkspace || !motionEnabled) {
       showPanel(id, { focus: true });
       return;
     }
-    entering = { id, started: performance.now() };
-    body.classList.add("is-entering");
-    body.dataset.entryState = "zooming";
+    finishBoot();
+    entering = { id, started: performance.now(), phase: "scramble" };
     landing.setAttribute("aria-busy", "true");
     document.getElementById("navigation-announcement").textContent =
       "Abrindo portfólio";
-    paintFrame(sceneTime);
-    enterTimer = setTimeout(finishEntry, ENTRY_DURATION + 300);
+    enterTimer = setTimeout(finishEntry, SCRAMBLE_DURATION + ENTRY_DURATION + 600);
     resumeAnimation();
+  }
+  function updateEntry(time) {
+    if (!entering) return;
+    const elapsed = time - entering.started;
+    if (entering.phase === "scramble") {
+      scrambleCode(Math.min(1, elapsed / SCRAMBLE_DURATION) * 0.9);
+      if (elapsed < SCRAMBLE_DURATION) return;
+      if (!visuals.beginEntry(performance.now(), ENTRY_DURATION)) {
+        finishEntry();
+        return;
+      }
+      entering.phase = "warp";
+      entering.started = time;
+      body.classList.add("is-entering");
+      body.dataset.entryState = "zooming";
+    } else if (elapsed >= ENTRY_DURATION) finishEntry();
   }
 
   function showPanel(id, options = {}) {
@@ -245,7 +269,7 @@
       "claudio — " + panel.dataset.path;
     document.getElementById("status-section").textContent =
       items[currentIndex].querySelector(".wheel-title").textContent;
-    visuals.setEyeText(panel.innerText);
+    visuals.setEyeText(panel.textContent);
     resetGhost(panel);
     const film = films.find((entry) => panel.contains(entry.element));
     if (film) showShot(film, 0);
@@ -272,8 +296,38 @@
       target.insertBefore(desk, before);
   }
 
+  // Intro: an empty shell types the command that opens the editor.
+  const boot = { command: "nvim ~/portfolio/claudio.py", char: 0, next: 0, active: false };
+  function startBoot() {
+    if (!motionEnabled) return finishBoot();
+    boot.active = true;
+    boot.char = 0;
+    boot.next = sceneTime + 600;
+    document.getElementById("boot-typed").textContent = "";
+    landing.classList.add("booting");
+  }
+  function finishBoot() {
+    boot.active = false;
+    landing.classList.remove("booting");
+  }
+  function updateBoot(time) {
+    if (time < boot.next) return;
+    const character = boot.command[boot.char];
+    if (character === undefined) {
+      visuals.setKey("\n");
+      finishBoot();
+      renderCode();
+      return;
+    }
+    document.getElementById("boot-typed").textContent += character;
+    boot.char++;
+    visuals.setKey(character);
+    boot.next = time + (character === " " ? 150 : 55 + Math.random() * 75);
+  }
+
   function showLanding(options = {}) {
     cancelEntry();
+    finishSession();
     placeDesk(landing, landing.querySelector(".landing-footer"));
     inWorkspace = false;
     body.classList.remove("is-workspace");
@@ -285,6 +339,7 @@
     visuals.setEyeText(snippets[snippetIndex].code.join(" "));
     setGhostState("idle");
     renderCode();
+    startBoot();
     paintFrame(sceneTime);
     if (options.focus)
       document.querySelector(".enter-link").focus({ preventScroll: true });
@@ -984,6 +1039,7 @@
   // The visitor types into the editor: the text lands at the caret,
   // the hands press the same keys and the autotyper waits a moment.
   function typeOnLanding(key) {
+    if (boot.active) finishBoot();
     const lines = snippets[snippetIndex].code;
     const line = lines[activeLine];
     if (key === "Backspace") {
@@ -1094,8 +1150,12 @@
     // the caret on the landing, the selected card in the workspace.
     focus: () =>
       inWorkspace
-        ? centerOf(items[currentIndex])
-        : centerOf(codeTrack.querySelector(".code-caret")),
+        ? centerOf(sessionCaret() || items[currentIndex])
+        : centerOf(
+            landing.classList.contains("booting")
+              ? document.querySelector("#boot-line .term-caret")
+              : codeTrack.querySelector(".code-caret"),
+          ),
   });
   visuals.setEyeText(snippets[snippetIndex].code.join(" "));
   fetch("assets/data/contributions.json")
@@ -1139,49 +1199,182 @@
     film.bar.style.width = (progress * 100).toFixed(1) + "%";
     if (progress >= 1) showShot(film, film.index + 1);
   }
+  // Full-screen view of the current shot.
+  const lightbox = document.createElement("div");
+  lightbox.className = "lightbox";
+  lightbox.hidden = true;
+  lightbox.innerHTML =
+    '<figure><div class="lightbox-frame"></div><figcaption></figcaption></figure>' +
+    '<button type="button" class="text-button lightbox-close">esc ✕</button>';
+  body.append(lightbox);
+  function openLightbox(film) {
+    const shot = film.shots[film.index].cloneNode(true);
+    shot.classList.add("is-current");
+    lightbox.querySelector(".lightbox-frame").replaceChildren(shot);
+    lightbox.querySelector("figcaption").textContent =
+      `${film.index + 1}/${film.shots.length} · ${film.shots[film.index].dataset.caption || ""}`;
+    lightbox.hidden = false;
+  }
+  function closeLightbox() {
+    lightbox.hidden = true;
+  }
+  lightbox.addEventListener("click", closeLightbox);
+  document.addEventListener(
+    "keydown",
+    (event) => {
+      if (!lightbox.hidden && event.key === "Escape") {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        closeLightbox();
+      }
+    },
+    true,
+  );
   films.forEach((film) => {
+    const expand = document.createElement("button");
+    expand.type = "button";
+    expand.className = "film-expand";
+    expand.textContent = "⤢ ampliar";
+    expand.addEventListener("click", () => openLightbox(film));
+    film.element.querySelector(".film-tabs").append(expand);
+    film.element
+      .querySelector(".film-frame")
+      .addEventListener("click", () => openLightbox(film));
     showShot(film, 0);
     film.tabs.forEach((tab, i) => tab.addEventListener("click", () => showShot(film, i)));
   });
 
-  // Ghost: when the visitor is idle, the hands type the open panel.
-  const ghost = { text: "", position: 0, next: 0, burstLeft: 0, state: "" };
+  // Ghost session: opening a panel replays it as a terminal session.
+  // Each prompt's command is typed (the hands press the keys, the eye
+  // follows the caret), then that command's output appears, line by line.
+  // Any click, scroll or key inside the terminal shows everything at once.
+  const ghost = { state: "", session: null };
   function setGhostState(state) {
     if (ghost.state === state) return;
     ghost.state = state;
     document.getElementById("ghost-state").textContent = state;
   }
+  function commandNodes(prompt) {
+    const arrow = prompt.querySelector(".prompt-arrow");
+    const nodes = [];
+    for (let node = arrow?.nextSibling; node; node = node.nextSibling) nodes.push(node);
+    return nodes;
+  }
+  function finishSession() {
+    const session = ghost.session;
+    if (!session) return;
+    session.steps.forEach((step) => {
+      step.prompt.classList.remove("session-hidden");
+      step.output.forEach((element) => element.classList.remove("session-hidden"));
+      if (step.typed) {
+        step.typed.remove();
+        step.caret.remove();
+        step.nodes.forEach((node) => step.prompt.append(node));
+      }
+    });
+    ghost.session = null;
+    setGhostState("idle");
+  }
   function resetGhost(panel) {
-    ghost.text = panel.innerText.replace(/\s+/g, " ").trim().toLowerCase();
-    ghost.position = 0;
-    ghost.next = sceneTime + 1800;
-    ghost.burstLeft = 0;
+    finishSession();
+    if (!motionEnabled) return;
+    const steps = [];
+    let current = null;
+    for (const element of panel.children) {
+      if (element.classList.contains("prompt")) {
+        current = { prompt: element, output: [], nodes: commandNodes(element) };
+        current.command = current.nodes
+          .map((node) => node.textContent)
+          .join("")
+          .replace(/\s+/g, " ")
+          .trim();
+        steps.push(current);
+      } else if (current) current.output.push(element);
+    }
+    if (!steps.length) return;
+    steps.forEach((step) => {
+      step.prompt.classList.add("session-hidden");
+      step.output.forEach((element) => element.classList.add("session-hidden"));
+    });
+    ghost.session = { panel, steps, index: 0, phase: "show", next: sceneTime + 350, char: 0 };
+  }
+  function followOutput() {
+    scroller.scrollTop = scroller.scrollHeight;
   }
   function updateGhost(time) {
-    const idle = !visuals.mouseActive() && !drag;
-    if (!idle || !ghost.text) {
+    const session = ghost.session;
+    if (!session) return;
+    if (time < session.next) return;
+    const step = session.steps[session.index];
+    if (!step) {
+      ghost.session = null;
       setGhostState("idle");
-      ghost.next = Math.max(ghost.next, time + 900);
       return;
     }
-    if (time < ghost.next) {
-      if (ghost.burstLeft <= 0) setGhostState("idle");
-      return;
+    if (session.phase === "show") {
+      step.prompt.classList.remove("session-hidden");
+      step.nodes.forEach((node) => node.remove());
+      step.typed = document.createElement("span");
+      step.caret = document.createElement("span");
+      step.caret.className = "term-caret";
+      step.prompt.append(" ", step.typed, step.caret);
+      session.phase = "type";
+      session.char = 0;
+      session.next = time + 260;
+      followOutput();
+    } else if (session.phase === "type") {
+      const character = step.command[session.char];
+      if (character === undefined) {
+        visuals.setKey("\n");
+        session.phase = "output";
+        session.next = time + 260;
+        return;
+      }
+      step.typed.textContent += character;
+      session.char++;
+      visuals.setKey(character);
+      setGhostState("typing");
+      session.next =
+        time + (character === " " ? 120 + Math.random() * 80 : 45 + Math.random() * 70);
+    } else if (session.phase === "output") {
+      step.typed.remove();
+      step.caret.remove();
+      step.typed = null;
+      step.nodes.forEach((node) => step.prompt.append(node));
+      const element = step.output.find((entry) => entry.classList.contains("session-hidden"));
+      if (element) {
+        element.classList.remove("session-hidden");
+        session.phase = "reveal";
+        session.next = time + 120;
+      } else {
+        session.index++;
+        session.phase = "show";
+        session.next = time + 420;
+      }
+      setGhostState("idle");
+      followOutput();
+    } else if (session.phase === "reveal") {
+      const element = step.output.find((entry) => entry.classList.contains("session-hidden"));
+      if (element) {
+        element.classList.remove("session-hidden");
+        session.next = time + 140;
+      } else {
+        session.index++;
+        session.phase = "show";
+        session.next = time + 450;
+      }
+      followOutput();
     }
-    if (ghost.burstLeft <= 0) ghost.burstLeft = 30 + Math.floor(Math.random() * 60);
-    const character = ghost.text[ghost.position % ghost.text.length];
-    ghost.position++;
-    ghost.burstLeft--;
-    visuals.setKey(character === " " ? " " : character);
-    setGhostState("typing");
-    ghost.next =
-      time +
-      (ghost.burstLeft <= 0
-        ? 1600 + Math.random() * 2200
-        : character === " "
-          ? 140 + Math.random() * 90
-          : 55 + Math.random() * 85);
   }
+  function sessionCaret() {
+    const step = ghost.session?.steps[ghost.session.index];
+    return step?.caret?.isConnected ? step.caret : null;
+  }
+  ["wheel", "pointerdown", "touchstart"].forEach((type) =>
+    scroller.addEventListener(type, finishSession, { passive: true }),
+  );
+  commandInput.addEventListener("focus", finishSession);
+
 
   // Real numbers from GitHub for the status bar.
   const github = { user: null, repos: null, loading: null };
@@ -1232,7 +1425,50 @@
       ? number.toLocaleString("pt-BR").replace(/\./g, "'")
       : "—";
   }
+  // Each public project opens with `fetch <repo>`: live numbers from GitHub.
+  panels.forEach((panel) => {
+    const repo = panel.dataset.repo;
+    if (!repo || repo === "private") return;
+    const prompt = document.createElement("p");
+    prompt.className = "prompt";
+    prompt.innerHTML = `<span>claudio<span class="muted">@dev</span></span>
+      <span class="path">${panel.dataset.path}</span>
+      <span class="prompt-arrow">›</span> fetch ${repo}`;
+    const facts = document.createElement("dl");
+    facts.className = "terminal-facts repo-fetch";
+    facts.dataset.repoFetch = repo;
+    facts.innerHTML = ["stars", "forks", "linguagem", "criado", "último push"]
+      .map((key) => `<div><dt>${key}</dt><dd data-key="${key}">—</dd></div>`)
+      .join("");
+    panel.prepend(prompt, facts);
+  });
+  function monthYear(value) {
+    if (!value) return "—";
+    return new Date(value).toLocaleDateString("pt-BR", { month: "short", year: "numeric" }).replace(".", "");
+  }
+  function fillRepoFetch() {
+    if (!github.repos) return;
+    const allStars = github.repos.reduce((sum, entry) => sum + entry.stargazers_count, 0);
+    document.querySelectorAll("[data-repo-fetch]").forEach((facts) => {
+      const repo = github.repos.find(
+        (entry) => entry.name.toLowerCase() === facts.dataset.repoFetch.toLowerCase(),
+      );
+      if (!repo) return;
+      const share = allStars ? Math.round((repo.stargazers_count / allStars) * 100) : 0;
+      const values = {
+        stars: `${repo.stargazers_count}  <span class="share-bar"><i style="width:${share}%"></i></span> ${share}% de todas as stars`,
+        forks: String(repo.forks_count),
+        linguagem: (repo.language || "—").toLowerCase(),
+        criado: monthYear(repo.created_at),
+        "último push": monthYear(repo.pushed_at),
+      };
+      facts.querySelectorAll("[data-key]").forEach((cell) => {
+        cell.innerHTML = values[cell.dataset.key];
+      });
+    });
+  }
   function fillFetch() {
+    fillRepoFetch();
     const values = {
       followers: format(github.user?.followers),
       repos: format(github.user?.public_repos),
@@ -1316,11 +1552,14 @@
         updateFilms(sceneTime);
       }
       else if (!entering) {
-        updateCode(sceneTime);
-        updateCodeScroll(dt);
+        if (boot.active) updateBoot(sceneTime);
+        else {
+          updateCode(sceneTime);
+          updateCodeScroll(dt);
+        }
       }
       paintFrame(sceneTime, dt);
-      if (entering && time - entering.started >= ENTRY_DURATION) finishEntry();
+      updateEntry(time);
       lastFrame = time;
     }
     animationFrame = requestAnimationFrame(animate);
@@ -1334,6 +1573,10 @@
   }
   function updateMotion() {
     if (!motionEnabled && entering) finishEntry();
+    if (!motionEnabled) {
+      finishSession();
+      finishBoot();
+    }
     body.classList.toggle("motion-paused", !motionEnabled);
     body.dataset.motion = motionEnabled ? "on" : "off";
     document.querySelectorAll("[data-motion-toggle]").forEach((button) => {
