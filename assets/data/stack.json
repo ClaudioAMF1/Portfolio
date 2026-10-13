@@ -1,0 +1,688 @@
+{
+ "languages": [
+  [
+   "Python",
+   15
+  ],
+  [
+   "HTML",
+   9
+  ],
+  [
+   "CSS",
+   8
+  ],
+  [
+   "JavaScript",
+   8
+  ],
+  [
+   "Shell",
+   5
+  ],
+  [
+   "C",
+   4
+  ],
+  [
+   "Jupyter Notebook",
+   3
+  ],
+  [
+   "TypeScript",
+   2
+  ],
+  [
+   "C++",
+   2
+  ],
+  [
+   "TeX",
+   1
+  ],
+  [
+   "Dart",
+   1
+  ],
+  [
+   "Kotlin",
+   1
+  ],
+  [
+   "Swift",
+   1
+  ],
+  [
+   "Java",
+   1
+  ]
+ ],
+ "tools": [
+  [
+   "Git",
+   26
+  ],
+  [
+   "GitHub",
+   26
+  ],
+  [
+   "pandas",
+   7
+  ],
+  [
+   "Docker",
+   6
+  ],
+  [
+   "PostgreSQL",
+   5
+  ],
+  [
+   "Flask",
+   5
+  ],
+  [
+   "NumPy",
+   5
+  ],
+  [
+   "SQLAlchemy",
+   4
+  ],
+  [
+   "Node.js",
+   4
+  ],
+  [
+   "React",
+   3
+  ],
+  [
+   "FastAPI",
+   3
+  ],
+  [
+   "Vite",
+   3
+  ],
+  [
+   "scikit-learn",
+   3
+  ],
+  [
+   "Streamlit",
+   3
+  ],
+  [
+   "Alembic",
+   2
+  ],
+  [
+   "Redis",
+   2
+  ],
+  [
+   "Kafka",
+   2
+  ],
+  [
+   "Power BI",
+   1
+  ],
+  [
+   "Flutter",
+   1
+  ],
+  [
+   "Celery",
+   1
+  ],
+  [
+   "OpenCV",
+   1
+  ]
+ ],
+ "repoCount": 26,
+ "byMonthRepo": {
+  "2024-08": {
+   "ClaudioAMF1": 6
+  },
+  "2024-09": {
+   "POO": 30,
+   "ClaudioAMF1": 17,
+   "TAA": 11,
+   "Machine-Learning": 6,
+   "Banco-de-Dados": 2
+  },
+  "2024-10": {
+   "POO": 37,
+   "TAA": 19,
+   "ClaudioAMF1": 14,
+   "Machine-Learning": 11,
+   "Banco-de-Dados": 1
+  },
+  "2024-11": {
+   "Banco-de-Dados": 53,
+   "TAA": 17,
+   "POO": 15,
+   "Machine-Learning": 13,
+   "ClaudioAMF1": 5,
+   "football_prediction": 2
+  },
+  "2024-12": {
+   "football_prediction": 9,
+   "TAA": 7,
+   "POO": 5,
+   "ClaudioAMF1": 2,
+   "Machine-Learning": 1
+  },
+  "2025-02": {
+   "ClaudioAMF1": 2,
+   "Rede-de-computadores": 2
+  },
+  "2025-03": {
+   "Ceritificados-carreta": 10,
+   "ClaudioAMF1": 3,
+   "TAA": 2
+  },
+  "2025-04": {
+   "ClaudioAMF1": 4
+  },
+  "2025-06": {
+   "air-quality-pipeline": 6,
+   "crypto-analytics-pipeline": 2
+  },
+  "2025-07": {
+   "soccer-video-analytics": 9,
+   "ClaudioAMF1": 1
+  },
+  "2025-08": {
+   "ClaudioAMF1": 5
+  },
+  "2025-10": {
+   "Teoria_da_Computacao": 6,
+   "Oficina_mobile": 4
+  },
+  "2025-12": {
+   "Trabalho-Pratico-Programacao-Concorrente": 35
+  },
+  "2026-02": {
+   "Portfolio": 8,
+   "ClaudioAMF1": 6
+  },
+  "2026-03": {
+   "VM-Medicina-Estagio": 12,
+   "Portfolio": 10,
+   "IDP-Scoutlink": 1,
+   "Motor-de-Busca-Semantico-com-RAG": 1
+  },
+  "2026-04": {
+   "Artigo-Compiladores": 5
+  },
+  "2026-05": {
+   "so-2026-01-t-01": 15,
+   "Artigo-Compiladores": 12,
+   "IDP-Scoutlink": 11,
+   "ClaudioAMF1": 3
+  },
+  "2026-06": {
+   "Artigo-Compiladores": 10,
+   "Ambiente": 4
+  },
+  "2026-07": {
+   "CAMF": 6,
+   "VM-Medicina-Estagio": 2
+  },
+  "2026-08": {
+   "TCC": 16,
+   "CAMF": 10,
+   "ClaudioAMF1": 5,
+   "Ambiente": 1
+  },
+  "2026-09": {
+   "TCC": 72,
+   "Inteligencia-de-negocio": 19,
+   "VM-Medicina-Estagio": 8,
+   "soccer-video-analytics": 3
+  },
+  "2026-10": {
+   "Portfolio": 8,
+   "Inteligencia-de-negocio": 5,
+   "VM-Medicina-Estagio": 3,
+   "CAMF": 1
+  }
+ },
+ "repos": {
+  "1_Projeto-Modelos-de-algoritmos": {
+   "commits": 0,
+   "files": 26,
+   "since": "2026-05-10",
+   "pushed": "2026-05-11",
+   "languages": [
+    "Jupyter Notebook",
+    "Python"
+   ],
+   "tools": [
+    "Git",
+    "GitHub"
+   ]
+  },
+  "Ambiente": {
+   "commits": 5,
+   "files": 7,
+   "since": "2026-06-01",
+   "pushed": "2026-08-20",
+   "languages": [
+    "Shell"
+   ],
+   "tools": [
+    "Git",
+    "GitHub"
+   ]
+  },
+  "Artigo-Compiladores": {
+   "commits": 27,
+   "files": 33,
+   "since": "2026-04-08",
+   "pushed": "2026-06-29",
+   "languages": [
+    "Python",
+    "TeX"
+   ],
+   "tools": [
+    "Git",
+    "GitHub"
+   ]
+  },
+  "Banco-de-Dados": {
+   "commits": 56,
+   "files": 42,
+   "since": "2024-09-23",
+   "pushed": "2024-11-24",
+   "languages": [],
+   "tools": [
+    "Git",
+    "GitHub"
+   ]
+  },
+  "CAMF": {
+   "commits": 17,
+   "files": 77,
+   "since": "2026-07-15",
+   "pushed": "2026-10-12",
+   "languages": [
+    "CSS",
+    "HTML",
+    "JavaScript",
+    "Python"
+   ],
+   "tools": [
+    "Alembic",
+    "Docker",
+    "FastAPI",
+    "Git",
+    "GitHub",
+    "Node.js",
+    "PostgreSQL",
+    "React",
+    "SQLAlchemy",
+    "Vite",
+    "pandas"
+   ]
+  },
+  "Ceritificados-carreta": {
+   "commits": 10,
+   "files": 34,
+   "since": "2025-03-21",
+   "pushed": "2025-03-30",
+   "languages": [
+    "CSS",
+    "HTML",
+    "JavaScript",
+    "Python",
+    "Shell"
+   ],
+   "tools": [
+    "Docker",
+    "Flask",
+    "Git",
+    "GitHub",
+    "PostgreSQL"
+   ]
+  },
+  "ClaudioAMF1": {
+   "commits": 73,
+   "files": 2,
+   "since": "2024-08-26",
+   "pushed": "2026-08-04",
+   "languages": [],
+   "tools": [
+    "Git",
+    "GitHub"
+   ]
+  },
+  "IDP-Scoutlink": {
+   "commits": 12,
+   "files": 114,
+   "since": "2026-03-17",
+   "pushed": "2026-05-28",
+   "languages": [
+    "CSS",
+    "HTML",
+    "JavaScript",
+    "Python",
+    "TypeScript"
+   ],
+   "tools": [
+    "FastAPI",
+    "Git",
+    "GitHub",
+    "Node.js",
+    "PostgreSQL",
+    "React",
+    "SQLAlchemy",
+    "Vite"
+   ]
+  },
+  "Inteligencia-de-negocio": {
+   "commits": 24,
+   "files": 68,
+   "since": "2026-09-02",
+   "pushed": "2026-10-04",
+   "languages": [
+    "Python"
+   ],
+   "tools": [
+    "Git",
+    "GitHub",
+    "Power BI"
+   ]
+  },
+  "Legitrack-idp": {
+   "commits": 0,
+   "files": 160,
+   "since": "2025-12-04",
+   "pushed": "2025-12-05",
+   "languages": [
+    "C",
+    "C++",
+    "Dart",
+    "HTML",
+    "Kotlin",
+    "Python",
+    "Swift"
+   ],
+   "tools": [
+    "Docker",
+    "Flask",
+    "Flutter",
+    "Git",
+    "GitHub",
+    "PostgreSQL",
+    "SQLAlchemy"
+   ]
+  },
+  "Machine-Learning": {
+   "commits": 31,
+   "files": 18,
+   "since": "2024-09-11",
+   "pushed": "2024-12-04",
+   "languages": [
+    "Jupyter Notebook",
+    "Python"
+   ],
+   "tools": [
+    "Flask",
+    "Git",
+    "GitHub",
+    "NumPy",
+    "pandas",
+    "scikit-learn"
+   ]
+  },
+  "Motor-de-Busca-Semantico-com-RAG": {
+   "commits": 1,
+   "files": 1,
+   "since": "2026-03-02",
+   "pushed": "2026-03-02",
+   "languages": [],
+   "tools": [
+    "Git",
+    "GitHub"
+   ]
+  },
+  "Oficina_mobile": {
+   "commits": 4,
+   "files": 19,
+   "since": "2025-10-02",
+   "pushed": "2025-10-03",
+   "languages": [
+    "CSS",
+    "HTML",
+    "JavaScript"
+   ],
+   "tools": [
+    "Git",
+    "GitHub",
+    "Node.js"
+   ]
+  },
+  "POO": {
+   "commits": 87,
+   "files": 109,
+   "since": "2024-09-02",
+   "pushed": "2024-12-08",
+   "languages": [
+    "Java"
+   ],
+   "tools": [
+    "Git",
+    "GitHub"
+   ]
+  },
+  "Portfolio": {
+   "commits": 26,
+   "files": 10,
+   "since": "2026-02-24",
+   "pushed": "2026-10-12",
+   "languages": [
+    "CSS",
+    "HTML",
+    "JavaScript"
+   ],
+   "tools": [
+    "Git",
+    "GitHub"
+   ]
+  },
+  "Rede-de-computadores": {
+   "commits": 2,
+   "files": 1,
+   "since": "2025-02-18",
+   "pushed": "2025-02-18",
+   "languages": [],
+   "tools": [
+    "Git",
+    "GitHub"
+   ]
+  },
+  "TAA": {
+   "commits": 56,
+   "files": 65,
+   "since": "2024-09-02",
+   "pushed": "2025-03-21",
+   "languages": [
+    "C",
+    "C++"
+   ],
+   "tools": [
+    "Git",
+    "GitHub"
+   ]
+  },
+  "TCC": {
+   "commits": 88,
+   "files": 95,
+   "since": "2026-08-04",
+   "pushed": "2026-09-28",
+   "languages": [
+    "Python"
+   ],
+   "tools": [
+    "Git",
+    "GitHub"
+   ]
+  },
+  "Teoria_da_Computacao": {
+   "commits": 6,
+   "files": 25,
+   "since": "2025-10-02",
+   "pushed": "2025-10-02",
+   "languages": [
+    "CSS",
+    "HTML",
+    "JavaScript",
+    "Python"
+   ],
+   "tools": [
+    "Git",
+    "GitHub"
+   ]
+  },
+  "Trabalho-Pratico-Programacao-Concorrente": {
+   "commits": 35,
+   "files": 18,
+   "since": "2025-12-09",
+   "pushed": "2025-12-11",
+   "languages": [
+    "C"
+   ],
+   "tools": [
+    "Git",
+    "GitHub"
+   ]
+  },
+  "VM-Medicina-Estagio": {
+   "commits": 25,
+   "files": 92,
+   "since": "2026-03-30",
+   "pushed": "2026-10-05",
+   "languages": [
+    "CSS",
+    "HTML",
+    "Python",
+    "TypeScript"
+   ],
+   "tools": [
+    "Alembic",
+    "Docker",
+    "FastAPI",
+    "Git",
+    "GitHub",
+    "Node.js",
+    "PostgreSQL",
+    "React",
+    "SQLAlchemy",
+    "Vite",
+    "pandas",
+    "scikit-learn"
+   ]
+  },
+  "air-quality-pipeline": {
+   "commits": 6,
+   "files": 21,
+   "since": "2025-06-03",
+   "pushed": "2025-06-09",
+   "languages": [
+    "Python",
+    "Shell"
+   ],
+   "tools": [
+    "Celery",
+    "Docker",
+    "Flask",
+    "Git",
+    "GitHub",
+    "Kafka",
+    "NumPy",
+    "Redis",
+    "Streamlit",
+    "pandas"
+   ]
+  },
+  "crypto-analytics-pipeline": {
+   "commits": 2,
+   "files": 18,
+   "since": "2025-06-24",
+   "pushed": "2025-06-24",
+   "languages": [
+    "JavaScript",
+    "Python",
+    "Shell"
+   ],
+   "tools": [
+    "Docker",
+    "Flask",
+    "Git",
+    "GitHub",
+    "Kafka",
+    "NumPy",
+    "Redis",
+    "Streamlit",
+    "pandas"
+   ]
+  },
+  "football_prediction": {
+   "commits": 11,
+   "files": 14,
+   "since": "2024-11-30",
+   "pushed": "2024-12-04",
+   "languages": [
+    "Jupyter Notebook",
+    "Python"
+   ],
+   "tools": [
+    "Git",
+    "GitHub",
+    "NumPy",
+    "Streamlit",
+    "pandas",
+    "scikit-learn"
+   ]
+  },
+  "so-2026-01-t-01": {
+   "commits": 15,
+   "files": 12,
+   "since": "2026-05-18",
+   "pushed": "2026-05-19",
+   "languages": [
+    "C",
+    "Shell"
+   ],
+   "tools": [
+    "Git",
+    "GitHub"
+   ]
+  },
+  "soccer-video-analytics": {
+   "commits": 12,
+   "files": 75,
+   "since": "2022-09-06",
+   "pushed": "2026-09-27",
+   "languages": [
+    "CSS",
+    "HTML",
+    "JavaScript",
+    "Python"
+   ],
+   "tools": [
+    "Git",
+    "GitHub",
+    "NumPy",
+    "OpenCV",
+    "pandas"
+   ]
+  }
+ }
+}
