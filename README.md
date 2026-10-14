@@ -25,6 +25,7 @@ Todas as seções são acessíveis pelos cartões. O terminal é uma opção adi
 | `help`                                     | Lista os comandos              |
 | `whoami`                                   | Apresentação e perfil          |
 | `ls` ou `projetos`                         | Projetos e pesquisa do TCC    |
+| `open aegis`                               | Defesa cibernética (SOC + IA)  |
 | `open clinica`                             | Gestão clínica (VM Medicina)   |
 | `open camf`                                | Contas a receber (boletos)     |
 | `open scoutlink`                           | Plataforma dos escoteiros do DF |

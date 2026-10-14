@@ -28,6 +28,7 @@
     <script src="js/visuals.js" defer></script>
     <script src="js/panels.js" defer></script>
     <script src="js/main.js" defer></script>
+    <script src="js/mascot.js" defer></script>
     <script src="js/extras.js" defer></script>
   </head>
   <body>
@@ -210,7 +211,7 @@
           aria-hidden="true"
         ></canvas>
         <div class="explorer-heading">
-          <span>~/portfolio</span><span class="muted">13 arquivos</span>
+          <span>~/portfolio</span><span class="muted">14 arquivos</span>
         </div>
         <nav
           class="project-wheel"
@@ -227,77 +228,83 @@
             ><span class="wheel-title">whoami</span
             ><span class="wheel-index">00</span></a
           >
+          <a class="wheel-item" href="#aegis" data-panel="aegis"
+            ><span class="wheel-preview"
+              ><img src="assets/shots/thumbs/aegis-dashboard.webp" alt="" width="320" height="200" loading="lazy" /></span
+            ><span class="wheel-title">aegis</span
+            ><span class="wheel-index">01</span></a
+          >
           <a class="wheel-item" href="#clinica" data-panel="clinica"
             ><span class="wheel-preview"
               ><img src="assets/shots/thumbs/vm-dashboard.webp" alt="" width="320" height="200" loading="lazy" /></span
             ><span class="wheel-title">vm-clinica</span
-            ><span class="wheel-index">01</span></a
+            ><span class="wheel-index">02</span></a
           >
           <a class="wheel-item" href="#camf" data-panel="camf"
             ><span class="wheel-preview"
               ><img src="assets/shots/thumbs/camf-dashboard.webp" alt="" width="320" height="200" loading="lazy" /></span
             ><span class="wheel-title">camf-boletos</span
-            ><span class="wheel-index">02</span></a
+            ><span class="wheel-index">03</span></a
           >
           <a class="wheel-item" href="#scoutlink" data-panel="scoutlink"
             ><span class="wheel-preview"
               ><img src="assets/shots/thumbs/sl-comunicacao.webp" alt="" width="320" height="200" loading="lazy" /></span
             ><span class="wheel-title">scoutlink</span
-            ><span class="wheel-index">03</span></a
+            ><span class="wheel-index">04</span></a
           >
           <a class="wheel-item" href="#legitrack" data-panel="legitrack"
             ><span class="wheel-preview"
               ><svg aria-hidden="true"><use href="#icon-gov" /></svg></span
             ><span class="wheel-title">legitrack</span
-            ><span class="wheel-index">04</span></a
+            ><span class="wheel-index">05</span></a
           >
           <a class="wheel-item" href="#crypto" data-panel="crypto"
             ><span class="wheel-preview"
               ><svg aria-hidden="true"><use href="#icon-data" /></svg></span
             ><span class="wheel-title">crypto-pipeline</span
-            ><span class="wheel-index">05</span></a
+            ><span class="wheel-index">06</span></a
           >
           <a class="wheel-item" href="#soccer" data-panel="soccer"
             ><span class="wheel-preview"
               ><svg aria-hidden="true"><use href="#icon-football" /></svg></span
             ><span class="wheel-title">soccer-vision</span
-            ><span class="wheel-index">06</span></a
+            ><span class="wheel-index">07</span></a
           >
           <a class="wheel-item" href="#pesquisa" data-panel="pesquisa"
             ><span class="wheel-preview"
               ><svg aria-hidden="true"><use href="#icon-research" /></svg></span
             ><span class="wheel-title">tcc-pesquisa</span
-            ><span class="wheel-index">07</span></a
+            ><span class="wheel-index">08</span></a
           >
           <a class="wheel-item" href="#more" data-panel="more"
             ><span class="wheel-preview"
               ><svg aria-hidden="true"><use href="#icon-more" /></svg></span
             ><span class="wheel-title">more/</span
-            ><span class="wheel-index">08</span></a
+            ><span class="wheel-index">09</span></a
           >
           <a class="wheel-item" href="#skills" data-panel="skills"
             ><span class="wheel-preview"
               ><svg aria-hidden="true"><use href="#icon-stack" /></svg></span
             ><span class="wheel-title">stack/</span
-            ><span class="wheel-index">09</span></a
+            ><span class="wheel-index">10</span></a
           >
           <a class="wheel-item" href="#experience" data-panel="experience"
             ><span class="wheel-preview"
               ><svg aria-hidden="true"><use href="#icon-log" /></svg></span
             ><span class="wheel-title">trajetoria.log</span
-            ><span class="wheel-index">10</span></a
+            ><span class="wheel-index">11</span></a
           >
           <a class="wheel-item" href="#contact" data-panel="contact"
             ><span class="wheel-preview"
               ><svg aria-hidden="true"><use href="#icon-mail" /></svg></span
             ><span class="wheel-title">contato/</span
-            ><span class="wheel-index">11</span></a
+            ><span class="wheel-index">12</span></a
           >
           <a class="wheel-item" href="#themes" data-panel="themes"
             ><span class="wheel-preview theme-preview" aria-hidden="true"
               ><i></i><i></i><i></i><i></i><i></i><i></i></span
             ><span class="wheel-title">themes/</span
-            ><span class="wheel-index">12</span></a
+            ><span class="wheel-index">13</span></a
           >
         </nav>
         <div class="explorer-footer">
@@ -456,6 +463,168 @@
           </article>
           <article
             class="content-panel"
+            id="aegis"
+            data-repo="AEGIS"
+            data-path="~/projetos/aegis"
+            aria-labelledby="aegis-title"
+          >
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="path">~/projetos/aegis</span>
+              <span class="prompt-arrow">›</span> cat README.md
+            </p>
+            <p class="eyebrow">01 / CIBERSEGURANÇA · SOC · IA</p>
+            <h2 id="aegis-title">AEGIS — Defesa cibernética autônoma</h2>
+            <p>
+              Plataforma open source de defesa cibernética para laboratórios e
+              ambientes autorizados. Um agente Linux em Rust coleta telemetria,
+              um pipeline valida e enriquece os eventos, um motor de detecção
+              compatível com um subconjunto do Sigma gera alertas e incidentes,
+              e um console web permite investigar, responder com aprovação e
+              consultar um analista de IA que cita as evidências.
+            </p>
+            <dl class="terminal-facts">
+              <div>
+                <dt>agente</dt>
+                <dd>Rust · processos, conexões, arquivos e auth.log · ~10 MB RSS</dd>
+              </div>
+              <div>
+                <dt>pipeline</dt>
+                <dd>contrato ACE v1, deduplicação, Redis Streams com backpressure</dd>
+              </div>
+              <div>
+                <dt>detecção</dt>
+                <dd>subconjunto Sigma + correlação temporal, MITRE ATT&amp;CK, 20 regras</dd>
+              </div>
+              <div>
+                <dt>investigação</dt>
+                <dd>linha do tempo, árvore de processos, grafo 2D/3D, evidências</dd>
+              </div>
+              <div>
+                <dt>analista IA</dt>
+                <dd>RAG restrito ao caso, citações verificadas, defesa contra prompt injection</dd>
+              </div>
+              <div>
+                <dt>resposta</dt>
+                <dd>catálogo fechado, aprovação four-eyes, auditoria e reversão</dd>
+              </div>
+              <div>
+                <dt>segurança</dt>
+                <dd>argon2id, MFA TOTP, CSRF, RBAC no backend, trilha de auditoria</dd>
+              </div>
+              <div>
+                <dt>medido</dt>
+                <dd>~1,1 mil eventos/s · 111 testes na API · E2E com Playwright</dd>
+              </div>
+            </dl>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open screenshots/
+            </p>
+            <figure class="project-visual film" data-film>
+              <div class="visual-caption">
+                <span><b data-film-name></b> <b data-film-index>1</b>/6</span
+                ><span class="accent">↔ shot</span>
+              </div>
+              <div class="film-frame">
+                <img
+                  class="shot"
+                  src="assets/shots/aegis-dashboard.webp"
+                  alt="Central de operações: telemetria, severidade, alertas recentes e rede (modo demo, dados sintéticos)."
+                  data-caption="Central de operações: telemetria, severidade, alertas recentes e rede (modo demo, dados sintéticos)."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="shot"
+                  src="assets/shots/aegis-grafo.webp"
+                  alt="Grafo de entidades do incidente: hosts, processos, usuários, IPs e alertas ligados."
+                  data-caption="Grafo de entidades do incidente: hosts, processos, usuários, IPs e alertas ligados."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="shot"
+                  src="assets/shots/aegis-analista.webp"
+                  alt="Analista de IA: separa fatos de hipóteses e cita os IDs dos eventos, verificados no servidor."
+                  data-caption="Analista de IA: separa fatos de hipóteses e cita os IDs dos eventos, verificados no servidor."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="shot"
+                  src="assets/shots/aegis-resposta.webp"
+                  alt="Resposta com aprovação de outra pessoa (four-eyes), justificativa e reversão."
+                  data-caption="Resposta com aprovação de outra pessoa (four-eyes), justificativa e reversão."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  class="shot"
+                  src="assets/shots/aegis-rede3d.webp"
+                  alt="Topologia 3D das entidades observadas na janela."
+                  data-caption="Topologia 3D das entidades observadas na janela."
+                  width="1280"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="shot shot-diagram" data-caption="Arquitetura: agente → gateway → API → Redis Streams → worker de detecção → console.">
+                <svg viewBox="0 0 560 240" role="img" aria-labelledby="aegis-diagram-title">
+                  <title id="aegis-diagram-title">Arquitetura do AEGIS: agente Rust, gateway Caddy, API FastAPI, PostgreSQL, Redis Streams, worker de detecção e console Next.js</title>
+                  <g class="diagram-grid"><path d="M0 40H560M0 80H560M0 120H560M0 160H560M0 200H560M40 0V240M80 0V240M120 0V240M160 0V240M200 0V240M240 0V240M280 0V240M320 0V240M360 0V240M400 0V240M440 0V240M480 0V240M520 0V240" /></g>
+                  <g class="diagram-lines"><path d="M120 75H160M260 75H300M410 75H440M355 102V160M300 185H260M420 185H440M490 102V160" /></g>
+                  <g class="diagram-boxes">
+                    <rect x="20" y="48" width="100" height="54" />
+                    <rect x="160" y="48" width="100" height="54" />
+                    <rect x="300" y="48" width="110" height="54" />
+                    <rect x="440" y="48" width="100" height="54" />
+                    <rect x="160" y="160" width="100" height="50" />
+                    <rect x="300" y="160" width="120" height="50" />
+                    <rect x="440" y="160" width="100" height="50" />
+                  </g>
+                  <g class="diagram-text">
+                    <text x="70" y="72">AGENTE</text><text class="diagram-sub" x="70" y="89">Rust</text>
+                    <text x="210" y="72">GATEWAY</text><text class="diagram-sub" x="210" y="89">Caddy</text>
+                    <text x="355" y="72">API</text><text class="diagram-sub" x="355" y="89">FastAPI</text>
+                    <text x="490" y="72">POSTGRES</text><text class="diagram-sub" x="490" y="89">casos</text>
+                    <text x="210" y="181">CONSOLE</text><text class="diagram-sub" x="210" y="197">Next.js</text>
+                    <text x="360" y="181">REDIS</text><text class="diagram-sub" x="360" y="197">streams</text>
+                    <text x="490" y="181">DETECÇÃO</text><text class="diagram-sub" x="490" y="197">Sigma</text>
+                    <text class="diagram-sub" x="280" y="30">TELEMETRIA → ALERTA → INCIDENTE → RESPOSTA</text>
+                  </g>
+                  <g class="flow-points"><circle cx="140" cy="75" r="3" /><circle cx="280" cy="75" r="3" /><circle cx="425" cy="75" r="3" /></g>
+                </svg>
+                </div>
+              </div>
+              <figcaption class="film-caption">Central de operações: telemetria, severidade, alertas recentes e rede (modo demo, dados sintéticos).</figcaption>
+              <div class="film-tabs"><button type="button" aria-label="Imagem 1 de 6" aria-pressed="true">1</button><button type="button" aria-label="Imagem 2 de 6" aria-pressed="false">2</button><button type="button" aria-label="Imagem 3 de 6" aria-pressed="false">3</button><button type="button" aria-label="Imagem 4 de 6" aria-pressed="false">4</button><button type="button" aria-label="Imagem 5 de 6" aria-pressed="false">5</button><button type="button" aria-label="Imagem 6 de 6" aria-pressed="false">6</button><span class="film-progress"><i></i></span></div>
+            </figure>
+            <div class="tech-list">
+              <span>Rust</span><span>Python</span><span>FastAPI</span><span>Next.js</span><span>TypeScript</span><span>PostgreSQL</span><span>Redis</span><span>Docker</span><span>Prometheus</span><span>Claude API</span>
+            </div>
+            <p class="prompt">
+              <span>claudio<span class="muted">@dev</span></span>
+              <span class="prompt-arrow">›</span> open repo
+            </p>
+            <a
+              class="repo-link"
+              href="https://github.com/ClaudioAMF1/AEGIS"
+              target="_blank"
+              rel="noopener noreferrer"
+              >github.com/ClaudioAMF1/AEGIS ↗</a
+            >
+          </article>
+          <article
+            class="content-panel"
             id="clinica"
             data-repo="private"
             data-local="VM-Medicina-Estagio"
@@ -467,7 +636,7 @@
               <span class="path">~/projetos/vm-clinica</span>
               <span class="prompt-arrow">›</span> cat README.md
             </p>
-            <p class="eyebrow">01 / HEALTHTECH · LGPD · IA APLICADA</p>
+            <p class="eyebrow">02 / HEALTHTECH · LGPD · IA APLICADA</p>
             <h2 id="clinica-title">Gestão Clínica — VM Medicina</h2>
             <p>
               Sistema web interno da VM Medicina e Saúde Mental, clínica
@@ -617,7 +786,7 @@
               <span class="path">~/projetos/camf-boletos</span>
               <span class="prompt-arrow">›</span> cat README.md
             </p>
-            <p class="eyebrow">02 / FINTECH · AUTOMAÇÃO · CLIENTE REAL</p>
+            <p class="eyebrow">03 / FINTECH · AUTOMAÇÃO · CLIENTE REAL</p>
             <h2 id="camf-title">CAMF — Contas a Receber</h2>
             <p>
               Aplicação full-stack que transforma PDFs de boletos Sicoob em uma
@@ -772,7 +941,7 @@
               <span class="path">~/projetos/scoutlink</span>
               <span class="prompt-arrow">›</span> cat README.md
             </p>
-            <p class="eyebrow">03 / MOBILE · WEB · IMPACTO SOCIAL</p>
+            <p class="eyebrow">04 / MOBILE · WEB · IMPACTO SOCIAL</p>
             <h2 id="scoutlink-title">ScoutLink — Escoteiros do DF</h2>
             <p>
               Plataforma integrada da Região Escoteira do Distrito Federal: um
@@ -918,7 +1087,7 @@
               <span class="path">~/projetos/legitrack</span>
               <span class="prompt-arrow">›</span> cat README.md
             </p>
-            <p class="eyebrow">04 / CIVIC TECH · MOBILE · DADOS ABERTOS</p>
+            <p class="eyebrow">05 / CIVIC TECH · MOBILE · DADOS ABERTOS</p>
             <h2 id="legitrack-title">LegiTrack — Projetos de Lei</h2>
             <p>
               App para qualquer cidadão acompanhar a tramitação de Projetos de Lei
@@ -1024,7 +1193,7 @@
               <span class="path">~/projetos/crypto-pipeline</span>
               <span class="prompt-arrow">›</span> cat README.md
             </p>
-            <p class="eyebrow">05 / BIG DATA · MICROSSERVIÇOS</p>
+            <p class="eyebrow">06 / BIG DATA · MICROSSERVIÇOS</p>
             <h2 id="crypto-title">Pipeline de Criptomoedas</h2>
             <p>
               Coleta, processamento e análise de dados de criptomoedas em tempo
@@ -1134,7 +1303,7 @@
               <span class="path">~/projetos/soccer-vision</span>
               <span class="prompt-arrow">›</span> cat README.md
             </p>
-            <p class="eyebrow">06 / COMPUTER VISION · MACHINE LEARNING</p>
+            <p class="eyebrow">07 / COMPUTER VISION · MACHINE LEARNING</p>
             <h2 id="soccer-title">Análise Tática de Futebol</h2>
             <p>
               Visão computacional aplicada à análise tática: detecção e
@@ -1240,7 +1409,7 @@
               <span class="path">~/pesquisa/tcc</span>
               <span class="prompt-arrow">›</span> cat proposta.md
             </p>
-            <p class="eyebrow">07 / PESQUISA · SEGURANÇA · PRIVACIDADE · EM ANDAMENTO</p>
+            <p class="eyebrow">08 / PESQUISA · SEGURANÇA · PRIVACIDADE · EM ANDAMENTO</p>
             <h2 id="pesquisa-title">Quem mais está dentro do aplicativo?</h2>
             <p>
               Meu TCC investiga se aplicativos móveis oficiais do governo

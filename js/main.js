@@ -34,8 +34,9 @@
   const aliases = {
     hero: "about",
     whoami: "about",
-    projects: "clinica",
-    projetos: "clinica",
+    projects: "aegis",
+    projetos: "aegis",
+    soc: "aegis",
     "vm-clinica": "clinica",
     clinica: "clinica",
     vm: "clinica",
@@ -569,6 +570,7 @@
     "help                 todos os comandos",
     "whoami               sobre mim",
     "ls / projetos        lista de projetos",
+    "open aegis           defesa cibernética (SOC + IA)",
     "open clinica         gestão clínica (VM Medicina)",
     "open camf            contas a receber (boletos)",
     "open scoutlink       escoteiros do DF",
@@ -584,8 +586,8 @@
     "clear                limpar respostas",
     "exit                 voltar à entrada",
     "",
-    "claudinho            fale com o mascote (pet, feed, dance)",
-    "neofetch · fortune · coffee · hire · achievements",
+    "claudinho [pet|feed|dance|say|off|on]",
+    "neofetch · fortune · coffee · hire · achievements · matrix",
   ].join("\n");
 
   function appendOutput(command, response, links = []) {
@@ -654,14 +656,15 @@
     if (command === "help" || command === "ajuda" || command === "?")
       appendOutput(raw, helpText);
     else if (["ls", "projetos", "projects"].includes(command)) {
-      appendOutput(raw, "06 projetos + 01 pesquisa / escolha um arquivo:", [
-        { label: "01 vm-clinica", href: "#clinica" },
-        { label: "02 camf-boletos", href: "#camf" },
-        { label: "03 scoutlink", href: "#scoutlink" },
-        { label: "04 legitrack", href: "#legitrack" },
-        { label: "05 crypto-pipeline", href: "#crypto" },
-        { label: "06 soccer-vision", href: "#soccer" },
-        { label: "07 tcc-pesquisa", href: "#pesquisa" },
+      appendOutput(raw, "07 projetos + 01 pesquisa / escolha um arquivo:", [
+        { label: "01 aegis", href: "#aegis" },
+        { label: "02 vm-clinica", href: "#clinica" },
+        { label: "03 camf-boletos", href: "#camf" },
+        { label: "04 scoutlink", href: "#scoutlink" },
+        { label: "05 legitrack", href: "#legitrack" },
+        { label: "06 crypto-pipeline", href: "#crypto" },
+        { label: "07 soccer-vision", href: "#soccer" },
+        { label: "08 tcc-pesquisa", href: "#pesquisa" },
       ]);
     } else if (command === "tema" || command === "theme") {
       if (!argument) {
@@ -745,6 +748,7 @@
         "help",
         "whoami",
         "projetos",
+        "open aegis",
         "open clinica",
         "open camf",
         "open scoutlink",
@@ -922,6 +926,7 @@
         '    return {"data": event, "processed": True}',
         "",
         "projects = (",
+        '    "aegis",',
         '    "vm-clinica",',
         '    "camf-boletos",',
         '    "scoutlink",',
