@@ -2,23 +2,23 @@
  "languages": [
   [
    "Python",
-   15
+   16
+  ],
+  [
+   "CSS",
+   9
+  ],
+  [
+   "JavaScript",
+   9
   ],
   [
    "HTML",
    9
   ],
   [
-   "CSS",
-   8
-  ],
-  [
-   "JavaScript",
-   8
-  ],
-  [
    "Shell",
-   5
+   6
   ],
   [
    "C",
@@ -30,11 +30,15 @@
   ],
   [
    "TypeScript",
-   2
+   3
   ],
   [
    "C++",
    2
+  ],
+  [
+   "Rust",
+   1
   ],
   [
    "TeX",
@@ -59,23 +63,31 @@
  ],
  "tools": [
   [
-   "Git",
-   26
+   "GitHub",
+   27
   ],
   [
-   "GitHub",
-   26
+   "Git",
+   27
+  ],
+  [
+   "Docker",
+   7
   ],
   [
    "pandas",
    7
   ],
   [
-   "Docker",
+   "PostgreSQL",
    6
   ],
   [
-   "PostgreSQL",
+   "SQLAlchemy",
+   5
+  ],
+  [
+   "Node.js",
    5
   ],
   [
@@ -87,19 +99,15 @@
    5
   ],
   [
-   "SQLAlchemy",
-   4
-  ],
-  [
-   "Node.js",
+   "FastAPI",
    4
   ],
   [
    "React",
-   3
+   4
   ],
   [
-   "FastAPI",
+   "Redis",
    3
   ],
   [
@@ -119,12 +127,20 @@
    2
   ],
   [
-   "Redis",
+   "Kafka",
    2
   ],
   [
-   "Kafka",
-   2
+   "Prometheus",
+   1
+  ],
+  [
+   "GitHub Actions",
+   1
+  ],
+  [
+   "Next.js",
+   1
   ],
   [
    "Power BI",
@@ -143,7 +159,7 @@
    1
   ]
  ],
- "repoCount": 26,
+ "repoCount": 27,
  "byMonthRepo": {
   "2024-08": {
    "ClaudioAMF1": 6
@@ -247,6 +263,7 @@
    "soccer-video-analytics": 3
   },
   "2026-10": {
+   "AEGIS": 10,
    "Portfolio": 8,
    "Inteligencia-de-negocio": 5,
    "VM-Medicina-Estagio": 3,
@@ -266,6 +283,34 @@
    "tools": [
     "Git",
     "GitHub"
+   ]
+  },
+  "AEGIS": {
+   "commits": 10,
+   "files": 290,
+   "since": "2026-10-13",
+   "pushed": "2026-10-14",
+   "languages": [
+    "CSS",
+    "JavaScript",
+    "Python",
+    "Rust",
+    "Shell",
+    "TypeScript"
+   ],
+   "tools": [
+    "Docker",
+    "FastAPI",
+    "Git",
+    "GitHub",
+    "GitHub Actions",
+    "Next.js",
+    "Node.js",
+    "PostgreSQL",
+    "Prometheus",
+    "React",
+    "Redis",
+    "SQLAlchemy"
    ]
   },
   "Ambiente": {

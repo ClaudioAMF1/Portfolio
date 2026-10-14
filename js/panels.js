@@ -161,13 +161,13 @@
   const LANG_ICON = {
     Python: "Py", HTML: "<>", CSS: "#", JavaScript: "JS", Shell: "$_", C: "C",
     "Jupyter Notebook": "Ju", TypeScript: "TS", "C++": "++", TeX: "Tx", Dart: "Da",
-    Kotlin: "Kt", Swift: "Sw", Java: "Jv", SQL: "SQ",
+    Kotlin: "Kt", Swift: "Sw", Java: "Jv", SQL: "SQ", Rust: "Rs",
   };
   const TOOL_ICON = {
     Git: "⎇", GitHub: "◉", Docker: "▣", PostgreSQL: "◆", Flask: "⚗", NumPy: "∑",
     pandas: "▤", SQLAlchemy: "⛁", "Node.js": "⬡", React: "⚛", FastAPI: "⚡", Vite: "▼",
     "scikit-learn": "◎", Streamlit: "◣", Alembic: "↯", Redis: "◈", Kafka: "⫶",
-    "Power BI": "▥", Flutter: "◢", Celery: "✿", OpenCV: "◐", "GitHub Actions": "↻",
+    "Power BI": "▥", Flutter: "◢", Celery: "✿", OpenCV: "◐", "GitHub Actions": "↻", "Next.js": "▲", Prometheus: "◔",
   };
   function fillStack() {
     if (!stack) return;
