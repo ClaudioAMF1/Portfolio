@@ -29,6 +29,8 @@
     explorer: "explorador · viu todos os projetos",
     tourist: "turista · passou por todas as seções",
     hacker: "hacker · usou o terminal",
+    friend: "amigo do claudinho · fez carinho nele",
+    insomniac: "insone · acordou o claudinho",
     konami: "↑↑↓↓←→←→BA · achou o segredo",
   };
   const PROJECTS = ["aegis", "clinica", "camf", "scoutlink", "legitrack", "crypto", "soccer"];
@@ -60,6 +62,8 @@
     }
   });
   setTimeout(() => unlock("hello"), 2500);
+  document.addEventListener("mascot:pet", () => unlock("friend"));
+  document.addEventListener("mascot:woke", () => unlock("insomniac"));
 
   const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
   let konami = 0;
@@ -69,6 +73,7 @@
     if (konami === KONAMI.length) {
       konami = 0;
       unlock("konami");
+      window.PortfolioMascot?.dance();
       rain(3200);
     }
   });
@@ -132,6 +137,7 @@
       "                         tema       " + theme,
             "                         foco       backend · dados · IA",
       "                         local      Brasília, BR",
+      "                         mascote    claudinho ✳",
       "                         conquistas " + unlocked.size + "/" + Object.keys(ACHIEVEMENTS).length,
     ].join("\n");
   }
@@ -140,6 +146,46 @@
     command(command, argument) {
       unlock("hacker");
       switch (command) {
+        case "claudinho":
+        case "mascote": {
+          const mascot = window.PortfolioMascot;
+          if (!mascot) return null;
+          const [action, ...rest] = argument.split(" ");
+          if (action === "off" || action === "tchau") {
+            mascot.toggle(false);
+            return { text: "claudinho foi descansar. `claudinho on` traz ele de volta." };
+          }
+          if (action === "on" || action === "volta") {
+            mascot.toggle(true);
+            return { text: "claudinho voltou ✳" };
+          }
+          if (mascot.hidden) return { text: "claudinho está descansando. digite `claudinho on`." };
+          if (action === "pet" || action === "carinho") {
+            mascot.pet();
+            unlock("friend");
+            return { text: "claudinho ronrona. (sim, mascote de terminal ronrona)" };
+          }
+          if (action === "feed" || action === "comer") {
+            mascot.feed();
+            return { text: "você deu um bug pro claudinho. ele adorou." };
+          }
+          if (action === "dance" || action === "danca") {
+            mascot.dance();
+            return { text: "♪ ┏(・o・)┛ ♪ ┗(・o・)┓ ♪" };
+          }
+          if (action === "sleep" || action === "dormir") {
+            mascot.sleep();
+            return { text: "claudinho foi tirar um cochilo. zzz" };
+          }
+          if (action === "say" || action === "fala") {
+            mascot.say(rest.join(" ") || "…");
+            return { text: "claudinho disse: " + (rest.join(" ") || "…") };
+          }
+          mascot.say("oi! me arrasta, eu deixo ✳");
+          return {
+            text: "claudinho ✳ — Claudio + Claude\nmascote do terminal. clique, arraste ou converse.\n\nuso: claudinho [pet | feed | dance | sleep | say <texto> | off | on]",
+          };
+        }
         case "neofetch":
           return { text: neofetch() };
         case "fortune":

@@ -586,6 +586,7 @@
     "clear                limpar respostas",
     "exit                 voltar à entrada",
     "",
+    "claudinho [pet|feed|dance|say|off|on]",
     "neofetch · fortune · coffee · hire · achievements · matrix",
   ].join("\n");
 
@@ -764,6 +765,7 @@
         "tema",
         "clear",
         "exit",
+        "claudinho",
         "neofetch",
         "fortune",
         "achievements",
